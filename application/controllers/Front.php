@@ -2,27 +2,28 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * SRT_ASMP - (SRoot) Aplikasi Sistem Menejemen Perkantoran
+ * ASMP - Aplikasi Sistem Menejemen Perkantoran
  *
- * @package SRT_ASMP
- * @author SRoot (Leader)
- * @copyright Copyright (c) 2018, CodeInAlfa <codeismywork01@gmail.com>
- * @link https://github.com/CodeInAlfa
- * @version BETA BUILD 2.0.0
+ * @package ASMP
+ * @author ThisFikri (Leader)
+ * @copyright Copyright (c) 2018, Recodech <ocraineore@gmail.com>
+ * @link https://github.com/codecoretech
+ * @version BETA BUILD 02
  * @since Aplha 1.0.0
- * @license GPL Closed Source
+ * @license GNU GPL v3.0
  *
  * Aplikasi ini dibuat dan dikembangkan untuk dipergunakan dalam hal administrasi perkantoran
  */
+
 
 /**
  * Front Class
  *
  * Mengontrol halaman utama.
  *
- * @package SRT_ASMP
+ * @package ASMP
  * @category Controller
- * @author SRoot
+ * @author ThisFikri
  */
 class Front extends CI_Controller
 {
@@ -38,7 +39,7 @@ class Front extends CI_Controller
 
     /**
      * constructor ini digunakan untuk membuat table awal untuk registrasi awal
-     * DOC[01] - SRT_ASMP Program Documentation
+     * DOC[01] - ASMP Program Documentation
      */
     public function __construct()
     {
@@ -127,7 +128,7 @@ class Front extends CI_Controller
 
     /**
      * index - Mengecek apakah preregister sudah dilakukan atau belum
-     * DOC[02] - SRT_ASMP Program Documentation
+     * DOC[02] - ASMP Program Documentation
      *
      * @since 1.0
      * @access public
@@ -232,7 +233,7 @@ class Front extends CI_Controller
     /**
      * preregister - Fungsi preregister pada class Front adalah untuk menampilkan halaman registrasi awal,
      * dan membuat table yang dibutuhkan jiga belum dibuat
-     * DOC[03] - SRT_ASMP Program Documentation
+     * DOC[03] - ASMP Program Documentation
      *
      * @since 1.0
      * @access public
@@ -395,7 +396,7 @@ class Front extends CI_Controller
             'mail_document_heading' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '100',
-                'default' => 'SRT_ASMP.Co.Ltd',
+                'default' => 'ASMP.Co.Ltd',
             ),
             'mail_document_address' => array(
                 'type' => 'VARCHAR',
@@ -633,7 +634,7 @@ class Front extends CI_Controller
 
     /**
      * preregister_user - Fungsi preregister_user pada class Front adalah untuk membuat user dengan hak akses admin jika user dengan hak admin belum ada.
-     * DOC[04] - SRT_ASMP Program Documentation
+     * DOC[04] - ASMP Program Documentation
      *
      * @since 1.0
      * @access public
@@ -1303,7 +1304,7 @@ class Front extends CI_Controller
 
     /**
      * forgot_password - Menampilkan halaman lupa password, dan memproses reset kata sandi
-     * DOC[05] - SRT_ASMP Program Documentation
+     * DOC[05] - ASMP Program Documentation
      *
      * @since 1.0 updated at 2.1 > 3.0
      * @access public

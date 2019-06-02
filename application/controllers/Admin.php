@@ -2,27 +2,28 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * SRT_ASMP - (SRoot) Aplikasi Sistem Menejemen Perkantoran
+ * ASMP - Aplikasi Sistem Menejemen Perkantoran
  *
- * @package SRT_ASMP
- * @author SRoot (Leader)
- * @copyright Copyright (c) 2018, CodeInAlfa <codeismywork01@gmail.com>
- * @link https://github.com/CodeInAlfa
+ * @package ASMP
+ * @author ThisFikri (Leader)
+ * @copyright Copyright (c) 2018, Recodech <ocraineore@gmail.com>
+ * @link https://github.com/codecoretech
  * @version BETA BUILD 02
  * @since Aplha 1.0.0
- * @license GPL Closed Source
+ * @license GNU GPL v3.0
  *
  * Aplikasi ini dibuat dan dikembangkan untuk dipergunakan dalam hal administrasi perkantoran
  */
+
 
 /**
  * Admin Class
  *
  * Mengontrol halaman admin.
  *
- * @package SRT_ASMP
+ * @package ASMP
  * @category Controller
- * @author SRoot
+ * @author ThisFikri
  */
 class Admin extends CI_Controller
 {
@@ -43,7 +44,7 @@ class Admin extends CI_Controller
 
     /**
      * constructor ini digunakan untuk membuat table awal untuk registrasi awal
-     * DOC[01] - SRT_ASMP Program Documentation
+     * DOC[01] - ASMP Program Documentation
      */
     public function __construct()
     {

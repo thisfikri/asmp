@@ -2,27 +2,28 @@
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
- * SRT_ASMP - (SRoot) Aplikasi Sistem Menejemen Perkantoran
- * 
- * @package SRT_ASMP
- * @author SRoot (Leader)
- * @copyright Copyright (c) 2018, CodeInAlfa <codeismywork01@gmail.com>
- * @link https://github.com/CodeInAlfa
+ * ASMP - Aplikasi Sistem Menejemen Perkantoran
+ *
+ * @package ASMP
+ * @author ThisFikri (Leader)
+ * @copyright Copyright (c) 2018, Recodech <ocraineore@gmail.com>
+ * @link https://github.com/codecoretech
  * @version BETA BUILD 02
  * @since Aplha 1.0.0
- * @license GPL Closed Source
- * 
+ * @license GNU GPL v3.0
+ *
  * Aplikasi ini dibuat dan dikembangkan untuk dipergunakan dalam hal administrasi perkantoran
  */
+
 
  /**
   * Settings_Handler Class
   * 
   * Mengatasi Settings Aplikasi
   *
-  * @package SRT_ASMP
+  * @package ASMP
   * @category Model
-  * @author SRoot
+  * @author ThisFikri
   */
 class Settings_Handler extends CI_Model {
 
