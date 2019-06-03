@@ -351,8 +351,14 @@ class User extends CI_Controller
             }
 
             $imagedir_name = $result[0]->gallery_dir;
-            $imagedir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $imagedir_name;
+            $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery';
 
+            if (!is_dir($gallery_dir)) {
+                mkdir($gallery_dir, 0755);
+            }
+
+            $imagedir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $imagedir_name;
+            
             if (is_dir($imagedir) === FALSE)
             {
                 mkdir($imagedir, 0755);

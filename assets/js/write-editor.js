@@ -1,4 +1,6 @@
 $(document).ready(function() {
+	var
+	containerSelector = '.add-om-modal';
     function setSelectionRange(input, selectionStart, selectionEnd) {
         if (input.setSelectionRange) {
             input.focus();
@@ -12,7 +14,7 @@ $(document).ready(function() {
         }
     }
 
-    $(".sk-new-entry-form").submit(function() {
+    $(containerSelector + ' .modal2ndlayer .mail-modal-form').submit(function() {
         var
 			iframeData = $("#mailContentsEditorWidgIframe").contents().find('body').html(),
 			blockElementTag = ['<p>', '<div<', '<ul>', '<ol>'],
@@ -47,7 +49,7 @@ $(document).ready(function() {
 			var
 			pDFDocAD = createPDFDocAD(matchingObject);
 			pDFDocAD = pDFDocAD.join('|');
-			$(".add-om-modal .modal2ndlayer .mail-modal-form input[name=editor_data]").val(iframeData);
+			$(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
 
 			function createPDFDocAD(data) { //create a pdf document avaible data
 				var i = 0, tag = [], plainTxt = [], spaceChar = 'nothing', itg = iptxt = ispc = 0, firstParent = 'nothing', endTagFirstParent = 'nothing',
@@ -139,13 +141,13 @@ $(document).ready(function() {
 				}
 			}
     });
+	// console.log($(containerSelector + ' .modal2ndlayer .mail-modal-form #mailContentsEditor'));
+	// $("#mailContentsEditorWidgIframe").change(function(event) {
+	// 	var
+	// 	iframeData = $("#mailContentsEditorWidgIframe").contents().find('body').html();
 
-	$('.reply-form .reply-submit').submit(function(event) {
-		var
-		iframeData = $("#letterTextEditorWidgIframe").contents().find('body').html();
-
-		$("#letterTextEditor").val(iframeData);
-		$(".reply-form input[name=editor_data]").val(iframeData);
-	});
+	// 	$("#mailContentsEditor").val(iframeData);
+	// 	$(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
+	// });
 	
 });

@@ -85,13 +85,25 @@ $(document).ready(function () {
                     name: 'save_om',
                     class: 'add-om-submit save'
                 }).html('<i class="fa fa-save"></i> Simpan').click(function () {
+                    let
+                    form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
+                    fdata = {},
+                    i = 0,
+                    iframeData = $("#mailContentsEditorWidgIframe").contents().find('body').html();
+
+                    $("#mailContentsEditor").val(iframeData);
+                    $(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
+                    for(; i < form[0].length; i++) {
+                        fdata[form[0][i].name] = form[0][i].value;    
+                    }
+                    
                     $.ajax({
                         type: "POST",
-                        url: baseURL() + '/user/om_cmd_exec',
+                        url: baseURL() + '/user/om_action_exec',
                         data: JSON.stringify({
                             data: {
                                 action: 'save',
-                                om_data: Formdata,
+                                om_data: fdata,
                                 t: $.cookie('t')
                             }
                         }),
@@ -112,13 +124,24 @@ $(document).ready(function () {
                     name: 'send_om',
                     class: 'add-om-submit send'
                 }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
+                    let
+                    form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
+                    fdata = {},
+                    i = 0,
+                    iframeData = $("#mailContentsEditorWidgIframe").contents().find('body').html();
+
+                    $("#mailContentsEditor").val(iframeData);
+                    $(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
+                    for(; i < form[0].length; i++) {
+                        fdata[form[0][i].name] = form[0][i].value;    
+                    }
                     $.ajax({
                         type: "POST",
                         url: baseURL() + '/user/om_action_exec',
                         data: JSON.stringify({
                             data: {
                                 action: 'send',
-                                om_data: formdata,
+                                om_data: fdata,
                                 t: $.cookie('t')
                             }
                         }),

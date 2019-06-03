@@ -11,7 +11,7 @@ SetEnv CI_ENV development
   RewriteBase /
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule ^(.*)$ simakwebapp-build02/index.php?/$1 [L]
+  RewriteRule ^(.*)$ asmp/index.php?/$1 [L]
 </IfModule>
 
 <IfModule !mod_rewrite.c>

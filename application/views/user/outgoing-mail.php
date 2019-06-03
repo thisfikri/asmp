@@ -179,8 +179,8 @@
     <script src="<?php echo base_url('assets/js/asmp-actionlib.js');?>"></script>
     <script src="<?php echo base_url('assets/js/user-page.js');?>"></script>
     <script src="<?php echo base_url('assets/js/photos-box.js');?>"></script>
-    <script src="<?php echo base_url('assets/js/mail-function.js');?>"></script>
     <script src="<?php echo base_url('assets/js/write-editor.js');?>"></script>
     <script type="text/javascript" src="<?php echo site_url().'assets/widgEditor_1.0.1/scripts/widgeditor.js';?>"></script>
+    <script src="<?php echo base_url('assets/js/mail-function.js');?>"></script>
 </body>
 </html>
