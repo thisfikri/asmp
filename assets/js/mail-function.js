@@ -100,13 +100,13 @@ $(document).ready(function () {
                     $.ajax({
                         type: "POST",
                         url: baseURL() + '/user/om_action_exec',
-                        data: JSON.stringify({
-                            data: {
-                                action: 'save',
+                        data: {
+                            request_data: JSON.stringify({
+                                action: 'send',
                                 om_data: fdata,
                                 t: $.cookie('t')
-                            }
-                        }),
+                            })
+                        },
                         dataType: "json",
                     }).done(function () {
 
@@ -138,13 +138,13 @@ $(document).ready(function () {
                     $.ajax({
                         type: "POST",
                         url: baseURL() + '/user/om_action_exec',
-                        data: JSON.stringify({
-                            data: {
+                        data: {
+                            request_data: JSON.stringify({
                                 action: 'send',
                                 om_data: fdata,
                                 t: $.cookie('t')
-                            }
-                        }),
+                            })
+                        },
                         dataType: "json",
                     }).done(function () {
 
@@ -159,13 +159,13 @@ $(document).ready(function () {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/user/om_action_exec',
-                data: JSON.stringify({
-                    data: {
-                        action: 'load',
-                        om_data: formdata,
+                data: {
+                    request_data: JSON.stringify({
+                        action: 'send',
+                        om_data: fdata,
                         t: $.cookie('t')
-                    }
-                }),
+                    })
+                },
                 dataType: "json",
             }).done(function () {
 

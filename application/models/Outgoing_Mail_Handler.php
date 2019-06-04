@@ -40,10 +40,35 @@ class Outgoing_Mail_Handler extends CI_Model
         {
             $username = $this->session->userdata('user_login');
 
-            $query = $this->db->where('position', $mail_data[3])->get('users');
-            $receiver_data = $query->result();
+            $query = $this->db->where('username', $username)->get('users');
+            $sender_data = $query->result();
+            $sender_pos = $sender_data[0]->position;
 
-            $query = $this->db->where('username', $username)->get('incoming_mail');
+            $query = $this->db->where('field_section_name', $sender_pos)->get('field_sections');
+            $filed_section_data = $query->result();
+            $pos_task = $filed_section_data[0]->task;
+            $receiver_data = null;
+            if ($pos_task == 'normal_accept_sending')
+            {
+                $query = $this->db->where('task', 'accept_lvl1_dpss')->get('field_sections');
+                $result = $query->result();
+                $receiver_pos = $result[0]->field_section_name;
+
+                $query = $this->db->where('position', $receiver_pos)->get('users');
+                $receiver_data = $query->result();
+                $receiver_data = $receiver_data[0];
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(
+                    array('status' => 'error',
+                    'message' => 'this function only for `user` authority and task normal'
+                    )
+                ));
+                exit(0);                
+            }
+
+            $query = $this->db->where('username', $receiver_data->username)->get('incoming_mail');
             $im_count = $query->num_rows();
 
             $query = $this->db->where('username', $username)->get('outgoing_mail');
@@ -51,24 +76,24 @@ class Outgoing_Mail_Handler extends CI_Model
 
             $data_to_send = array(
                 'id' => $om_count + 1,
-                'mail_number' => $mail_data[0],
+                'mail_number' => $mail_data['mail_number'],
                 'username' => $username,
-                'subject' => $mail_data[1],
-                'sender' => $mail_data[2],
-                'receiver' => $mail_data[3],
-                'contents' => $mail_data[4],
+                'subject' => $mail_data['mail_subject'],
+                'sender' => $sender_pos,
+                'receiver' => $receiver_pos,
+                'contents' => $mail_data['editor_data'],
                 'status' => 'baru',
                 'date' => date('Y-m-d h:i:s A'),
-                'pdf_layout' => $mail_data[5]
+                'pdf_layout' => $mail_data['pdf_layouts']
             );
 
             $this->db->insert('outgoing_mail', $data_to_send);
             if ($this->db->affected_rows())
             {
                 $data_to_send['id'] = $im_count + 1;
-                $data_to_send['username'] = $receiver_data[0]->username;
+                $data_to_send['username'] = $receiver_data->username;
                 $this->db->insert('incoming_mail', $data_to_send); 
-                if ($this->db->affected_rocws())
+                if ($this->db->affected_rows())
                 {
                     if ($output == 'echo')
                     {
@@ -133,20 +158,48 @@ class Outgoing_Mail_Handler extends CI_Model
         {
             $username = $this->session->userdata('user_login');
 
+            $query = $this->db->where('username', $username)->get('users');
+            $sender_data = $query->result();
+            $sender_pos = $sender_data[0]->position;
+
+            $query = $this->db->where('field_section_name', $sender_pos)->get('field_sections');
+            $filed_section_data = $query->result();
+            $pos_task = $filed_section_data[0]->task;
+            $receiver_data = null;
+            if ($pos_task == 'normal_accept_sending')
+            {
+                $query = $this->db->where('task', 'accept_lvl1_dpss')->get('field_sections');
+                $result = $query->result();
+                $receiver_pos = $result[0]->field_section_name;
+
+                $query = $this->db->where('position', $receiver_pos)->get('users');
+                $receiver_data = $query->result();
+                $receiver_data = $receiver_data[0];
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(
+                    array('status' => 'error',
+                    'message' => 'this function only for `user` authority and task normal'
+                    )
+                ));
+                exit(0);                
+            }
+
             $query = $this->db->where('username', $username)->get('outgoing_mail');
             $om_count = $query->num_rows();
 
             $data_to_send = array(
                 'id' => $om_count + 1,
-                'mail_number' => $mail_data[0],
+                'mail_number' => $mail_data['mail_number'],
                 'username' => $username,
-                'subject' => $mail_data[1],
-                'sender' => $mail_data[2],
-                'receiver' => $mail_data[3],
-                'contents' => $mail_data[4],
+                'subject' => $mail_data['mail_subject'],
+                'sender' => $sender_pos,
+                'receiver' => $receiver_pos,
+                'contents' => $mail_data['editor_data'],
                 'status' => 'baru',
                 'date' => date('Y-m-d h:i:s A'),
-                'pdf_layout' => $mail_data[5]
+                'pdf_layout' => $mail_data['pdf_layouts']
             );
             $this->db->insert('outgoing_mail', $data_to_send);
             if ($this->db->affected_rows())

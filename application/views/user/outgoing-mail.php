@@ -37,7 +37,7 @@
                     <th class="table-title"><i class="fa fa-calendar-alt"></i> Tanggal</th>
                     <th class="table-title">Aksi</th>
                 </tr>
-                <tr class="item id1">
+                <!-- <tr class="item id1">
                     <td><input type="checkbox" class="checkbox item1"><span class="checkmark item1"><i class="fa fa-check"></i></span></td>
                     <td>XII/M1/19</td>
                     <td>Rapat Divisi 11</td>
@@ -88,13 +88,13 @@
                         <button class="button action-btn send" id="item4"><i class="fa fa-edit"></i></button>
                         <button class="button action-btn trash" id="item4"><i class="fa fa-trash-alt"></i></button>
                     </td>
-                </tr>
+                </tr> -->
             </table>
             <div class="pagination" id="pageNavContainer">
-                <a href="#" class="page-link current">1</a>
+                <!-- <a href="#" class="page-link current">1</a>
                 <a href="#" class="page-link">2</a>
                 <a href="#" class="page-link">3</a>
-                <a href="#" class="page-link arrow-next"><i class="fa fa-angle-right"></i></a>
+                <a href="#" class="page-link arrow-next"><i class="fa fa-angle-right"></i></a> -->
             </div>
             <div class="mail-container">
             </div>

@@ -353,12 +353,13 @@ class User extends CI_Controller
             $imagedir_name = $result[0]->gallery_dir;
             $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery';
 
-            if (!is_dir($gallery_dir)) {
+            if (!is_dir($gallery_dir))
+            {
                 mkdir($gallery_dir, 0755);
             }
 
             $imagedir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $imagedir_name;
-            
+
             if (is_dir($imagedir) === FALSE)
             {
                 mkdir($imagedir, 0755);
@@ -481,10 +482,10 @@ class User extends CI_Controller
                     'row_limit' => $this->input->post('pagingLimit', TRUE),
                 );
 
-                if ($this->input->post('cmd', TRUE) == 'save_settings')
+                if ($this->input->post('cmd', TRUE) == 'save_user_settings')
                 {
                     header('Content-Type: application/json');
-                    echo json_encode($this->app_settings->save_settings($this->_username, $settings_data));
+                    echo json_encode($this->app_settings->save_user_settings($this->_username, $settings_data));
                 }
             }
             else
@@ -554,16 +555,16 @@ class User extends CI_Controller
             $data = array(
                 'uprof_data' => $user_profile_data[0],
                 'new_im' => $new_im,
-                'settings' => $this->app_settings->get_settings($this->_username),
+                'settings' => $this->app_settings->get_user_settings($this->_username),
                 'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
             );
             $this->load->view('user/user-settings', $data, FALSE);
         }
     }
-    
+
     /**
      *
-    */
+     */
     public function incoming_mail()
     {
         $query = $this->db->where('username', $this->_username)->get('users');
@@ -625,7 +626,7 @@ class User extends CI_Controller
         $data = array(
             'uprof_data' => $user_profile_data[0],
             'new_im' => $new_im,
-            'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture)
+            'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
         );
 
         $this->load->view('user/incoming-mail', $data, FALSE);
@@ -633,111 +634,161 @@ class User extends CI_Controller
 
     // ------------------------------------------------------------------------
 
-    public function outgoing_mail()
+    public function outgoing_mail($load_item = '')
     {
-        $query = $this->db->where('username', $this->_username)->get('users');
-
-        /**
-         * $user_profile_data - Data profil pengguna yang diambil dari database
-         *
-         * @var object
-         */
-        $user_profile_data = $query->result();
-
-        $row = $query->result();
-
-        /**
-         * $wdata - Where Data
-         *
-         * @var array
-         */
-        $wdata = array(
-            'username' => $this->_username,
-            'status' => 'baru',
-        );
-
-        $query = $this->db->where($wdata)->get('incoming_mail');
-
-        /**
-         * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
-         *
-         * @var int
-         */
-        $new_im_count = $query->num_rows();
-
-        /**
-         * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
-         *
-         * @var array
-         */
-        $new_im = array(
-            'display' => false,
-            'count' => 0,
-        );
-
-        // Cek jumlah surat masuk baru
-        if ($new_im_count > 0)
+        if ($this->input->is_ajax_request() && $load_item === 'load')
         {
-            $new_im = array(
-                'display' => TRUE,
-                'count' => $new_im_count,
-            );
+            $token = $this->input->post('t', TRUE);
+            if ($token === $this->session->userdata('CSRF'))
+            {
+                $username = $this->session->userdata('user_login');
+                $query = $this->db->where('username', $username)->get('outgoing_mail');
+                $result = $query->result_array();
+                $om_count = $query->num_rows();
+                $om_data_keys = array_keys($result);
+                $om_data = array();
+                $settings = $this->app_settings->get_user_settings($this->_username);
+                $paging = array();
+                $paging['status'] = $settings[0]->paging_status;
+                $paging['limit'] = $settings[0]->row_limit;
+
+                $i = 0;
+                if ($om_count > 0)
+                {
+                    for (; $i < $om_count; $i++)
+                    {
+                        unset($result[$i]['id']);
+                        unset($result[$i]['username']);
+                        unset($result[$i]['receiver']);
+                    }
+
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'data' => $result,
+                            'paging' => $paging
+                        )
+                    ));
+                }
+                else if ($om_count === 0)
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'data' => '<i class="fa fa-exclamation-circle"></i> User Not Found.',
+                            'paging' => $paging
+                        )
+                    ));
+                }
+            }
         }
         else
         {
-            $new_im = array(
-                'display' => FALSE,
-                'count' => $new_im_count,
+            $query = $this->db->where('username', $this->_username)->get('users');
+
+            /**
+             * $user_profile_data - Data profil pengguna yang diambil dari database
+             *
+             * @var object
+             */
+            $user_profile_data = $query->result();
+
+            $row = $query->result();
+
+            /**
+             * $wdata - Where Data
+             *
+             * @var array
+             */
+            $wdata = array(
+                'username' => $this->_username,
+                'status' => 'baru',
             );
+
+            $query = $this->db->where($wdata)->get('incoming_mail');
+
+            /**
+             * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
+             *
+             * @var int
+             */
+            $new_im_count = $query->num_rows();
+
+            /**
+             * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
+             *
+             * @var array
+             */
+            $new_im = array(
+                'display' => false,
+                'count' => 0,
+            );
+
+            // Cek jumlah surat masuk baru
+            if ($new_im_count > 0)
+            {
+                $new_im = array(
+                    'display' => TRUE,
+                    'count' => $new_im_count,
+                );
+            }
+            else
+            {
+                $new_im = array(
+                    'display' => FALSE,
+                    'count' => $new_im_count,
+                );
+            }
+
+            $query = $this->db->where('username', $this->_username)->get('outgoing_mail');
+            $om_result = $query->result();
+
+            $data = array(
+                'uprof_data' => $user_profile_data[0],
+                'new_im' => $new_im,
+                'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
+                'incoming_mail' => $om_result,
+            );
+
+            $this->load->view('user/outgoing-mail', $data, FALSE);
         }
-
-        $query = $this->db->where('username', $this->_username)->get('outgoing_mail');
-        $om_result = $query->result();
-
-        $data = array(
-            'uprof_data' => $user_profile_data[0],
-            'new_im' => $new_im,
-            'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
-            'incoming_mail' => $om_result,
-        );
-
-        $this->load->view('user/outgoing-mail', $data, FALSE);
     }
 
     // ------------------------------------------------------------------------
-    
+
     /**
      * Execute outgoing mail action
      *
      * @return void
-    */
+     */
     public function om_action_exec()
     {
         if ($this->input->is_ajax_request() && $this->input->post())
         {
-            $request_data = $this->input->post('request_data', TRUE);
-            $request_data = json_decode($request_data, TRUE);
-            switch ($request_data['action']) {
-            	case 'load':
-		            $this->om_handler->load_om($requested_data['om_data'], 'json');
-					break;
-                case 'send':
-                    $this->om_handler->send_om($requested_data['om_data'], 'json');
-                    break;
-                case 'save':
-                    $this->om_handler->save_om($requested_data['om_data'], 'json');
-                    break;
-                case 'throw':
-                    $this->om_handler->throw_om($requested_data['om_data'], 'json');
-                    break;
-                default:
-                    $this->output->set_content_type('application/json')->set_output(json_encode(
-                        array(
-                            'status' => 'error',
-                            'message' => 'action not found!'
-                        )
-                    ));
-                    break;
+            $requested_data = $this->input->post('request_data', TRUE);
+            $requested_data = json_decode($requested_data, TRUE);
+            switch ($requested_data['action'])
+            {
+            case 'load':
+                $this->om_handler->load_om($requested_data['om_data'], 'json');
+                break;
+            case 'send':
+                $this->om_handler->send_om($requested_data['om_data'], 'json');
+                break;
+            case 'save':
+                $this->om_handler->save_om($requested_data['om_data'], 'json');
+                break;
+            case 'throw':
+                $this->om_handler->throw_om($requested_data['om_data'], 'json');
+                break;
+            default:
+                $this->output->set_content_type('application/json')->set_output(json_encode(
+                    array(
+                        'status' => 'error',
+                        'message' => 'action not found!',
+                    )
+                ));
+                break;
             }
         }
         else

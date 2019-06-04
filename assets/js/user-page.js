@@ -156,12 +156,14 @@ $(document).ready(function () {
                 ma.defineAction('multipleAction3');
                 ma.multipleAction1('remove', 'user_management', true);
                 ma.multipleAction2('trash', 'incoming_mail', true);
-                ma.multipleAction3('remove', 'field_section', true);
+                ma.multipleAction3('trash', 'outgoing_mail', true);
+                ma.multipleAction4('remove', 'field_section', true);
             } else if (checkedItemCount < 2) {
                 $('.multiple-action').addClass('hide');
                 ma.deleteAction('multipleAction1');
                 ma.deleteAction('multipleAction2');
                 ma.deleteAction('multipleAction3');
+                ma.deleteAction('multipleAction4');
             }
         }
 
@@ -210,7 +212,7 @@ $(document).ready(function () {
                 mulRecAct: $('#settingsForm .form-section.page #mulRecAct').val(),
                 pagingItem: $('#settingsForm .form-section.page span.settings-checkbox #pagingItem').is(':checked'),
                 pagingLimit: $('#settingsForm .form-section.page #pagingLimit').val(),
-                cmd: 'save_settings',
+                cmd: 'save_user_settings',
                 t: $.cookie('t')
             },
             currObj = $(this);
@@ -273,17 +275,70 @@ $(document).ready(function () {
         });
     });
 
-    var
-        i = 1,
-        itemLength = $('.checkbox').length,
-        atrgr = new ActionTrigger();
-    for (; i < itemLength + 1; i++) {
-        console.log(i);
-        atrgr.defineTrigger('chekboxAction' + i, 'checkbox_action');
-        atrgr.defineTrigger('throwMailToTrash' + i, 'throw_mail_tt');
-        atrgr.defineTrigger('viewMail' + i, 'view_mail');
-        atrgr.execTrigger('chekboxAction' + i, i);
-        atrgr.execTrigger('throwMailToTrash' + i, i);
-        atrgr.execTrigger('viewMail' + i, i);
-    }
+    $('.table-container#outgoingMail .item-list').ready(function () {
+        $.ajax({
+            type: "POST",
+            url: baseURL() + '/outgoing_mail/load',
+            dataType: "json",
+            data: {
+                t: $.cookie('t')
+            }
+        }).done(function () {
+
+        }).fail(function () {
+
+        }).always(function (result) {
+            if ($.isArray(result.data)) {
+                var atrgr = new ActionTrigger();
+                //console.log(result.data.length);
+                for (var i = 1; i < result.data.length + 1; i++) {
+                    console.log(result.data[i - 1].subject);
+                    $('.table-container#outgoingMail .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(4).text(result.data[i - 1].status);
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        '<button class="button action-btn edit" id="item' + i + '"><i class="fa fa-edit"></i></button>'
+                    );
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        '<button class="button action-btn view" id="item' + i + '"><i class="fa fa-eye"></i></button>'
+                    );
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        '<button class="button action-btn trash" id="item' + i + '"><i class="fa fa-times"></i></button>'
+                    );
+                    atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                    atrgr.defineTrigger('viewMail' + i, 'view_mail');
+                    atrgr.defineTrigger('throwMailToTrash' + i, 'throw_mail_tt');
+                    atrgr['checkboxAction' + i](i);
+                    atrgr['throwMailToTrash' + i](i, result.data[i - 1].true_name);
+                }
+
+                if (Number.parseInt(result.paging.status) == 1) {
+                    console.log('Entering...');
+                    var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
+                    pagination = pgnt.paginate();
+                }
+
+            } else {
+                $('</p>').addClass('not-found-msg').html(result.data).appendTo('.table-container#outgoingMail .table-header');
+            }
+        });
+    });
+
+    // var
+    //     i = 1,
+    //     itemLength = $('.checkbox').length,
+    //     atrgr = new ActionTrigger();
+    // for (; i < itemLength + 1; i++) {
+    //     console.log(i);
+    //     atrgr.defineTrigger('chekboxAction' + i, 'checkbox_action');
+    //     atrgr.defineTrigger('throwMailToTrash' + i, 'throw_mail_tt');
+    //     atrgr.defineTrigger('viewMail' + i, 'view_mail');
+    //     atrgr.execTrigger('chekboxAction' + i, i);
+    //     atrgr.execTrigger('throwMailToTrash' + i, i);
+    //     atrgr.execTrigger('viewMail' + i, i);
+    // }
 });
