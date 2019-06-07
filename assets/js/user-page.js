@@ -8,9 +8,9 @@ $(document).ready(function () {
         //filtered_str = xssFilters.inUnQuotedAttr(filtered_str);
         return filtered_str;
     }
-    
+
     // welcome msg
-    
+
 
     //Navbar Menu Icon
     $('.navbar-icon').click(function () {
@@ -123,7 +123,7 @@ $(document).ready(function () {
     });
 
     $('#checkAll').click(function () {
-        var ma = new MultipleAction(baseURL() + '/user/remove_item');
+        var ma = new MultipleAction(baseURL() + '/remove_item');
         if ($(this).is(':checked') && $('.item td .checkbox').not('.item.hide td .checkbox').length !== 0) {
             var mailIds = $('.multiple-action').data('mail-ids'),
                 i = 1,
@@ -154,6 +154,7 @@ $(document).ready(function () {
                 ma.defineAction('multipleAction1');
                 ma.defineAction('multipleAction2');
                 ma.defineAction('multipleAction3');
+                ma.defineAction('multipleAction4');
                 ma.multipleAction1('remove', 'user_management', true);
                 ma.multipleAction2('trash', 'incoming_mail', true);
                 ma.multipleAction3('trash', 'outgoing_mail', true);
@@ -289,20 +290,23 @@ $(document).ready(function () {
 
         }).always(function (result) {
             if ($.isArray(result.data)) {
-                var atrgr = new ActionTrigger();
+                var atrgr = new ActionTrigger(),
+                    itemData;
                 //console.log(result.data.length);
                 for (var i = 1; i < result.data.length + 1; i++) {
                     console.log(result.data[i - 1].subject);
+                    itemData = itemData = JSON.stringify(result.data[i - 1]);
                     $('.table-container#outgoingMail .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i).attr('data-itemdata', itemData);
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(4).text(result.data[i - 1].status);
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
-                    $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
-                        '<button class="button action-btn edit" id="item' + i + '"><i class="fa fa-edit"></i></button>'
-                    );
+                    // $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                    //     '<button class="button action-btn edit" id="item' + i + '"><i class="fa fa-edit"></i></button>'
+                    // );
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
                         '<button class="button action-btn view" id="item' + i + '"><i class="fa fa-eye"></i></button>'
                     );
@@ -310,10 +314,11 @@ $(document).ready(function () {
                         '<button class="button action-btn trash" id="item' + i + '"><i class="fa fa-times"></i></button>'
                     );
                     atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
-                    atrgr.defineTrigger('viewMail' + i, 'view_mail');
-                    atrgr.defineTrigger('throwMailToTrash' + i, 'throw_mail_tt');
+                    atrgr.defineTrigger('viewMailOM' + i, 'view_mail');
+                    atrgr.defineTrigger('throwMailToTrashOM' + i, 'throw_mail_tt');
                     atrgr['checkboxAction' + i](i);
-                    atrgr['throwMailToTrash' + i](i, result.data[i - 1].true_name);
+                    atrgr['throwMailToTrashOM' + i](i, 'om', result.data[i - 1]);
+                    atrgr['viewMailOM' + i](i);
                 }
 
                 if (Number.parseInt(result.paging.status) == 1) {
@@ -322,10 +327,73 @@ $(document).ready(function () {
                     pagination = pgnt.paginate();
                 }
 
-            } else {
-                $('</p>').addClass('not-found-msg').html(result.data).appendTo('.table-container#outgoingMail .table-header');
             }
         });
+    });
+
+    // $('<div></div>').attr({
+    //     class: 'mail-top-number'
+    // }).html('<p><b>' + i + '.Surat Keluar</b></p>').appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+
+    // $('<div></div>').attr({
+    //     class: 'mail-header'
+    // }).html(
+    //     '<h1>PT.Casual Outfit</h1>' +
+    //     '<h5>Jln.InfityLoop No.32</h2>' +
+    //     '<h5>Telp.022-123-456 / Fax.13421423</h3>'
+    // ).appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+    
+    // $('<div></div>').attr({
+    //     class: 'mail-information'
+    // }).html(
+    //     '<p class="info-txt"><b>Nomor Surat:</b> ' + result.data[i - 1].mail_number + '</p>' +
+    //     '<p class="info-txt"><b>Perihal:</b> ' + result.data[i - 1].subject + '</p>' +
+    //     '<p class="info-txt"><b>Dari:</b> ' + result.data[i - 1].sender + '</p>' +
+    //     '<p class="info-txt"><b>Kepada:</b> ' + result.data[i - 1].receiver + '</p>' +
+    //     '<p class="info-txt"><b>Tanggal:</b> ' + result.data[i - 1].date + '</p>'
+    // ).appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+
+    // $('<div></div>').attr({
+    //     class: 'mail-contents'
+    // }).html('<p>' + result.data[i - 1].contents + '</p>').appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+    
+    // $('<button></button>').attr({
+    //     class: 'button mail-btn print'
+    // })
+    // .html('<i class="fa fa-print"></i>')
+    // .click(function() {
+            
+    // })
+    // .appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+
+    // if (result.data[i - 1].mail_send == false) {
+    //     $('<button></button>').attr({
+    //         class: 'button mail-btn edit'
+    //     })
+    //     .html('<i class="fa fa-edit"></i>')
+    //     .click(function() {
+            
+    //     })
+    //     .appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+
+    //     $('<button></button>').attr({
+    //         class: 'button mail-btn send'
+    //     })
+    //     .html('<i class="fa fa-paper-plane"></i>')
+    //     .click(function() {
+
+    //     })
+    //     .appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+    // }
+    
+
+    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').unbind('click');
+    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function () {
+        $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+        $('.casual-theme.mail-views').addClass('hide');
+        $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+        $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
     });
 
     // var

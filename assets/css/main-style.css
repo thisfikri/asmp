@@ -2857,7 +2857,8 @@ section.casual-theme.activity-page.main-contents {
 }
 
 
-.casual-theme.add-om-modal {
+.casual-theme.add-om-modal,
+.casual-theme.edit-om-modal {
     top: 80px;
     display: none;
     position: fixed;
@@ -2871,7 +2872,8 @@ section.casual-theme.activity-page.main-contents {
     padding: 8px;
 }
 
-.casual-theme.add-om-modal .modal2ndlayer {
+.casual-theme.add-om-modal .modal2ndlayer,
+.casual-theme.edit-om-modal .modal2ndlayer {
     width: 100%;
     height: 100%;
     background-color: #f1f1f1;
@@ -2880,8 +2882,24 @@ section.casual-theme.activity-page.main-contents {
     border-radius: 2px;
 }
 
-.casual-theme.add-om-modal .modal2ndlayer .close-btn {
-    float: right;
+.casual-theme.add-om-modal .modal2ndlayer .modal-title ,
+.casual-theme.edit-om-modal .modal2ndlayer .modal-title  {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .modal-title h3,
+.casual-theme.edit-om-modal .modal2ndlayer .modal-title h3 {
+    padding: 4px;
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .close-btn,
+.casual-theme.edit-om-modal .modal2ndlayer .close-btn {
+    position: absolute;
+    top: 13px;
+    right: 13px;
     padding: 6px;
     width: 30px;
     text-align: center;
@@ -2892,7 +2910,125 @@ section.casual-theme.activity-page.main-contents {
     color: #424242;
 }
 
-.casual-theme.add-om-modal .modal2ndlayer .close-btn:hover {
+.casual-theme.add-om-modal .modal2ndlayer .close-btn:hover,
+.casual-theme.edit-om-modal .modal2ndlayer .close-btn:hover {
+    background-color: #FF4400;
+    color: #ffffff;
+    cursor: pointer;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .close-btn:active,
+.casual-theme.edit-om-modal .modal2ndlayer .close-btn:active {
+    background-color: rgb(223, 63, 5);
+    cursor: default;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form select,
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form select {
+    font-family: H-ChakraPetch-Bold;
+    font-size: 12px;
+    padding: 4px;
+    border: 1px solid rgb(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form select option,
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form select option {
+    font-family: H-ChakraPetch-Bold;
+    font-size: 12px;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form label,
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form label {
+    display: block;
+    font-family: H-ChakraPetch-Bold;
+    font-size: 14px;
+    padding: 3px;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form input,
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form input {
+    padding: 6px;
+    border: 1px solid rgb(0, 0, 0, 0.1);
+    border-radius: 5px;
+    box-shadow: 0 0 7px 1px rgb(0, 0, 0, 0.1) inset;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button[type="submit"],
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button[type="submit"] {
+    padding: 5px;
+    margin: 0 3px;
+    display: inline-block;
+    font-family: H-ChakraPetch-Bold;
+    font-size: 12px;
+    border: 1px solid rgb(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.save,
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.save {
+    background: linear-gradient(90deg, #2A7DC7,#266FB1);
+    color: #ffffff;
+}
+
+.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.send,
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.send {
+    background: linear-gradient(90deg, rgb(41, 221, 98), rgb(38, 202, 87));
+    color: #ffffff;
+}
+
+.casual-theme.mail-views.hide {
+    display: none;
+}
+
+.casual-theme.mail-view.hide {
+    display: none;
+}
+
+.table-container#outgoingMail .item-list tbody tr.item .button.action-btn {
+    width: 30px;
+    margin: 0 3px;
+}
+
+
+
+.casual-theme.mail-view {
+    top: 80px;
+    position: fixed;
+    z-index: 99;
+    width: 50%;
+    height: 75%;
+    margin-left: 200px;
+    background-color: #424242;
+    border: 1px solid rgb(0, 0, 0, 0.1);
+    border-radius: 5px;
+    padding: 8px;
+}
+
+.casual-theme.mail-view .modal2ndlayer {
+    width: 100%;
+    height: 100%;
+    background-color: #f1f1f1;
+    padding: 5px;
+    border: 1px solid rgb(0, 0, 0, 0.1);
+    border-radius: 2px;
+}                  
+
+.casual-theme.mail-view .modal2ndlayer .close-btn {
+    position: absolute;
+    top: 13px;
+    right: 13px;
+    padding: 6px;
+    width: 30px;
+    text-align: center;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    background-color: #f3eded;
+    outline: none;
+    color: #424242;
+}
+
+.casual-theme.mail-view .modal2ndlayer .close-btn:hover {
     background-color: #FF4400;
     color: #ffffff;
     cursor: pointer;
@@ -2903,51 +3039,50 @@ section.casual-theme.activity-page.main-contents {
     cursor: default;
 }
 
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form select {
-    font-family: H-ChakraPetch-Bold;
-    font-size: 12px;
-    padding: 4px;
-    border: 1px solid rgb(0, 0, 0, 0.1);
-    border-radius: 5px;
-}
-
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form select option {
-    font-family: H-ChakraPetch-Bold;
-    font-size: 12px;
-}
-
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form label {
-    display: block;
-    font-family: H-ChakraPetch-Bold;
-    font-size: 14px;
-    padding: 3px;
-}
-
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form input {
-    padding: 6px;
-    border: 1px solid rgb(0, 0, 0, 0.1);
-    border-radius: 5px;
-    box-shadow: 0 0 7px 1px rgb(0, 0, 0, 0.1) inset;
-}
-
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button[type="submit"] {
+.casual-theme.mail-view .modal2ndlayer .mail-header {
+    text-align: center;
+    margin-bottom: 10px;
     padding: 5px;
-    margin: 0 3px;
-    display: inline-block;
-    font-family: H-ChakraPetch-Bold;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.casual-theme.mail-view .modal2ndlayer .mail-information {
+    margin-bottom: 7px;
+    padding: 5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.casual-theme.mail-view .modal2ndlayer .mail-information p {
+    font-size: 14px;
+}
+
+.casual-theme.mail-view .modal2ndlayer .mail-contents {
+    overflow: auto;
+    margin-bottom: 10px;
+    padding: 5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    height: 180px;
+}
+
+.casual-theme.mail-view .modal2ndlayer .mail-contents p {
     font-size: 12px;
-    border: 1px solid rgb(0, 0, 0, 0.1);
-    border-radius: 5px;
 }
 
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.save {
-    background: linear-gradient(90deg, #2A7DC7,#266FB1);
-    color: #ffffff;
+.casual-theme.mail-view .modal2ndlayer .button {
+    width: 50px;
+    margin: 0 3px;
 }
 
-.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.send {
-    background: linear-gradient(90deg, rgb(41, 221, 98), rgb(38, 202, 87));
-    color: #ffffff;
+.casual-theme.mail-view .modal2ndlayer .button.mail-btn.print {
+    background: linear-gradient(90deg, rgb(204, 226, 9), rgb(233, 236, 19));
+}
+
+.casual-theme.mail-view .modal2ndlayer .button.mail-btn.edit {
+    background: linear-gradient(90deg, rgb(33, 175, 78), rgb(24, 187, 73));
+}
+
+.casual-theme.mail-view .modal2ndlayer .button.mail-btn.send {
+    background: linear-gradient(90deg, rgb(36, 102, 160), rgb(32, 120, 197));
 }
 
 /* Activity Page Main Footer */

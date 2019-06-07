@@ -1041,7 +1041,7 @@ $(document).ready(function () {
             var
                 layoutName = $('#layout' + id + ' .pdf-layout-name').text(),
                 t = $.cookie('t');
-            window.open(baseURL() + '/admin/pdf-layout/view/' + layoutName + '/im/' + t);
+            window.open(baseURL() + '/admin/pdf-layout/view/' + layoutName + '/im/' + encodeURIComponent("XII&sol;23") + '/' + t);
         });
     }
 

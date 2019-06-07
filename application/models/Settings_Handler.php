@@ -125,7 +125,7 @@ class Settings_Handler extends CI_Model {
 
     public function get_app_settings($result_dtype = 'o')
     {
-        if ($this->checker->is_admin())
+        if ($this->checker->is_admin() || $this->checker->is_user())
         {
             $query = $this->db->get('app_settings');
             if ($result_dtype === 'o')
@@ -153,10 +153,6 @@ class Settings_Handler extends CI_Model {
                     return false;
                 }
             }
-        }
-        else if ($this->checker->is_user())
-        {
-            return 'this function only for admin!';
         }
         else
         {

@@ -643,6 +643,7 @@ class User extends CI_Controller
             {
                 $username = $this->session->userdata('user_login');
                 $query = $this->db->where('username', $username)->get('outgoing_mail');
+                $result = array();
                 $result = $query->result_array();
                 $om_count = $query->num_rows();
                 $om_data_keys = array_keys($result);
@@ -657,16 +658,25 @@ class User extends CI_Controller
                 {
                     for (; $i < $om_count; $i++)
                     {
-                        unset($result[$i]['id']);
                         unset($result[$i]['username']);
-                        unset($result[$i]['receiver']);
+                        unset($result[$i]['last_modified']);
+                        $query = $this->db->where('mail_number', $result[$i]['mail_number'])->get('incoming_mail');
+                        $im_count = $query->num_rows();
+                        if ($im_count != 0)
+                        {
+                            $result[$i]['mail_send'] = TRUE;
+                        }
+                        else if ($im_count == 0)
+                        {
+                            $result[$i]['mail_send'] = FALSE;
+                        }
                     }
 
                     $this->output->set_content_type('application/json')->set_output(json_encode(
                         array(
                             'status' => 'success',
                             'data' => $result,
-                            'paging' => $paging
+                            'paging' => $paging,
                         )
                     ));
                 }
@@ -676,7 +686,7 @@ class User extends CI_Controller
                         array(
                             'status' => 'success',
                             'data' => '<i class="fa fa-exclamation-circle"></i> User Not Found.',
-                            'paging' => $paging
+                            'paging' => $paging,
                         )
                     ));
                 }
@@ -748,6 +758,7 @@ class User extends CI_Controller
                 'new_im' => $new_im,
                 'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
                 'incoming_mail' => $om_result,
+                'app_settings' => $this->app_settings->get_app_settings()[0],
             );
 
             $this->load->view('user/outgoing-mail', $data, FALSE);
@@ -779,9 +790,13 @@ class User extends CI_Controller
                 $this->om_handler->save_om($requested_data['om_data'], 'json');
                 break;
             case 'throw':
-                $this->om_handler->throw_om($requested_data['om_data'], 'json');
+                $this->om_handler->throw_om($requested_data['mail_data'], 'json');
+                break;
+            case 'update':
+                $this->om_handler->update_om($requested_data['om_data'], 'json');
                 break;
             default:
+                var_dump($this->input->post());
                 $this->output->set_content_type('application/json')->set_output(json_encode(
                     array(
                         'status' => 'error',
@@ -794,6 +809,240 @@ class User extends CI_Controller
         else
         {
             redirect('login', 'refresh');
+        }
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function remove_item()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = array(
+                'id' => $this->input->post('id', TRUE),
+                'item_type' => $this->input->post('item_type', TRUE),
+                'item_data' => $this->input->post('item_data', TRUE),
+                'all_item' => $this->input->post('all_item', TRUE),
+                'selected_item' => $this->input->post('selected_item', TRUE),
+                'token' => $this->input->post('t', TRUE),
+            );
+
+            if ($data['token'] == $this->session->userdata('CSRF'))
+            {
+                $query = $this->db->where('username', $this->_username)->get('users');
+                $result = $query->result();
+                $hashed_password = $result[0]->password;
+                switch ($data['item_type'])
+                {
+                case 'incoming_mail':
+                    if ($data['all_item'] === 'true')
+                        {
+                        $this->db->where('username', $this->_username)->delete('incoming_mail');
+                        if ($this->db->affected_rows())
+                            {
+                            header('Content-Type: application/json');
+                            echo json_encode(array('status' => 'success', 'message' => '<i class="fa fa-check-circle"></i> Semua surat masuk berhasil dihapus'));
+                        }
+                            else
+                            {
+                            header('Content-Type: application/json');
+                            echo json_encode(array('status' => 'failed', 'message' => '<i class="fa fa-exclamation-circle"></i> Gagal menghapus semua surat masuk'));
+                        }
+                    }
+                        else if ($data['selected_item'] === 'true')
+                        {
+                        $i = 0;
+                        $result_message = array();
+                        for (; $i < count($data['item_data']['names']); $i++)
+                            {
+                            $this->db->where(array(
+                                'username' => $this->_username,
+                                'mail_number' => $data['item_data']['mail_numbers'][$i],
+                            ))->delete('incoming_mail');
+                            if ($this->db->affected_rows())
+                                {
+                                $result_message[$i] = '<i class="fa fa-check-circle"></i> Surat Masuk ' . $data['item_data']['mail_numbers'][$i] . ' berhasil dihapus';
+                            }
+                                else
+                                {
+                                $result_message[$i] = '<i class="fa fa-exclamation-circle"></i> Surat Masuk ' . $data['item_data']['mail_numbers'][$i] . ' gagal dihapus';
+                            }
+                        }
+                        $result_message = implode(',', $result_message);
+                        header('Content-Type: application/json');
+                        echo json_encode(array('status' => 'success', 'message' => $result_message));
+                    }
+                        else
+                        {
+                        $this->db->where(array(
+                            'username' => $this->_username,
+                            'mail_number' => $data['item_data']['mail_number'],
+                        ))->delete('incoming_mail');
+                        if ($this->db->affected_rows())
+                            {
+                            header('Content-Type: application/json');
+                            echo json_encode(array('status' => 'success', 'message' => '<i class="fa fa-check-circle"></i> Surat Masuk ' . $data['item_data']['mail_number'] . ' berhasil dihapus'));
+                        }
+                            else
+                            {
+                            header('Content-Type: application/json');
+                            echo json_encode(array('status' => 'failed', 'message' => '<i class="fa fa-exclamation-circle"></i> Surat Masuk ' . $data['item_data']['mail_number'] . ' gagal dihapus'));
+                        }
+                    }
+                    break;
+                case 'outgoing_mail':
+                    if ($data['all_item'] === 'true')
+                        {
+                        $query = $this->db->where('username', $this->_username)->get('outgoing_mail');
+                        $result = $query->result_array();
+                        $result_count = $query->num_rows();
+
+                        $query = $this->db->get('trash_can');
+                        $trash_count = $query->num_rows();
+
+                        for ($i = 0; $i < $result_count; $i++)
+                            {
+                            $result[$i]['id'] = $trash_count + 1;
+                            ++$trash_count;
+                        }
+
+                        // add result checking (IMPORTANT)
+                        $this->db->insert_batch('trash_can', $result);
+                        if ($this->db->affected_rows())
+                            {
+                            $this->db->where('username', $this->_username)->delete('outgoing_mail');
+                            if ($this->db->affected_rows())
+                                {
+                                header('Content-Type: application/json');
+                                echo json_encode(array('status' => 'success', 'message' => '<i class="fa fa-check-circle"></i> Semua surat keluar berhasil dibuang'));
+                            }
+                                else
+                                {
+                                header('Content-Type: application/json');
+                                echo json_encode(array('status' => 'failed', 'message' => '<i class="fa fa-exclamation-circle"></i> Gagal membuang semua surat keluar'));
+                            }
+                        }
+                            else
+                            {
+                            header('Content-Type: application/json');
+                            echo json_encode(array('status' => 'failed', 'message' => '<i class="fa fa-exclamation-circle"></i> Gagal membuang semua surat keluar'));
+                        }
+                    }
+                        else if ($data['selected_item'] === 'true')
+                        {
+                        $i = 0;
+                        $result_message = array();
+
+                        for (; $i < count($data['item_data']['mail_numbers']); $i++)
+                            {
+                            $query = $this->db->where(array(
+                                'username' => $this->_username,
+                                'mail_number' => $data['item_data']['mail_numbers'][$i],
+                            ))->get('outgoing_mail');
+                            $result = $query->result_array();
+
+                            $query = $this->db->get('trash_can');
+                            $trash_count = $query->num_rows();
+                            $result[0]['id'] = $trash_count + 1;
+
+                            $this->db->insert('trash_can', $result[0]);
+                            ++$trash_count;
+                            if ($this->db->affected_rows())
+                                {
+                                $this->db->where(array(
+                                    'username' => $this->_username,
+                                    'mail_number' => $data['item_data']['mail_numbers'][$i],
+                                ))->delete('outgoing_mail');
+                                if ($this->db->affected_rows())
+                                    {
+                                    $result_message[$i] = '<i class="fa fa-check-circle"></i> Surat Keluar ' . $data['item_data']['mail_numbers'][$i] . ' berhasil dibuang';
+                                }
+                                    else
+                                    {
+                                    $result_message[$i] = '<i class="fa fa-exclamation-circle"></i> Surat Keluar ' . $data['item_data']['mail_numbers'][$i] . ' gagal dibuang';
+                                }
+                            }
+                                else
+                                {
+                                $result_message[$i] = '<i class="fa fa-exclamation-circle"></i> Surat Keluar ' . $data['item_data']['mail_numbers'][$i] . ' gagal dibuang';
+                            }
+                        }
+
+                        $min_id = min($data['id']);
+                        $max_id = max($data['id']);
+                        if (in_array($min_id + (count($data['id']) - 1), $data['id']))
+                            {
+                            $query = $this->db->get('outgoing_mail');
+                            $row_count = $query->num_rows();
+                            $target_id = $min_id + 1;
+                            $target_break = $row_count + 1;
+                            $i = 0;
+                            while ($i <= $target_break)
+                                {
+                                if (!in_array($target_id, $data['id']))
+                                    {
+                                    $this->db->where('id', $target_id)->update('outgoing_mail', array('id' => $min_id));
+                                    ++$min_id;
+                                    ++$target_id;
+                                }
+                                    else
+                                    {
+                                    ++$target_id;
+                                }
+                                ++$i;
+                            }
+                        }
+                            else
+                            {
+                            $query = $this->db->get('outgoing_mail');
+                            $row_count = $query->num_rows();
+                            $min_id = min($data['id']);
+                            $max_id = max($data['id']);
+                            $target_id = $min_id + 1;
+                            $target_break = $row_count + 1;
+                            $i = 0;
+                            while ($i <= $target_break)
+                                {
+                                if (!in_array($target_id, $data['id']))
+                                    {
+                                    $this->db->where('id', $target_id)->update('outgoing_mail', array('id' => $min_id));
+                                    ++$min_id;
+                                    ++$target_id;
+                                }
+                                    else
+                                    {
+                                    ++$target_id;
+                                }
+                                ++$i;
+                            }
+                        }
+
+                        $result_message = implode(',', $result_message);
+                        header('Content-Type: application/json');
+                        echo json_encode(array('status' => 'success', 'message' => $result_message));
+                    }
+                    break;
+                case 'trash_can':
+
+                    break;
+                default:
+                    header('Content-Type: application/json');
+                    echo json_encode(array('status' => 'error', 'message' => 'no item type'));
+                    break;
+                }
+            }
+            else
+            {
+                header('Content-Type: application/json');
+                echo json_encode(array('status' => 'error', 'message' => '<i class="fa fa-exclamation-triangle"></i> Token tidak sama!'));
+            }
+        }
+        else
+        {
+            redirect('admin', 'refresh');
         }
     }
 }

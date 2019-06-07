@@ -15,16 +15,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Aplikasi ini dibuat dan dikembangkan untuk dipergunakan dalam hal administrasi perkantoran
  */
 
-
- /**
-  * Outgoing_Mail_Handler Class
-  * 
-  * Menghandle Outgoing Mail
-  *
-  * @package ASMP
-  * @category Model
-  * @author ThisFikri
-  */
+/**
+ * Outgoing_Mail_Handler Class
+ *
+ * Menghandle Outgoing Mail
+ *
+ * @package ASMP
+ * @category Model
+ * @author ThisFikri
+ */
 class Outgoing_Mail_Handler extends CI_Model
 {
     /**
@@ -62,10 +61,10 @@ class Outgoing_Mail_Handler extends CI_Model
             {
                 $this->output->set_content_type('application/json')->set_output(json_encode(
                     array('status' => 'error',
-                    'message' => 'this function only for `user` authority and task normal'
+                        'message' => 'this function only for `user` authority and task normal',
                     )
                 ));
-                exit(0);                
+                exit(0);
             }
 
             $query = $this->db->where('username', $receiver_data->username)->get('incoming_mail');
@@ -84,7 +83,7 @@ class Outgoing_Mail_Handler extends CI_Model
                 'contents' => $mail_data['editor_data'],
                 'status' => 'baru',
                 'date' => date('Y-m-d h:i:s A'),
-                'pdf_layout' => $mail_data['pdf_layouts']
+                'pdf_layout' => $mail_data['pdf_layouts'],
             );
 
             $this->db->insert('outgoing_mail', $data_to_send);
@@ -92,7 +91,7 @@ class Outgoing_Mail_Handler extends CI_Model
             {
                 $data_to_send['id'] = $im_count + 1;
                 $data_to_send['username'] = $receiver_data->username;
-                $this->db->insert('incoming_mail', $data_to_send); 
+                $this->db->insert('incoming_mail', $data_to_send);
                 if ($this->db->affected_rows())
                 {
                     if ($output == 'echo')
@@ -103,7 +102,7 @@ class Outgoing_Mail_Handler extends CI_Model
                     {
                         $this->output->set_content_type('application/json')->set_output(json_encode(
                             array('status' => 'success',
-                            'message' => 'surat keluar berhasil dikirim'
+                                'message' => 'surat keluar berhasil dikirim',
                             )
                         ));
                     }
@@ -119,7 +118,7 @@ class Outgoing_Mail_Handler extends CI_Model
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(
                         array('status' => 'failed',
-                        'message' => 'surat keluar gagal disimpan dan dikirim'
+                            'message' => 'surat keluar gagal disimpan dan dikirim',
                         )
                     ));
                 }
@@ -135,10 +134,10 @@ class Outgoing_Mail_Handler extends CI_Model
             {
                 $this->output->set_content_type('application/json')->set_output(json_encode(
                     array('status' => 'error',
-                    'message' => 'this function only for `user` authority'
+                        'message' => 'this function only for `user` authority',
                     )
                 ));
-                
+
             }
         }
     }
@@ -180,10 +179,10 @@ class Outgoing_Mail_Handler extends CI_Model
             {
                 $this->output->set_content_type('application/json')->set_output(json_encode(
                     array('status' => 'error',
-                    'message' => 'this function only for `user` authority and task normal'
+                        'message' => 'this function only for `user` authority and task normal',
                     )
                 ));
-                exit(0);                
+                exit(0);
             }
 
             $query = $this->db->where('username', $username)->get('outgoing_mail');
@@ -198,12 +197,14 @@ class Outgoing_Mail_Handler extends CI_Model
                 'receiver' => $receiver_pos,
                 'contents' => $mail_data['editor_data'],
                 'status' => 'baru',
-                'date' => date('Y-m-d h:i:s A'),
-                'pdf_layout' => $mail_data['pdf_layouts']
+                'date' => date('Y-m-d'),
+                'pdf_layout' => $mail_data['pdf_layouts'],
             );
             $this->db->insert('outgoing_mail', $data_to_send);
             if ($this->db->affected_rows())
             {
+                $data_to_send['mail_send'] = FALSE;
+                $data_to_send['user_setting'] = $this->app_settings->get_user_settings($username)[0];
                 if ($output == 'echo')
                 {
                     echo 'surat keluar berhasil disimpan';
@@ -211,8 +212,10 @@ class Outgoing_Mail_Handler extends CI_Model
                 else if ($output == 'json')
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(
-                        array('status' => 'success',
-                        'message' => 'surat keluar berhasil disimpan'
+                        array(
+                            'status' => 'success',
+                            'message' => 'surat keluar berhasil disimpan',
+                            'data' => $data_to_send,
                         )
                     ));
                 }
@@ -227,7 +230,7 @@ class Outgoing_Mail_Handler extends CI_Model
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(
                         array('status' => 'failed',
-                        'message' => 'surat keluar gagal disimpan'
+                            'message' => 'surat keluar gagal disimpan',
                         )
                     ));
                 }
@@ -243,10 +246,10 @@ class Outgoing_Mail_Handler extends CI_Model
             {
                 $this->output->set_content_type('application/json')->set_output(json_encode(
                     array('status' => 'error',
-                    'message' => 'this function only for `user` authority'
+                        'message' => 'this function only for `user` authority',
                     )
                 ));
-                
+
             }
         }
     }
@@ -272,30 +275,62 @@ class Outgoing_Mail_Handler extends CI_Model
             $data_to_send = array(
                 'id' => $trash_count + 1,
                 'mail_type' => 'om',
-                'mail_number' => $mail_data[0],
+                'mail_number' => $mail_data['mail_number'],
                 'username' => $username,
-                'subject' => $mail_data[1],
-                'sender' => $mail_data[2],
-                'receiver' => $mail_data[3],
-                'contents' => $mail_data[4],
+                'subject' => $mail_data['subject'],
+                'sender' => $mail_data['sender'],
+                'receiver' => $mail_data['receiver'],
+                'contents' => $mail_data['contents'],
                 'status' => 'baru',
                 'date' => date('Y-m-d h:i:s A'),
-                'pdf_layout' => $mail_data[5]
+                'pdf_layout' => $mail_data['pdf_layout'],
             );
             $this->db->insert('trash_can', $data_to_send);
             if ($this->db->affected_rows())
             {
-                if ($output == 'echo')
+                $this->db->where('mail_number', $mail_data['mail_number'])->delete('outgoing_mail');
+                if ($this->db->affected_rows())
                 {
-                    echo 'surat keluar berhasil dibuang';
+                    $query = $this->db->get('outgoing_mail');
+                    $row_count = $query->num_rows();
+                    $i = 0;
+                    $first_id = $mail_data['id'] + 1;
+                    $target_id = $mail_data['id'];
+                    $row_count = $row_count - ($mail_data['id'] - 1);
+                    for (; $i < $row_count; $i++)
+                    {
+                        $this->db->where('id', $first_id)->update('outgoing_mail', array('id' => $target_id));
+                        ++$first_id;
+                        ++$target_id;
+                    }
+
+                    if ($output == 'echo')
+                    {
+                        echo 'surat keluar berhasil dibuang';
+                    }
+                    else if ($output == 'json')
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(
+                            array('status' => 'success',
+                                'message' => 'surat keluar berhasil dibuang',
+                            )
+                        ));
+                    }
                 }
-                else if ($output == 'json')
+                else
                 {
-                    $this->output->set_content_type('application/json')->set_output(json_encode(
-                        array('status' => 'success',
-                        'message' => 'surat keluar berhasil dibuang'
-                        )
-                    ));
+                    if ($output == 'echo')
+                    {
+                        echo 'surat keluar gagal dibuang';
+                    }
+                    else if ($output == 'json')
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(
+                            array('status' => 'failed',
+                                'message' => 'surat keluar gagal dibuang',
+                            )
+                        ));
+                    }
                 }
             }
             else
@@ -308,7 +343,7 @@ class Outgoing_Mail_Handler extends CI_Model
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(
                         array('status' => 'failed',
-                        'message' => 'surat keluar gagal dibuang'
+                            'message' => 'surat keluar gagal dibuang',
                         )
                     ));
                 }
@@ -324,15 +359,15 @@ class Outgoing_Mail_Handler extends CI_Model
             {
                 $this->output->set_content_type('application/json')->set_output(json_encode(
                     array('status' => 'error',
-                    'message' => 'this function only for `user` authority'
+                        'message' => 'this function only for `user` authority',
                     )
                 ));
-                
+
             }
         }
     }
-   
-   // ------------------------------------------------------------------------
+
+    // ------------------------------------------------------------------------
 
     /**
      * Load Outgoing Mail Data
@@ -342,31 +377,107 @@ class Outgoing_Mail_Handler extends CI_Model
      */
     public function load_om($output = 'echo')
     {
-    	if ($this->checker->is_user())
+        if ($this->checker->is_user())
         {
             $username = $this->session->userdata('user_login');
             $query = $this->db->where('username', $username)->get('outgoing_mail');
             $result = $query->result_array();
             if ($result)
             {
-            	if ($output == 'echo')
-	            {
-					print_r($result);
-				}
-				else if ($output == 'json')
-				{
-					$this->output->set_content_type('application/json')->set_output(json_encode(
-                    array(
-						'status' => 'success',
-	                    'message' => 'load complete',
-						'om_data' => $result
-	                    )
-	                ));
+                if ($output == 'echo')
+                {
+                    print_r($result);
+                }
+                else if ($output == 'json')
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'message' => 'load complete',
+                            'om_data' => $result,
+                        )
+                    ));
                 }
             }
         }
     }
-}
 
+    public function update_om(array $mail_data, $output = 'echo')
+    {
+        if ($this->checker->is_user())
+        {
+            $username = $this->session->userdata('user_login');
+            $prev_mailnum = $mail_data['prev_mailnum'];
+            $data_to_update = array(
+                'pdf_layout' => $mail_data['pdf_layouts'],
+                'mail_number' => $mail_data['mail_number'],
+                'subject' => $mail_data['mail_subject'],
+                'contents' => $mail_data['editor_data'],
+                'date' => date('Y-m-d'),
+                'last_modified' => date('Y-m-d h:i:s A')
+            );
+            
+            $this->db->where(array(
+                'username' => $username,
+                'mail_number' => $prev_mailnum,
+            ))->update('outgoing_mail', $data_to_update);
+
+            if ($this->db->affected_rows())
+            {
+                $query = $this->db->where(array(
+                    'username' => $username,
+                    'mail_number' => $data_to_update['mail_number']
+                ))->get('outgoing_mail');
+                $result_data = $query->result();
+                if ($output == 'echo')
+                {
+                    echo 'Surat Keluar Berhasil Diubah';
+                }
+                else if ($output == 'json')
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'message' => 'Surat Keluar Berhasil Diubah',
+                            'data' => $result_data[0]
+                        )
+                    ));
+                }
+            }
+            else
+            {
+                if ($output == 'echo')
+                {
+                    echo 'Surat Keluar Gagal Diubah';
+                }
+                else if ($output == 'json')
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'message' => 'Surat Keluar Gagal Diubah'
+                        )
+                    ));
+                }
+            }
+        }
+        else
+        {
+            if ($output == 'echo')
+            {
+                echo 'this function only for `user` authority';
+            }
+            else if ($output == 'json')
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(
+                    array('status' => 'error',
+                        'message' => 'this function only for `user` authority',
+                    )
+                ));
+
+            }
+        }
+    }
+}
 
 /* End of file filename.php */

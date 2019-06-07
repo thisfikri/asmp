@@ -66,7 +66,7 @@ function ASMPUsefulAPI() {
         }
     }
 
-    this.getFullURL = function() {
+    this.getFullURL = function () {
         var
             url = window.location.pathname,
             urlParams = url.split('/');
@@ -298,36 +298,84 @@ function ASMPActionExecutor() {
                 }
             });
         } else if (settings.multipleAction !== true && settings.mailFunction.view === true && settings.haveID === true) {
-            $.ajax({
-                type: "POST",
-                url: this.actionUrl,
-                data: this.actionData,
-                dataType: "json",
-            }).done(function () {
+            let
+                itemID = this.actionData.id,
+                itemTarget = this.itemTarget,
+                mailData = JSON.parse(this.actionData.mailData),
+                mailType = window.location.href,
+                mtFirstChar = '',
+                i = 0,
+                atrgr = new ActionTrigger();
+            mailType = mailType.split('/');
+            mailType = mailType[mailType.length - 1];
+            mailType = mailType.split('-');
+            for (; i < mailType.length; i++) {
+                mtFirstChar = mailType[i].charAt(0).toUpperCase();
+                mailType[i] = mailType[i].replace(mailType[i].charAt(0), mtFirstChar);
+            }
+            mailType = mailType.join(' ');
+            if (settings.mailFunction.tableContainer !== undefined && settings.mailFunction.mailContainer !== undefined) {
+                //$(settings.mailFunction.tableContainer).addClass('hide');
 
-            }).fail(function () {
+                $(settings.mailFunction.mailContainer).removeClass('hide');
+                // mail top number
+                $(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer .mail-top-number')
+                    .html('<p><b>' + mailData.id + '.' + mailType + '</b></p>');
 
-            }).always(function (result) {
-                if (result.status !== 'error' && result.status !== 'failed') {
-                    if (settings.mailFunction.tableContainer !== undefined && settings.mailFunction.mailContainer !== undefined) {
-                        $(settings.mailFunction.tableContainer).addClass('hide');
-                        $(settings.mailFunction.mailContainer).removeClass('hide');
-                        $(settings.mailFunction.mailContainer + ' ' + this.itemTarget + '.id' + this.actionData.id).removeClass('hide');
-                    } else {
-                        $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> Tidak Ada Container</p>');
-                        $('.action-msg-notification').addClass('error');
-                        $('.action-msg-notification').removeClass('hide');
+                $(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer .mail-information')
+                    .html(
+                        '<p class="info-txt mail-number"><b>Nomor Surat:</b> ' + mailData.mail_number + '</p>' +
+                        '<p class="info-txt mail-subject"><b>Perihal:</b> ' + mailData.subject + '</p>' +
+                        '<p class="info-txt sender"><b>Dari:</b> ' + mailData.sender + '</p>' +
+                        '<p class="info-txt receiver"><b>Kepada:</b> ' + mailData.receiver + '</p>' +
+                        '<p class="info-txt date"><b>Tanggal:</b> ' + mailData.date + '</p>'
+                    );
+
+                $(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer .mail-contents')
+                    .html(mailData.contents);
+
+                $('<button></button>').attr({
+                        class: 'button mail-btn print',
+                        id: itemID
+                    })
+                    .html('<i class="fa fa-print"></i>')
+                    .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
+
+                if (mailData.hasOwnProperty('mail_send')) {
+                    if (mailData.mail_send === false) {
+                        $('<button></button>').attr({
+                                class: 'button mail-btn edit',
+                                id: itemID
+                            })
+                            .html('<i class="fa fa-edit"></i>')
+                            .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
+
+                        $('<button></button>').attr({
+                                class: 'button mail-btn send',
+                                id: itemID
+                            })
+                            .html('<i class="fa fa-paper-plane"></i>')
+                            .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
+
+                        atrgr.defineTrigger('editMail' + itemID, 'edit_mail');
+                        atrgr['editMail' + itemID](itemID, '.edit-om-modal', mailData, [settings.mailFunction.mailContainer, itemTarget]);
                     }
-                } else if (result.status === 'error') {
-                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    $('.action-msg-notification').addClass('error');
-                    $('.action-msg-notification').removeClass('hide');
-                } else if (result.status === 'failed') {
-                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    $('.action-msg-notification').addClass('failed');
-                    $('.action-msg-notification').removeClass('hide');
                 }
-            });
+
+                $(settings.mailFunction.mailContainer + ' ' + itemTarget).removeClass('hide');
+            } else {
+                $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> Tidak Ada Container</p>');
+                $('.action-msg-notification').addClass('error');
+                $('.action-msg-notification').removeClass('hide');
+            }
+        } else if (result.status === 'error') {
+            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+            $('.action-msg-notification').addClass('error');
+            $('.action-msg-notification').removeClass('hide');
+        } else if (result.status === 'failed') {
+            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+            $('.action-msg-notification').addClass('failed');
+            $('.action-msg-notification').removeClass('hide');
         }
     }
 }
@@ -493,29 +541,47 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
                 itemID, // item id to sort
                 i = 1,
                 atrgr = new ActionTrigger(),
-                onlyID = 0;
+                onlyID = 0,
+                mailITemData;
             for (; i < itemCount + 1; i++) {
                 itemID = $(this.itemToPaginate).eq(i - 1).attr('class').match(/id([0-9])/g);
                 //console.log($(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.remove'), this.itemToPaginate + '.' + itemID[0] + ' .action-btn.remove');
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.remove').removeAttr('id');
+                $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.trash').removeAttr('id');
+                $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.view').removeAttr('id');
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkbox').removeClass('item' + itemID[0].split('id')[1]);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkmark').removeClass('item' + itemID[0].split('id')[1]);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.remove').attr('id', 'item' + i);
+                $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.trash').attr('id', 'item' + i);
+                $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.view').attr('id', 'item' + i);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkbox').addClass('item' + i);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkmark').addClass('item' + i);
                 onlyID = itemID[0].split('id');
                 //console.log(onlyID);
                 atrgr.deleteTrigger('deleteFieldSection' + onlyID[1]);
                 atrgr.deleteTrigger('deleteUser' + onlyID[1]);
+                atrgr.deleteTrigger('throwMailToTrash' + onlyID[1]);
+                atrgr.deleteTrigger('viewMail' + onlyID[1]);
                 atrgr.deleteTrigger('checkboxAction' + onlyID[1]);
                 atrgr.defineTrigger('deleteFieldSection' + i, 'delete_field_section');
                 atrgr.defineTrigger('deleteUser' + i, 'delete_user');
+                atrgr.defineTrigger('throwMailToTrashOM' + i, 'throw_mail_tt');
+
+                atrgr.defineTrigger('viewMail' + i, 'view_mail');
                 atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
                 $(this.itemToPaginate).eq(i - 1).removeClass(itemID[0]);
                 $(this.itemToPaginate).eq(i - 1).addClass('id' + i);
+                mailITemData = $(this.itemToPaginate + '.id' + i).data('itemdata');
+                mailITemData.id = i;
+                mailITemData = JSON.stringify(mailITemData);
+                $(this.itemToPaginate + '.id' + i).data('itemdata', mailITemData);
+                mailITemData = JSON.parse(mailITemData);
                 //console.log($(this.itemToPaginate + '.id' + i + ' td').eq(1).text());
                 atrgr['deleteFieldSection' + i](i, $(this.itemToPaginate + '.id' + i + ' td').eq(1).text());
                 atrgr['deleteUser' + i](i, $(this.itemToPaginate + '.id' + i + ' td').eq(1).text());
+                atrgr['throwMailToTrashOM' + i](i, 'om', mailITemData);
+
+                atrgr['viewMail' + i](i);
                 atrgr['checkboxAction' + i](i);
             }
             //console.log(Object.getOwnPropertyNames(atrgr));
@@ -933,6 +999,47 @@ function MultipleAction(url) {
                         $('.table-container#incomingMail .table-header .multiple-action').addClass('hide');
                         checkedItemCount = 0;
                     });
+                } else if (targetName === 'outgoing_mail') {
+                    $('.table-container#outgoingMail .table-header .multiple-action .multiple-action-btn.trash').unbind('click');
+                    $('.table-container#outgoingMail .table-header .multiple-action .multiple-action-btn.trash').click(function () {
+                        var itemIds = $('.multiple-action').data('mail-ids'),
+                            mailNumbers = [];
+                        //console.log(itemIds);
+                        itemIds = itemIds.slice(0, -1);
+                        itemIds = itemIds.split(',');
+                        if ($.isArray(itemIds)) {
+                            for (var i = 0; i < itemIds.length; i++) {
+                                mailNumbers[i] = $('.item-list .item.id' + itemIds[i]).children('td').eq(1).text();
+                            }
+                            //console.log(fieldSections);
+                        }
+                        actionExecutor.actionName = 'Throw All Mail to Trash';
+                        actionExecutor.actionUrl = url;
+                        actionExecutor.actionData = {
+                            id: itemIds,
+                            t: $.cookie('t'),
+                            item_type: targetName,
+                            item_data: {
+                                mail_numbers: mailNumbers
+                            },
+                            multiple: true,
+                            all_item: allItem,
+                            selected_item: seltdItem
+                        };
+                        actionExecutor.itemTarget = '.item';
+                        actionExecutor.exec({
+                            multipleAction: true,
+                            haveID: true,
+                            removeTarget: true
+                        });
+                        if (allItem === true) {
+                            $('#checkAll').prop('checked', false);
+                            $('.checkmark').css('display', 'none');
+                        }
+                        $('.multiple-action').data('mail-ids', '');
+                        $('.table-container#outgoingMail .table-header .multiple-action').addClass('hide');
+                        checkedItemCount = 0;
+                    });
                 }
             }
         }
@@ -1040,16 +1147,20 @@ function ActionTrigger() {
                     });
                 });
             }, // add unbind to item
-            throwMailToTrash = function (index) {
+            throwMailToTrash = function (index, mailType, mailData) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.table-container #mailAction .action-btn.trash#item' + index).unbind('click');
                 $('.table-container #mailAction .action-btn.trash#item' + index).click(function () {
-                    //console.log(index);
+                    console.log(index);
                     actionExecutor.actionName = 'Throw Mail to Trash';
-                    actionExecutor.actionUrl = baseURL() + '/' + userRole + '/throw_mail_to_trash';
+                    actionExecutor.actionUrl = baseURL() + '/' + mailType + '_action_exec';
                     actionExecutor.actionData = {
                         id: index,
-                        token: 'This is Token',
+                        token: $.cookie('t'),
+                        request_data: JSON.stringify({
+                            action: 'throw',
+                            mail_data: mailData
+                        }),
                         multiple: false
                     };
                     actionExecutor.itemTarget = '.item';
@@ -1141,7 +1252,7 @@ function ActionTrigger() {
                 });
             },
             checkboxAction = function (index) {
-                var ma = new MultipleAction(baseURL() + '/' + userRole + '/remove_item');
+                var ma = new MultipleAction(baseURL() + '/remove_item');
                 $('.checkbox.item' + index).unbind('click');
                 $('.checkbox.item' + index).click(function () {
                     var mailIds = $('.multiple-action').data('mail-ids');
@@ -1157,9 +1268,11 @@ function ActionTrigger() {
                             ma.defineAction('multipleAction1');
                             ma.defineAction('multipleAction2');
                             ma.defineAction('multipleAction3');
+                            ma.defineAction('multipleAction4');
                             ma.multipleAction1('remove', 'user_management', false, true);
                             ma.multipleAction2('trash', 'incoming_mail', false, true);
-                            ma.multipleAction3('remove', 'field_section', false, true);
+                            ma.multipleAction3('trash', 'outgoing_mail', false, true);
+                            ma.multipleAction4('remove', 'field_section', false, true);
                         } else if (checkedItemCount < 2) {
                             $('.multiple-action').addClass('hide');
                         }
@@ -1196,23 +1309,26 @@ function ActionTrigger() {
                 });
             },
             viewMail = function (index) {
+                console.log('View...');
                 var actionExecutor = new ASMPActionExecutor();
-                $('.table-container .action-btn.view#item' + index).unbind('click');
-                $('.table-container .action-btn.view#item' + index).click(function () {
-                    //console.log('View' + index);
-                    actionExecutor.actionName = 'View Incoming Mail';
-                    actionExecutor.actionUrl = baseURL() + '/' + userRole + '/view_im';
+                $('.table-container #mailAction .action-btn.view#item' + index).unbind('click');
+                $('.table-container #mailAction .action-btn.view#item' + index).click(function () {
+                    //console.log('View' + index);.table-container #mailAction .action-btn.view
+                    $('.table-container #mailAction .action-btn.view').attr('disabled', 'disabled');
+                    actionExecutor.actionName = actionName;
+                    actionExecutor.actionUrl = baseURL() + '/view_im';
                     actionExecutor.actionData = {
                         id: index,
-                        token: 'This is Token'
+                        token: $.cookie('t'),
+                        mailData: $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata')
                     };
-                    actionExecutor.itemTarget = '.incoming-mail';
+                    actionExecutor.itemTarget = '.mail-view';
                     actionExecutor.exec({
                         haveID: true,
                         mailFunction: {
                             view: true,
-                            tableContainer: '#incomingMail',
-                            mailContainer: '.incoming-mails-container'
+                            tableContainer: '.table-container',
+                            mailContainer: '.mail-views'
                         }
                     });
                 });
@@ -1223,6 +1339,211 @@ function ActionTrigger() {
                     $('.incoming-mails-container .incoming-mail.id' + index).addClass('hide');
                     $('#incomingMail').removeClass('hide');
                 });
+            },
+            editMail = function (index, containerSelector, mailData, currWindowToClose) {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.edit').unbind('click');
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.edit').click(function () {
+                    var
+                        itemID = index,
+                        pdfLayouts = $(containerSelector).data('pdflayouts').split(',');
+
+                    if ($.isArray(currWindowToClose)) {
+                        let i = 0;
+                        for (; i < currWindowToClose.length; i++) {
+                            $(currWindowToClose[i]).addClass('hide');
+                        }
+                    } else {
+                        $(currWindowToClose).addClass('hide');
+                    }
+
+                    $(containerSelector).css('display', 'block');
+
+                    // pdf layout selection
+                    $('<label></label>').attr('for', 'pdf_layout').text('PDF Layout:')
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+                    $('<select></select>').attr({
+                        name: 'pdf_layouts'
+                    }).appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+                    for (var i = 0; i < pdfLayouts.length; i++) {
+                        console.log(pdfLayouts[i].replace('_', ' ').toUpperCase());
+                        $('<option></option>').attr({
+                                value: pdfLayouts[i]
+                            }).text(pdfLayouts[i].replace('_', ' ').toUpperCase())
+                            .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input select[name=pdf_layouts]');
+                    }
+                    $(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input select[name=pdf_layouts]').val(mailData.pdf_layout.toLowerCase());
+
+                    // mail number
+                    $('<label></label>').attr('for', 'mail_number').text('Nomor Surat:')
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+                    $('<input>').attr({
+                        type: 'text',
+                        name: 'mail_number',
+                        placeholder: 'Ex: XII/M2/19',
+                        value: mailData.mail_number
+                    }).appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+
+                    // mail subject
+                    $('<label></label>').attr('for', 'mail_subject').text('Perihal:')
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+                    $('<input>').attr({
+                        type: 'text',
+                        name: 'mail_subject',
+                        placeholder: 'Ex: Rapat Umum',
+                        value: mailData.subject
+                    }).appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+
+                    $("#mailContentsEditorEditingWidgIframe").contents().find('body').html(mailData.contents);
+
+                    // button save
+                    $('<button></button>').attr({
+                            type: 'submit',
+                            name: 'update_om',
+                            class: 'add-om-submit save'
+                        }).html('<i class="fa fa-save"></i> Simpan').click(function () {
+                            let
+                                form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
+                                fdata = {},
+                                i = 0,
+                                iframeData = $("#mailContentsEditorEditingWidgIframe").contents().find('body').html();
+
+                            $("#mailContentsEditorEditing").val(iframeData);
+                            $(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
+                            for (; i < form[0].length; i++) {
+                                fdata[form[0][i].name] = form[0][i].value;
+                            }
+
+                            fdata['prev_mailnum'] = mailData.mail_number;
+
+                            $.ajax({
+                                type: "POST",
+                                url: baseURL() + '/om_action_exec',
+                                data: {
+                                    request_data: JSON.stringify({
+                                        action: 'update',
+                                        om_data: fdata,
+                                        t: $.cookie('t')
+                                    })
+                                },
+                                dataType: "json",
+                            }).done(function () {
+
+                            }).fail(function () {
+
+                            }).always(function (result) {
+                                $('.edit-om-modal').css('display', 'none');
+                                $('#addOm').removeAttr('disabled');
+                                $('.casual-theme.edit-om-modal .modal2ndlayer .form-input input').remove();
+                                $('.casual-theme.edit-om-modal .modal2ndlayer .form-input select').remove();
+                                $('.casual-theme.edit-om-modal .modal2ndlayer .form-input label').remove();
+                                $('.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+                                $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+                                if (result.status !== 'error' && result.status !== 'failed') {
+                                    
+                                    $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
+                                    $('.table-container .item-list tbody .item.id' + index + ' td').eq(1).text(result.data['mail_number']);
+                                    $('.table-container .item-list tbody .item.id' + index + ' td').eq(2).text(result.data['subject']);
+                                    $('.table-container .item-list tbody .item.id' + index + ' td').eq(5).text(result.data['date']);
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('error');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').addClass('success');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'error') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').addClass('error');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'failed') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('error');
+                                    $('.action-msg-notification').addClass('failed');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                }
+                            });
+                        })
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
+
+                    // button send
+                    $('<button></button>').attr({
+                            type: 'submit',
+                            name: 'send_om',
+                            class: 'add-om-submit send'
+                        }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
+                            let
+                                form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
+                                fdata = {},
+                                i = 0,
+                                iframeData = $("#mailContentsEditorEditingWidgIframe").contents().find('body').html();
+
+                            $("#mailContentsEditorEditing").val(iframeData);
+                            $(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
+                            for (; i < form[0].length; i++) {
+                                fdata[form[0][i].name] = form[0][i].value;
+                            }
+                            $.ajax({
+                                type: "POST",
+                                url: baseURL() + '/user/om_action_exec',
+                                data: {
+                                    request_data: JSON.stringify({
+                                        action: 'send',
+                                        om_data: fdata,
+                                        t: $.cookie('t')
+                                    })
+                                },
+                                dataType: "json",
+                            }).done(function () {
+
+                            }).fail(function () {
+
+                            }).always(function (result) {
+
+                            });
+                        })
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
+                    $('.casual-theme.edit-om-modal .modal2ndlayer .close-btn').unbind('click');
+                    $('.casual-theme.edit-om-modal .modal2ndlayer .close-btn').click(function () {
+                        $('.edit-om-modal').css('display', 'none');
+                        $('#addOm').removeAttr('disabled');
+                        $('.casual-theme.edit-om-modal .modal2ndlayer .form-input input').remove();
+                        $('.casual-theme.edit-om-modal .modal2ndlayer .form-input select').remove();
+                        $('.casual-theme.edit-om-modal .modal2ndlayer .form-input label').remove();
+                        $('.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form    button').remove();
+
+                        $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                        $('.casual-theme.mail-views').addClass('hide');
+                        $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                        $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                    });
+                });
+            },
+            printMail = function(index, mailType, mailNumber, pdfLayout) {
+                mailNumber = mailNumber.replace(/\//g, '&sol;');
+                window.open(baseURL() + '/pdf-layout/view/' + pdfLayout + '/' + mailType + '/' + encodeURIComponent(mailNumber) + '/' + $.cookie('t'));
             },
             currTrigger = '';
 
@@ -1242,6 +1563,9 @@ function ActionTrigger() {
             case 'view_mail':
                 currTrigger = viewMail;
                 break;
+            case 'edit_mail':
+                currTrigger = editMail;
+                break;
             default:
                 console.log('No Trigger Found!');
         }
@@ -1260,7 +1584,7 @@ function ActionTrigger() {
         }
     }
 
-    this.execTrigger = function(actionName, params) {
+    this.execTrigger = function (actionName, params) {
         this[actionName](params);
     }
 

@@ -1333,10 +1333,10 @@ class Admin extends CI_Controller
             $this->pdfcdmanp->convert_data($result[0]->layout_data);
             $pdf_layout_data = $this->pdfcdmanp->get_data();
             //
-            $this->pdfcdmanp->convert_data($result[0]->pdf_page_setup);
+            $this->pdfcdmanp->convert_data($result[0]->layout_page_setup);
             $pdf_page_setup = $this->pdfcdmanp->get_data();
             //
-            $query = $this->db->where('username', $this->_username)->get('settings');
+            $query = $this->db->get('app_settings');
             $settings_data = $query->result();
             //
             $pdflay_data_name = array_keys($pdf_layout_data);
@@ -1620,7 +1620,7 @@ class Admin extends CI_Controller
             $data = json_decode($this->input->post('data', TRUE), TRUE);
             if ($data['t'] == $this->session->userdata('CSRF'))
             {
-                $query = $this->db->where('pdf_layout_name', $data['layout_name'])->get('pdf_layouts');
+                $query = $this->db->where('layout_name', $data['layout_name'])->get('pdf_layouts');
                 $result = $query->result();
 
                 if ($result)
@@ -1628,8 +1628,8 @@ class Admin extends CI_Controller
                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                         'status' => 'success',
                         'message' => 'Data Layout Berhasil Dimuat',
-                        'data' => json_decode($result[0]->pdf_layout_data, TRUE),
-                        'page_setup' => json_decode($result[0]->pdf_page_setup),
+                        'data' => json_decode($result[0]->layout_data, TRUE),
+                        'page_setup' => json_decode($result[0]->layout_page_setup),
                     )));
                 }
                 else
@@ -1713,39 +1713,48 @@ class Admin extends CI_Controller
      * @param string $t csrf token
      * @return void
      */
-    public function PDF_viewer($pdf_layout_name, $mail_type, $t)
+    public function PDF_viewer($pdf_layout_name, $mail_type, $mail_number, $t)
     {
         $pdf_layout_name = xss_clean(urldecode($pdf_layout_name));
         if ($t == $this->session->userdata('CSRF'))
         {
+            $mail_number = urldecode($mail_number);
+            $mail_number = preg_replace('/&sol;/', '/', $mail_number);
             //
-            $query = $this->db->where('pdf_layout_name', ucwords($pdf_layout_name))->get('pdf_layouts');
+            $query = $this->db->where('layout_name', ucwords($pdf_layout_name))->get('pdf_layouts');
             $result = $query->result();
             //
-            $this->pdfcdmanp->convert_data($result[0]->pdf_layout_data);
+            $this->pdfcdmanp->convert_data($result[0]->layout_data);
             $pdf_layout_data = $this->pdfcdmanp->get_data();
             //
-            $this->pdfcdmanp->convert_data($result[0]->pdf_page_setup);
+            $this->pdfcdmanp->convert_data($result[0]->layout_page_setup);
             $pdf_page_setup = $this->pdfcdmanp->get_data();
             //
             if ($mail_type == 'im')
             {
-                $query = $this->db->where('username', $this->_username)->get('incoming_mail');
+                $query = $this->db->where(array(
+                    'username' => $this->_username,
+                    'mail_number' => $mail_number
+                ))->get('incoming_mail');
                 $mail_data = $query->result();
                 $mail_type = 'Surat Masuk';
             }
             else if ($mail_type == 'om')
             {
-                $query = $this->db->where('username', $this->_username)->get('outgoing_mail');
+                $query = $this->db->where(array(
+                    'username' => $this->_username,
+                    'mail_number' => $mail_number
+                ))->get('outgoing_mail');
                 $mail_data = $query->result();
                 $mail_type = 'Surat Keluar';
             }
+            
             //
-            $query = $this->db->where('username', $this->_username)->get('settings');
+            $query = $this->db->get('app_settings');
             $settings_data = $query->result();
             //
             $pdflay_data_name = array_keys($pdf_layout_data);
-            $document_name = $result[0]->pdf_layout_name . '.pdf';
+            $document_name = $result[0]->layout_name . '.pdf';
             $pdf_txt_data = array(
                 'idAndMailType' => $mail_data[0]->id . '.' . $mail_type,
                 'docTitle' => $settings_data[0]->mail_document_heading,
@@ -1753,13 +1762,13 @@ class Admin extends CI_Controller
                 'docContact' => $settings_data[0]->mail_document_contact,
                 'docMailNum' => $mail_data[0]->mail_number,
                 'docDate' => $mail_data[0]->date,
-                'docFor' => $mail_data[0]->for,
+                'docFor' => $mail_data[0]->receiver,
                 'docSubject' => $mail_data[0]->subject,
                 'docContents' => $mail_data[0]->contents,
                 'docSignature' => array(
                     'ftxt' => 'Hormat Saya,',
                     'stxt' => '',
-                    'thtxt' => $mail_data[0]->from,
+                    'thtxt' => $mail_data[0]->sender,
                 ),
             );
             $pdf = new TCPDF($pdf_page_setup['orientation'], $pdf_page_setup['unit'], $pdf_page_setup['format']);

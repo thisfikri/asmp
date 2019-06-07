@@ -84,7 +84,7 @@ if ($app_language == 'indonesia')
     $route['admin/pdf-layouts'] = 'admin/PDF_layout_list';
     $route['admin/pdf-editor/(:any)/(:any)'] = 'admin/PDF_editor/$1/$2';
     $route['admin/pdf-editor/view/(:any)/(:any)'] = 'admin/PDF_editor_viewer/$1/$2';
-    $route['admin/pdf-layout/view/(:any)/(:any)/(:any)'] = 'admin/PDF_viewer/$1/$2/$3';
+    $route['admin/pdf-layout/view/(:any)/(:any)/(:any)/(:any)'] = 'admin/PDF_viewer/$1/$2/$3/$4';
     $route['admin/plsc'] = 'admin/pdf_layout_stat_changer';
     $route['admin/rempl'] = 'admin/remove_pdf_layout';
     $route['admin/gedtrdta'] = 'admin/get_editor_data';
