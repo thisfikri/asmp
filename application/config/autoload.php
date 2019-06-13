@@ -140,5 +140,6 @@ $autoload['model'] = array(
     'Settings_Handler' => 'app_settings', 
     'Email_Handler' => 'emailhandler', 
     'PDF_CD_Manipulator' => 'pdfcdmanp',
-    'Outgoing_Mail_Handler' => 'om_handler'
+    'Outgoing_Mail_Handler' => 'om_handler',
+    'Mail_Components_Filter' => 'mailcomp_filter'
 );

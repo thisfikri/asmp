@@ -8,7 +8,7 @@ var checkedItemCount = 0;
 function baseURL() {
     var
         baseURL = window.location.origin + '/' + window.location.pathname.split('/')[1];
-    return encodeURIComponent(baseURL);
+    return encodeURI(baseURL);
 }
 
 function ASMPUsefulAPI() {
@@ -205,6 +205,11 @@ function ASMPActionExecutor() {
                         }
                     });
                 } else if (result.status === 'error') {
+                    $('.multiple-action').data('mail-ids', '');
+                    $('.checkbox').prop('checked', false);
+                    $('.checkmark').css('display', 'none');
+                    checkedItemCount = 0;
+
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('failed');
@@ -218,6 +223,11 @@ function ASMPActionExecutor() {
                         }
                     });
                 } else if (result.status === 'failed') {
+                    $('.multiple-action').data('mail-ids', '');
+                    $('.checkbox').prop('checked', false);
+                    $('.checkmark').css('display', 'none');
+                    checkedItemCount = 0;
+
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('error');
@@ -270,6 +280,11 @@ function ASMPActionExecutor() {
                         }
                     });
                 } else if (result.status == 'error') {
+                    $('.multiple-action').data('mail-ids', '');
+                    $('.checkbox').prop('checked', false);
+                    $('.checkmark').css('display', 'none');
+                    checkedItemCount = 0;
+                    
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('failed');
@@ -283,6 +298,11 @@ function ASMPActionExecutor() {
                         }
                     });
                 } else if (result.status == 'failed') {
+                    $('.multiple-action').data('mail-ids', '');
+                    $('.checkbox').prop('checked', false);
+                    $('.checkmark').css('display', 'none');
+                    checkedItemCount = 0;
+
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('error');
@@ -307,6 +327,20 @@ function ASMPActionExecutor() {
                 mtFirstChar = '',
                 i = 0,
                 atrgr = new ActionTrigger();
+                $.ajax({
+                    type: "POST",
+                    url: this.actionUrl,
+                    data: {
+                        mail_data: JSON.stringify(mailData),
+                        token: $.cookie('t')
+                    },
+                    dataType: "json",
+                }).done(function () {
+
+                }).fail(function () {
+
+                }).always(function (result) {
+                });
             mailType = mailType.split('/');
             mailType = mailType[mailType.length - 1];
             mailType = mailType.split('-');
@@ -1419,7 +1453,7 @@ function ActionTrigger() {
                     checkedItemCount += 1;
                     mailIds += index + ',';
                     $('.multiple-action').data('mail-ids', mailIds);
-                    //console.log($(this).is(':checked'), index, 'Checked Count: ' + checkedItemCount, 'Mail Ids: ' + $('.multiple-action').data('mail-ids'));
+                    console.log($(this).is(':checked'), index, 'Checked Count: ' + checkedItemCount, 'Mail Ids: ' + $('.multiple-action').data('mail-ids'));
                     if ($(this).is(':checked')) {
                         //console.log('IndexCHECKED:' + index);
                         $('.checkmark.item' + index).css('display', 'inline-block');
@@ -1484,14 +1518,13 @@ function ActionTrigger() {
                 });
             },
             viewMail = function (index) {
-                console.log('View...');
                 var actionExecutor = new ASMPActionExecutor();
                 $('.table-container #mailAction .action-btn.view#item' + index).unbind('click');
                 $('.table-container #mailAction .action-btn.view#item' + index).click(function () {
                     //console.log('View' + index);.table-container #mailAction .action-btn.view
                     $('.table-container #mailAction .action-btn.view').attr('disabled', 'disabled');
                     actionExecutor.actionName = actionName;
-                    actionExecutor.actionUrl = baseURL() + '/view_im';
+                    actionExecutor.actionUrl = baseURL() + '/view_activity';
                     actionExecutor.actionData = {
                         id: index,
                         token: $.cookie('t'),
@@ -1613,30 +1646,19 @@ function ActionTrigger() {
                                 $('.casual-theme.edit-om-modal .modal2ndlayer .form-input label').remove();
                                 $('.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form  button').remove();
                                 $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
-                                if (result.status !== 'error' && result.status !== 'failed') {
+                            if (result.status == 'success') {
 
                                     $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(1).text(result.data['mail_number']);
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(2).text(result.data['subject']);
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(5).text(result.data['date']);
+
                                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                                     $('.action-msg-notification').removeClass('error');
                                     $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').removeClass('warning');
                                     $('.action-msg-notification').addClass('success');
-                                    $('.action-msg-notification').removeClass('hide');
-                                    $('.action-msg-notification').fadeOut({
-                                        duration: 3000,
-                                        complete: () => {
-                                            $('.action-msg-notification').addClass('hide');
-                                            $('.action-msg-notification').removeAttr('style');
-                                        }
-                                    });
-                                } else if (result.status == 'error') {
-                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                                    $('.action-msg-notification').removeClass('success');
-                                    $('.action-msg-notification').removeClass('failed');
-                                    $('.action-msg-notification').addClass('error');
                                     $('.action-msg-notification').removeClass('hide');
                                     $('.action-msg-notification').fadeOut({
                                         duration: 3000,
@@ -1648,8 +1670,37 @@ function ActionTrigger() {
                                 } else if (result.status == 'failed') {
                                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                                     $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('warning');
                                     $('.action-msg-notification').removeClass('error');
                                     $('.action-msg-notification').addClass('failed');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'error') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('warning');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').addClass('error');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'warning') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').removeClass('error');
+                                    $('.action-msg-notification').addClass('warning');
                                     $('.action-msg-notification').removeClass('hide');
                                     $('.action-msg-notification').fadeOut({
                                         duration: 3000,

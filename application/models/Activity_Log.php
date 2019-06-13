@@ -76,14 +76,14 @@ class Activity_Log extends CI_Model {
 			case 'delete_glry_image':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-image fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				break;
-			case 'add_sk':
+			case 'add_om':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-paper-plane fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				// set detail text
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'move_to_trash':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-trash fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'move_to_trash_all':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-trash fa-stack-1x" style="color: rgb(3, 70, 129)"></i><i class="fa fa-trash fa-stack" style="margin-left: 2px;color: rgb(3, 70, 129)"><i class="fa fa-trash fa-stack-1x" style="margin-left: 5px;color: rgb(3, 70, 129)"></i></i></span>';
@@ -91,41 +91,41 @@ class Activity_Log extends CI_Model {
 			case 'move_to_trash_wselected':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-trash fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				$this->_detail_text = ' (';
-				if (array_key_exists('dari', $data))
+				if (array_key_exists('sender', $data))
 				{
-					for ($i = 0; $i < count($data['dari']); $i++)
+					for ($i = 0; $i < count($data['sender']); $i++)
 					{
-						$this->_detail_text .= 'Dari: '.$data['dari'][$i].' & No Surat: '.$data['no_surat'][$i].', ';
+						$this->_detail_text .= 'Dari: '.$data['sender'][$i].' & No Surat: '.$data['mail_number'][$i].', ';
 					}
 				}
 				else
 				{
-					for ($i = 0; $i < count($data['perihal_surat']); $i++)
+					for ($i = 0; $i < count($data['subject']); $i++)
 					{
-						$this->_detail_text .= 'Perihal Surat: '.$data['perihal_surat'][$i].' & No Surat: '.$data['no_surat'][$i].', ';
+						$this->_detail_text .= 'Perihal Surat: '.$data['subject'][$i].' & No Surat: '.$data['mail_number'][$i].', ';
 					}
 				}
 				$this->_detail_text .= ')';
 				break;
 			case 'view':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-eye fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'print':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-print fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'send':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-paper-plane fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'edit':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-edit fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'delete':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-times fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'deleteperm_all':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-times fa-stack-1x" style="color: rgb(3, 70, 129)"></i><i class="fa fa-times fa-stack-1x" style="color: rgb(3, 70, 129)"></i><i class="fa fa-times fa-stack-1x" style="padding: 2px 14px 0 0;color: rgb(3, 70, 129)"></i><i class="fa fa-times fa-stack-1x" style="padding: 2px 0 0 14px;color: rgb(3, 70, 129)"></i></span>';
@@ -133,29 +133,55 @@ class Activity_Log extends CI_Model {
 			case 'deleteperm_wselected':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-times fa-stack-1x" style="padding: 0 0 0 7px;color: rgb(3, 70, 129)"></i><i class="fa fa-times fa-stack-1x" style="padding: 0 7px 0 0;color: rgb(3, 70, 129)"></i></span>';
 				$this->_detail_text = ' (';
-				if (array_key_exists('dari', $data))
+				if (array_key_exists('sender', $data))
 				{
-					for ($i = 0; $i < count($data['dari']); $i++)
+					for ($i = 0; $i < count($data['sender']); $i++)
 					{
-						$this->_detail_text .= 'Dari: '.$data['dari'][$i].' & No Surat: '.$data['no_surat'][$i].', ';
+						$this->_detail_text .= 'Dari: '.$data['sender'][$i].' & No Surat: '.$data['mail_number'][$i].', ';
 					}
 				}
 				else
 				{
-					for ($i = 0; $i < count($data['perihal_surat']); $i++)
+					for ($i = 0; $i < count($data['subject']); $i++)
 					{
-						$this->_detail_text .= 'Perihal Surat: '.$data['perihal_surat'][$i].' & No Surat: '.$data['no_surat'][$i].', ';
+						$this->_detail_text .= 'Perihal Surat: '.$data['subject'][$i].' & No Surat: '.$data['mail_number'][$i].', ';
+					}
+				}
+				$this->_detail_text .= ')';
+				break;
+			case 'recovery':
+				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-recycle fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
+				break;
+			case 'recovery_all':
+				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-recycle fa-stack-1x" style="color: rgb(3, 70, 129)"></i><i class="fa fa-recycle fa-stack-1x" style="color: rgb(3, 70, 129)"></i><i class="fa fa-recycle fa-stack-1x" style="padding: 2px 14px 0 0;color: rgb(3, 70, 129)"></i><i class="fa fa-recycle fa-stack-1x" style="padding: 2px 0 0 14px;color: rgb(3, 70, 129)"></i></span>';
+				break;
+			case 'recovery_wselected':
+				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-recycle fa-stack-1x" style="padding: 0 0 0 7px;color: rgb(3, 70, 129)"></i><i class="fa fa-recycle fa-stack-1x" style="padding: 0 7px 0 0;color: rgb(3, 70, 129)"></i></span>';
+				$this->_detail_text = ' (';
+				if (array_key_exists('sender', $data))
+				{
+					for ($i = 0; $i < count($data['sender']); $i++)
+					{
+						$this->_detail_text .= 'Dari: '.$data['sender'][$i].' & No Surat: '.$data['mail_number'][$i].', ';
+					}
+				}
+				else
+				{
+					for ($i = 0; $i < count($data['subject']); $i++)
+					{
+						$this->_detail_text .= 'Perihal Surat: '.$data['subject'][$i].' & No Surat: '.$data['mail_number'][$i].', ';
 					}
 				}
 				$this->_detail_text .= ')';
 				break;
 			case 'disposition':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-share-square fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'reply':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-reply fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
-				$this->_detail_text = ' (Perihal Surat: '.$data['perihal_surat'].', No Surat: '.$data['no_surat'].')';
+				$this->_detail_text = ' (Perihal Surat: '.$data['subject'].', No Surat: '.$data['mail_number'].')';
 				break;
 			case 'udelete':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-user-times fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';

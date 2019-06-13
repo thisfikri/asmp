@@ -158,6 +158,7 @@ $(document).ready(function () {
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('error');
                             $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').addClass('success');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
@@ -177,6 +178,7 @@ $(document).ready(function () {
 
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').removeClass('error');
                             $('.action-msg-notification').addClass('failed');
                             $('.action-msg-notification').removeClass('hide');
@@ -197,8 +199,30 @@ $(document).ready(function () {
 
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').removeClass('failed');
                             $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'warning') {
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').addClass('warning');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
                                 duration: 3000,
@@ -290,6 +314,7 @@ $(document).ready(function () {
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('error');
                             $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').addClass('success');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
@@ -306,9 +331,10 @@ $(document).ready(function () {
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
-                            
+
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').removeClass('error');
                             $('.action-msg-notification').addClass('failed');
                             $('.action-msg-notification').removeClass('hide');
@@ -326,11 +352,33 @@ $(document).ready(function () {
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
-                            
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('warning');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'warning') {
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('failed');
-                            $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').addClass('warning');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
                                 duration: 3000,

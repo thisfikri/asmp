@@ -98,6 +98,10 @@ class Outgoing_Mail_Handler extends CI_Model
                     $data_to_send['username'] = $username;
                     $data_to_send['status'] = 'terkirim';
                     $data_to_send['user_setting'] = $this->app_settings->get_user_settings($username)[0];
+
+                    // Tulis log
+                    $this->activity_log->create_activity_log('send', ' Surat Keluar Berhasil Dikirim', $data_to_send, $username);
+
                     if ($output == 'echo')
                     {
                         echo 'surat keluar berhasil dikirim';
@@ -229,6 +233,9 @@ class Outgoing_Mail_Handler extends CI_Model
             $this->db->insert('outgoing_mail', $data_to_send);
             if ($this->db->affected_rows())
             {
+                // Tulis log
+                $this->activity_log->create_activity_log('add_om', ' Surat Keluar berhasil ditambahkan', $data_to_send, $username);
+
                 $data_to_send['user_setting'] = $this->app_settings->get_user_settings($username)[0];
                 if ($output == 'echo')
                 {
@@ -328,6 +335,9 @@ class Outgoing_Mail_Handler extends CI_Model
                         ++$first_id;
                         ++$target_id;
                     }
+
+                    // Tulis log
+                    $this->activity_log->create_activity_log('move_to_trash', ' surat keluar berhasil dibuang', $data_to_send, $username);
 
                     if ($output == 'echo')
                     {
@@ -454,6 +464,10 @@ class Outgoing_Mail_Handler extends CI_Model
                     'mail_number' => $data_to_update['mail_number'],
                 ))->get('outgoing_mail');
                 $result_data = $query->result();
+
+                // Tulis log
+                $this->activity_log->create_activity_log('edit', ' Surat Keluar Berhasil Diubah', $data_to_update, $username);
+
                 if ($output == 'echo')
                 {
                     echo 'Surat Keluar Berhasil Diubah';
@@ -544,8 +558,11 @@ class Outgoing_Mail_Handler extends CI_Model
 
                 $this->db->where(array(
                     'username' => $username,
-                    'mail_number' => $mail_data['mail_number']
+                    'mail_number' => $mail_data['mail_number'],
                 ))->update('outgoing_mail', array('status' => 'terikirim'));
+
+                // Tulis log
+                $this->activity_log->create_activity_log('send', ' Surat Keluar Berhasil Dikirim', $mail_data, $username);
 
                 if ($output == 'echo')
                 {

@@ -757,6 +757,25 @@ class User extends CI_Controller
         }
     }
 
+    public function view_activity()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $mail_data = $this->input->post('mail_data', TRUE);
+            $mail_data = json_decode($mail_data, TRUE);
+            $token = $this->input->post('token', TRUE);
+            if ($token == $this->session->userdata('CSRF'))
+            {
+                // Tulis log
+                $this->activity_log->create_activity_log('view', 'Telah Melihat', $mail_data, $this->_username);
+            }
+            else
+            {
+                log_message('error','token tidak sama!');
+            }
+        }
+    }
+
     // ------------------------------------------------------------------------
 
     /**
@@ -779,7 +798,18 @@ class User extends CI_Controller
                 if (isset($requested_data['om_data']['pdf_layouts']) && isset($requested_data['om_data']['mail_number']) &&
                     isset($requested_data['om_data']['mail_subject']) && $requested_data['om_data']['editor_data'])
                     {
-                    $this->om_handler->send_om($requested_data['om_data'], 'json');
+                    if ($this->mailcomp_filter->validate_mail_number($requested_data['om_data']['mail_number']))
+                        {
+                        $this->om_handler->send_om($requested_data['om_data'], 'json');
+                    }
+                        else
+                        {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(
+                            array('status' => 'warning',
+                                'message' => '<i class="fa fa-exclamation-triangle"></i> nomor surat sudah dipakai',
+                            )
+                        ));
+                    }
                 }
                     else
                     {
@@ -794,7 +824,18 @@ class User extends CI_Controller
                 if (isset($requested_data['om_data']['pdf_layouts']) && isset($requested_data['om_data']['mail_number']) &&
                     isset($requested_data['om_data']['mail_subject']) && $requested_data['om_data']['editor_data'])
                     {
-                    $this->om_handler->save_om($requested_data['om_data'], 'json');
+                    if ($this->mailcomp_filter->validate_mail_number($requested_data['om_data']['mail_number']))
+                        {
+                        $this->om_handler->save_om($requested_data['om_data'], 'json');
+                    }
+                        else
+                        {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(
+                            array('status' => 'warning',
+                                'message' => '<i class="fa fa-exclamation-triangle"></i> nomor surat sudah dipakai',
+                            )
+                        ));
+                    }
                 }
                     else
                     {
@@ -809,7 +850,30 @@ class User extends CI_Controller
                 $this->om_handler->throw_om($requested_data['mail_data'], 'json');
                 break;
             case 'update':
-                $this->om_handler->update_om($requested_data['om_data'], 'json');
+                if (isset($requested_data['om_data']['pdf_layouts']) && isset($requested_data['om_data']['mail_number']) &&
+                    isset($requested_data['om_data']['mail_subject']) && $requested_data['om_data']['editor_data'])
+                    {
+                    if ($this->mailcomp_filter->validate_mail_number($requested_data['om_data']['mail_number']))
+                        {
+                        $this->om_handler->update_om($requested_data['om_data'], 'json');
+                    }
+                        else
+                        {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(
+                            array('status' => 'warning',
+                                'message' => '<i class="fa fa-exclamation-triangle"></i> nomor surat sudah dipakai',
+                            )
+                        ));
+                    }
+                }
+                    else
+                    {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array('status' => 'failed',
+                            'message' => '<i class="fa fa-exclamation-circle"></i> tidak ada yang boleh kosong saat membuat surat baru',
+                        )
+                    ));
+                }
                 break;
             case 're_send':
                 $this->om_handler->resend_om($requested_data['om_data'], 'json');
@@ -984,6 +1048,9 @@ class User extends CI_Controller
                                         ++$i;
                                     }
                                 }
+                                // Tulis log
+                                $this->activity_log->create_activity_log('move_to_trash_all', ' Semua surat keluar berhasil dibuang', null, $this->_username);
+
                                 header('Content-Type: application/json');
                                 echo json_encode(array('status' => 'success', 'message' => '<i class="fa fa-check-circle"></i> Semua surat keluar berhasil dibuang'));
                             }
@@ -1003,6 +1070,7 @@ class User extends CI_Controller
                         {
                         $i = 0;
                         $result_message = array();
+                        $activity_data = array();
 
                         for (; $i < count($data['item_data']['mail_numbers']); $i++)
                             {
@@ -1012,10 +1080,14 @@ class User extends CI_Controller
                             ))->get('outgoing_mail');
                             $result = $query->result_array();
 
+                            $activity_data['sender'][$i] = $result[0]['sender'];
+                            $activity_data['mail_number'][$i] = $result[0]['mail_number'];
+
                             $query = $this->db->get('trash_can');
                             $trash_count = $query->num_rows();
                             $result[0]['id'] = $trash_count + 1;
                             $result[0]['mail_type'] = 'om';
+                            $status = 'failed';
 
                             $this->db->insert('trash_can', $result[0]);
                             ++$trash_count;
@@ -1027,15 +1099,18 @@ class User extends CI_Controller
                                 ))->delete('outgoing_mail');
                                 if ($this->db->affected_rows())
                                     {
+                                    $status = 'success';
                                     $result_message[$i] = '<i class="fa fa-check-circle"></i> Surat Keluar ' . $data['item_data']['mail_numbers'][$i] . ' berhasil dibuang';
                                 }
                                     else
                                     {
+                                    $status = 'failed';
                                     $result_message[$i] = '<i class="fa fa-exclamation-circle"></i> Surat Keluar ' . $data['item_data']['mail_numbers'][$i] . ' gagal dibuang';
                                 }
                             }
                                 else
                                 {
+                                $status = 'failed';
                                 $result_message[$i] = '<i class="fa fa-exclamation-circle"></i> Surat Keluar ' . $data['item_data']['mail_numbers'][$i] . ' gagal dibuang';
                             }
                         }
@@ -1089,9 +1164,14 @@ class User extends CI_Controller
                             }
                         }
 
-                        $result_message = implode(',', $result_message);
+                        if ($status == 'success')
+                            {
+                            // Tulis log
+                            $this->activity_log->create_activity_log('move_to_trash_wselected', 'Surat Keluar Berhasil Dibuang', $activity_data, $this->_username);
+                        }
+                        
                         header('Content-Type: application/json');
-                        echo json_encode(array('status' => 'success', 'message' => $result_message));
+                        echo json_encode(array('status' => $status, 'message' => $result_message));
                     }
                     break;
                 case 'trash_can':
@@ -1102,6 +1182,9 @@ class User extends CI_Controller
                             $this->db->where('username', $this->_username)->delete('trash_can');
                             if ($this->db->affected_rows())
                                 {
+                                // Tulis log
+                                $this->activity_log->create_activity_log('deleteperm_all', 'Semua surat berhasil dihapus', null, $this->_username);
+
                                 header('Content-Type: application/json');
                                 echo json_encode(array('status' => 'success', 'message' => '<i class="fa fa-check-circle"></i> Semua surat berhasil dihapus'));
                             }
@@ -1115,19 +1198,33 @@ class User extends CI_Controller
                             {
                             $i = 0;
                             $result_message = array();
+                            $status = 'failed';
+                            $activity_data = array();
 
                             for (; $i < count($data['item_data']['mail_numbers']); $i++)
                                 {
+                                $query = $this->db->where(array(
+                                    'username' => $this->_username,
+                                    'mail_number' => $data['item_data']['mail_numbers'][$i],
+                                ))->get('trash_can');
+
+                                $result = $query->result_array();
+
+                                $activity_data['sender'][$i] = $result[0]['sender'];
+                                $activity_data['mail_number'][$i] = $result[0]['mail_number'];
+                                
                                 $this->db->where(array(
                                     'username' => $this->_username,
                                     'mail_number' => $data['item_data']['mail_numbers'][$i],
                                 ))->delete('trash_can');
                                 if ($this->db->affected_rows())
                                     {
+                                    $status = 'success';
                                     $result_message[$i] = '<i class="fa fa-check-circle"></i> Surat ' . $data['item_data']['mail_numbers'][$i] . ' berhasil dibuang';
                                 }
                                     else
                                     {
+                                    $status = 'failed';
                                     $result_message[$i] = '<i class="fa fa-exclamation-circle"></i> Surat ' . $data['item_data']['mail_numbers'][$i] . ' gagal dibuang';
                                 }
                             }
@@ -1182,6 +1279,14 @@ class User extends CI_Controller
                             }
 
                             $result_message = implode(',', $result_message);
+
+                            if ($status == 'success')
+                                {
+                                // Tulis log
+                                $this->activity_log->create_activity_log('deleteperm_wselected', $result_message, $activity_data, $this->_username);
+
+                            }
+
                             header('Content-Type: application/json');
                             echo json_encode(array('status' => 'success', 'message' => $result_message));
                         }
@@ -1190,6 +1295,13 @@ class User extends CI_Controller
                             $query = $this->db->where('username', $this->_username)->get('users');
                             $result = $query->result();
                             $hashed_password = $result[0]->password;
+
+                            $query = $this->db->where(array(
+                                'username' => $this->_username,
+                                'mail_number' => $data['item_data']['mail_number'],
+                            ))->get('trash_can');
+
+                            $activity_data = $query->result_array();
 
                             $this->db->where(array(
                                 'username' => $this->_username,
@@ -1209,6 +1321,9 @@ class User extends CI_Controller
                                     ++$first_id;
                                     ++$target_id;
                                 }
+
+                                // Tulis log
+                                $this->activity_log->create_activity_log('delete', 'Semua surat berhasil dihapus', $activity_data[0], $this->_username);
 
                                 header('Content-Type: application/json');
                                 echo json_encode(array('status' => 'success', 'message' => '<i class="fa fa-check-circle"></i> Surat berhasil dihapus'));
@@ -1575,7 +1690,7 @@ class User extends CI_Controller
                 $paging = array();
                 $paging['status'] = $settings[0]->paging_status;
                 $paging['limit'] = $settings[0]->row_limit;
-                
+
                 if ($trash_count !== 0)
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(
@@ -1794,6 +1909,9 @@ class User extends CI_Controller
 
                     if ($status == 'success')
                     {
+                        // Tulis log
+                        $this->activity_log->create_activity_log('recovery_all', ' Surat Keluar Berhasil dipulihkan', null, $this->_username);
+
                         $min_id = min($data['id']);
                         $max_id = max($data['id']);
                         if (in_array($min_id + (count($data['id']) - 1), $data['id']))
@@ -1850,7 +1968,8 @@ class User extends CI_Controller
                 else if ($data['selected_item'] == 'true')
                 {
                     $result_message = array();
-                    $status = '';
+                    $status = 'failed';
+                    $activity_data = array();
                     $i = 0;
 
                     for (; $i < count($data['item_data']['mail_numbers']); $i++)
@@ -1875,6 +1994,9 @@ class User extends CI_Controller
 
                             $query = $this->db->get('incoming_mail');
                             $im_count = $query->num_rows();
+
+                            $activity_data['sender'][$i] = $result[0]->sender;
+                            $activity_data['mail_number'][$i] = $result[0]->mail_number;
 
                             $data['id'][$i] = $result[0]->id;
                             $result[0]->id = $im_count + 1;
@@ -1922,6 +2044,9 @@ class User extends CI_Controller
                             $query = $this->db->get('outgoing_mail');
                             $om_count = $query->num_rows();
 
+                            $activity_data['sender'][$i] = $result[0]->sender;
+                            $activity_data['mail_number'][$i] = $result[0]->mail_number;
+
                             $data['id'][$i] = $result[0]->id;
                             $result[0]->id = $om_count + 1;
                             unset($result[0]->mail_type);
@@ -1958,6 +2083,9 @@ class User extends CI_Controller
 
                     if ($status == 'success')
                     {
+                        // Tulis log
+                        $this->activity_log->create_activity_log('recovery_wselected', ' Surat Keluar Berhasil dipulihkan', $activity_data, $this->_username);
+
                         $min_id = min($data['id']);
                         $max_id = max($data['id']);
                         if (in_array($min_id + (count($data['id']) - 1), $data['id']))
@@ -2095,6 +2223,9 @@ class User extends CI_Controller
                                     ++$first_id;
                                     ++$target_id;
                                 }
+
+                                // Tulis log
+                                $this->activity_log->create_activity_log('recovery', ' Surat Keluar Berhasil dipulihkan', $result[0], $this->_username);
 
                                 header('Content-Type: application/json');
                                 echo json_encode(array(
