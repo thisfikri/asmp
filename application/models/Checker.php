@@ -19,7 +19,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  /**
   * ASMP_Security Class
   * 
-  * Mendefinisikan fungsi - fungsi keamanan aplikasi ASMP
+  * Mendefinisikan fungsi - fungsi pengecekan aplikasi ASMP
   *
   * @package ASMP
   * @category Model

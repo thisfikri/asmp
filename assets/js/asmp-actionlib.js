@@ -8,7 +8,7 @@ var checkedItemCount = 0;
 function baseURL() {
     var
         baseURL = window.location.origin + '/' + window.location.pathname.split('/')[1];
-    return baseURL;
+    return encodeURIComponent(baseURL);
 }
 
 function ASMPUsefulAPI() {
@@ -303,12 +303,20 @@ function ASMPActionExecutor() {
                 itemTarget = this.itemTarget,
                 mailData = JSON.parse(this.actionData.mailData),
                 mailType = window.location.href,
+                sortMailType = '',
                 mtFirstChar = '',
                 i = 0,
                 atrgr = new ActionTrigger();
             mailType = mailType.split('/');
             mailType = mailType[mailType.length - 1];
             mailType = mailType.split('-');
+            for (; i < mailType.length; i++) {
+                if (mailType[i].search('#page') !== -1) {
+                    mailType[i] = mailType[i].split('#');
+                    mailType[i] = mailType[i][0];
+                }
+            }
+            sortMailType = mailType[0].charAt(0) + mailType[1].charAt(0);;
             for (; i < mailType.length; i++) {
                 mtFirstChar = mailType[i].charAt(0).toUpperCase();
                 mailType[i] = mailType[i].replace(mailType[i].charAt(0), mtFirstChar);
@@ -339,10 +347,14 @@ function ASMPActionExecutor() {
                         id: itemID
                     })
                     .html('<i class="fa fa-print"></i>')
+                    .click(function () {
+                        atrgr.defineTrigger('printMail' + itemID, 'print_mail');
+                        atrgr['printMail' + itemID](itemID, sortMailType, mailData.mail_number, mailData.pdf_layout);
+                    })
                     .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
 
-                if (mailData.hasOwnProperty('mail_send')) {
-                    if (mailData.mail_send === false) {
+                if (mailData.hasOwnProperty('status')) {
+                    if (mailData.status == 'disimpan') {
                         $('<button></button>').attr({
                                 class: 'button mail-btn edit',
                                 id: itemID
@@ -358,7 +370,9 @@ function ASMPActionExecutor() {
                             .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
 
                         atrgr.defineTrigger('editMail' + itemID, 'edit_mail');
+                        atrgr.defineTrigger('sendMail' + itemID, 'send_mail');
                         atrgr['editMail' + itemID](itemID, '.edit-om-modal', mailData, [settings.mailFunction.mailContainer, itemTarget]);
+                        atrgr['sendMail' + itemID](itemID, mailData, settings.mailFunction.mailContainer + ' ' + itemTarget);
                     }
                 }
 
@@ -549,11 +563,13 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.remove').removeAttr('id');
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.trash').removeAttr('id');
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.view').removeAttr('id');
+                $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.recovery').removeAttr('id');
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkbox').removeClass('item' + itemID[0].split('id')[1]);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkmark').removeClass('item' + itemID[0].split('id')[1]);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.remove').attr('id', 'item' + i);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.trash').attr('id', 'item' + i);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.view').attr('id', 'item' + i);
+                $(this.itemToPaginate + '.' + itemID[0] + ' .action-btn.recovery').attr('id', 'item' + i);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkbox').addClass('item' + i);
                 $(this.itemToPaginate + '.' + itemID[0] + ' .checkmark').addClass('item' + i);
                 onlyID = itemID[0].split('id');
@@ -562,17 +578,20 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
                 atrgr.deleteTrigger('deleteUser' + onlyID[1]);
                 atrgr.deleteTrigger('throwMailToTrash' + onlyID[1]);
                 atrgr.deleteTrigger('viewMail' + onlyID[1]);
+                atrgr.deleteTrigger('recoverMail' + onlyID[1]);
                 atrgr.deleteTrigger('checkboxAction' + onlyID[1]);
+
                 atrgr.defineTrigger('deleteFieldSection' + i, 'delete_field_section');
                 atrgr.defineTrigger('deleteUser' + i, 'delete_user');
                 atrgr.defineTrigger('throwMailToTrashOM' + i, 'throw_mail_tt');
-
+                atrgr.defineTrigger('recoverMail' + i, 'recover_mail');
                 atrgr.defineTrigger('viewMail' + i, 'view_mail');
                 atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
                 $(this.itemToPaginate).eq(i - 1).removeClass(itemID[0]);
                 $(this.itemToPaginate).eq(i - 1).addClass('id' + i);
                 mailITemData = $(this.itemToPaginate + '.id' + i).data('itemdata');
                 mailITemData.id = i;
+
                 mailITemData = JSON.stringify(mailITemData);
                 $(this.itemToPaginate + '.id' + i).data('itemdata', mailITemData);
                 mailITemData = JSON.parse(mailITemData);
@@ -580,6 +599,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
                 atrgr['deleteFieldSection' + i](i, $(this.itemToPaginate + '.id' + i + ' td').eq(1).text());
                 atrgr['deleteUser' + i](i, $(this.itemToPaginate + '.id' + i + ' td').eq(1).text());
                 atrgr['throwMailToTrashOM' + i](i, 'om', mailITemData);
+                atrgr['recoverMail' + i](i, mailITemData);
 
                 atrgr['viewMail' + i](i);
                 atrgr['checkboxAction' + i](i);
@@ -967,6 +987,101 @@ function MultipleAction(url) {
                         });
                     });
 
+                } else if (targetName === 'trash_can') {
+                    $('.confirm-box#trashCan').remove();
+                    $('.action-msg-notification').after('<div class="confirm-box hide" id="trashCan"></div>');
+                    $('.confirm-box#trashCan').append('<p>Apakah Anda Yakin Ingin Menghapusnya?</p>');
+                    $('.confirm-box#trashCan').append('<button class="button yes-btn">Ya</button>');
+                    $('.confirm-box#trashCan').append('<button class="button no-btn">Tidak</button>');
+                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.remove').unbind('click');
+                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.remove').click(function () {
+                        //console.log(Object.getOwnPropertyNames(new MultipleAction));
+                        var
+                            itemIds = $('.multiple-action').data('mail-ids'),
+                            promptInp = false,
+                            uPass = '',
+                            mailNumbers = [];
+                        itemIds = itemIds.slice(0, -1);
+                        itemIds = itemIds.split(',');
+                        if ($.isArray(itemIds)) {
+                            for (var i = 0; i < itemIds.length; i++) {
+                                mailNumbers[i] = $('.item-list .item.id' + itemIds[i]).children('td').eq(1).text();
+                            }
+                            //console.log(fieldSections);
+                        }
+                        $('#checkAll').attr('disabled', 'disabled');
+                        $('.checkmark.all').attr('disabled', 'disabled');
+                        $('.checkbox.item').attr('disabled', 'disabled');
+                        $('.confirm-box#trashCan').removeClass('hide');
+                        $('.confirm-box#trashCan .yes-btn').click(function () {
+                            $('.confirm-box#trashCan').addClass('hide');
+                            $('#checkAll').removeAttr('disabled');
+                            $('.checkmark.all').removeAttr('disabled');
+                            $('.checkbox.item').removeAttr('disabled');
+                            if ($('.prompt-box form .prompt-submit').length === 0) {
+                                $('<button></buton>').attr({
+                                    type: 'submit',
+                                    class: 'button prompt-submit',
+                                    id: 'rmAll'
+                                }).text('Submit').appendTo('.prompt-box form');
+                            }
+                            $('.prompt-box').removeClass('hide');
+                            $('.dim-light').removeClass('hide-elemet');
+                            $('.prompt-box form input#uPass').focus();
+                            $('.prompt-box form .prompt-submit#rmAll').click(function () {
+                                promptInp = true;
+                                uPass = $('.prompt-box form input#uPass').val();
+                                //console.log(uPass);
+                                if (promptInp != false) {
+                                    actionExecutor.actionName = 'removeTrash';
+                                    actionExecutor.actionUrl = url;
+                                    actionExecutor.actionData = {
+                                        id: itemIds,
+                                        t: $.cookie('t'),
+                                        item_type: 'trash_can',
+                                        selected_item: seltdItem,
+                                        multiple: true,
+                                        all_item: allItem,
+                                        item_data: {
+                                            mail_numbers: mailNumbers,
+                                            password: uPass,
+                                        }
+                                    };
+                                    actionExecutor.itemTarget = '.item';
+                                    actionExecutor.exec({
+                                        multipleAction: true,
+                                        haveID: true,
+                                        removeTarget: true
+                                    });
+                                    if (allItem === true) {
+                                        $('#checkAll').prop('checked', false);
+                                        $('.checkmark').css('display', 'none');
+                                    }
+                                    $('.multiple-action').data('mail-ids', '');
+                                    //console.log($('.multiple-action').data('mail-ids'));
+                                    $('.table-container#trashCan .table-header .multiple-action').addClass('hide');
+                                    checkedItemCount = 0;
+                                    $('.prompt-box form input#uPass').val('');
+                                    $('.prompt-box').addClass('hide');
+                                    $('.dim-light').addClass('hide-elemet');
+                                    $('.prompt-box form .prompt-submit').remove();
+                                    uPass = '';
+                                    promptInp = false;
+                                }
+                            });
+                            $('.prompt-box .close-btn').click(function () {
+                                //console.log('prompt-box::before');
+                                $('.prompt-box').addClass('hide');
+                                $('.dim-light').addClass('hide-elemet');
+                            });
+                        });
+                        $('.confirm-box#trashCan .no-btn').click(function () {
+                            $('.confirm-box#trashCan').addClass('hide');
+                            $('#checkAll').removeAttr('disabled');
+                            $('.checkmark.all').removeAttr('disabled');
+                            $('.checkbox.item').removeAttr('disabled');
+                        });
+                    });
                 }
             } else if (action === 'trash') {
                 if (targetName === 'incoming_mail') {
@@ -1022,6 +1137,49 @@ function MultipleAction(url) {
                             item_data: {
                                 mail_numbers: mailNumbers
                             },
+                            multiple: true,
+                            all_item: allItem,
+                            selected_item: seltdItem
+                        };
+                        actionExecutor.itemTarget = '.item';
+                        actionExecutor.exec({
+                            multipleAction: true,
+                            haveID: true,
+                            removeTarget: true
+                        });
+                        if (allItem === true) {
+                            $('#checkAll').prop('checked', false);
+                            $('.checkmark').css('display', 'none');
+                        }
+                        $('.multiple-action').data('mail-ids', '');
+                        $('.table-container#outgoingMail .table-header .multiple-action').addClass('hide');
+                        checkedItemCount = 0;
+                    });
+                }
+            } else if (action === 'recovery') {
+                if (targetName === 'trash_can') {
+                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.recovery').unbind('click');
+                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.recovery').click(function () {
+                        var itemIds = $('.multiple-action').data('mail-ids'),
+                            mailNumbers = [];
+                        //console.log(itemIds);
+                        itemIds = itemIds.slice(0, -1);
+                        itemIds = itemIds.split(',');
+                        if ($.isArray(itemIds)) {
+                            for (var i = 0; i < itemIds.length; i++) {
+                                mailNumbers[i] = $('.item-list .item.id' + itemIds[i]).children('td').eq(1).text();
+                            }
+                            //console.log(fieldSections);
+                        }
+                        actionExecutor.actionName = 'Recover All Mail';
+                        actionExecutor.actionUrl = baseURL() + '/recovery_mail';
+                        actionExecutor.actionData = {
+                            id: itemIds,
+                            token: $.cookie('t'),
+                            item_type: targetName,
+                            item_data: JSON.stringify({
+                                mail_numbers: mailNumbers
+                            }),
                             multiple: true,
                             all_item: allItem,
                             selected_item: seltdItem
@@ -1255,7 +1413,9 @@ function ActionTrigger() {
                 var ma = new MultipleAction(baseURL() + '/remove_item');
                 $('.checkbox.item' + index).unbind('click');
                 $('.checkbox.item' + index).click(function () {
-                    var mailIds = $('.multiple-action').data('mail-ids');
+                    var
+                        mailIds = $('.multiple-action').data('mail-ids'),
+                        totalcheckbox = $('.checkbox.item').length;
                     checkedItemCount += 1;
                     mailIds += index + ',';
                     $('.multiple-action').data('mail-ids', mailIds);
@@ -1269,10 +1429,25 @@ function ActionTrigger() {
                             ma.defineAction('multipleAction2');
                             ma.defineAction('multipleAction3');
                             ma.defineAction('multipleAction4');
-                            ma.multipleAction1('remove', 'user_management', false, true);
-                            ma.multipleAction2('trash', 'incoming_mail', false, true);
-                            ma.multipleAction3('trash', 'outgoing_mail', false, true);
-                            ma.multipleAction4('remove', 'field_section', false, true);
+                            ma.defineAction('multipleAction5');
+                            ma.defineAction('multipleAction6');
+
+                            if (checkedItemCount == totalcheckbox) {
+                                ma.multipleAction1('remove', 'user_management', true);
+                                ma.multipleAction2('trash', 'incoming_mail', true);
+                                ma.multipleAction3('trash', 'outgoing_mail', true);
+                                ma.multipleAction4('remove', 'trash_can', true);
+                                ma.multipleAction4('recovery', 'trash_can', true);
+                                ma.multipleAction5('remove', 'field_section', true);
+                            } else if (checkboxAction != totalcheckbox) {
+                                console.log('SELECTED');
+                                ma.multipleAction1('remove', 'user_management', false, true);
+                                ma.multipleAction2('trash', 'incoming_mail', false, true);
+                                ma.multipleAction3('trash', 'outgoing_mail', false, true);
+                                ma.multipleAction4('remove', 'trash_can', false, true);
+                                ma.multipleAction4('recovery', 'trash_can', false, true);
+                                ma.multipleAction5('remove', 'field_section', false, true);
+                            }
                         } else if (checkedItemCount < 2) {
                             $('.multiple-action').addClass('hide');
                         }
@@ -1439,10 +1614,11 @@ function ActionTrigger() {
                                 $('.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form  button').remove();
                                 $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
                                 if (result.status !== 'error' && result.status !== 'failed') {
-                                    
+
                                     $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(1).text(result.data['mail_number']);
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(2).text(result.data['subject']);
+                                    $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(5).text(result.data['date']);
                                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                                     $('.action-msg-notification').removeClass('error');
@@ -1506,10 +1682,10 @@ function ActionTrigger() {
                             }
                             $.ajax({
                                 type: "POST",
-                                url: baseURL() + '/user/om_action_exec',
+                                url: baseURL() + '/om_action_exec',
                                 data: {
                                     request_data: JSON.stringify({
-                                        action: 'send',
+                                        action: 're_send',
                                         om_data: fdata,
                                         t: $.cookie('t')
                                     })
@@ -1541,9 +1717,185 @@ function ActionTrigger() {
                     });
                 });
             },
-            printMail = function(index, mailType, mailNumber, pdfLayout) {
+            printMail = function (index, mailType, mailNumber, pdfLayout) {
                 mailNumber = mailNumber.replace(/\//g, '&sol;');
+                if (mailType == 'sk') {
+                    mailType = 'om';
+                } else if (mailType == 'sm') {
+                    mailType = 'im';
+                }
                 window.open(baseURL() + '/pdf-layout/view/' + pdfLayout + '/' + mailType + '/' + encodeURIComponent(mailNumber) + '/' + $.cookie('t'));
+            },
+            sendMail = function (index, mailData, targetToHide) {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').unbind('click');
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: baseURL() + '/om_action_exec',
+                        data: {
+                            request_data: JSON.stringify({
+                                action: 're_send',
+                                om_data: mailData,
+                                t: $.cookie('t')
+                            })
+                        },
+                        dataType: "json",
+                    }).done(function () {
+
+                    }).fail(function () {
+
+                    }).always(function (result) {
+                        if (result.status == 'success') {
+                            $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
+                            $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
+
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').addClass('success');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'failed') {
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').addClass('failed');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'error') {
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        }
+                    });
+                });
+            },
+            removeTrash = function (index, mailNumber) {
+                var actionExecutor = new ASMPActionExecutor();
+                $('.confirm-box#trashCan').remove();
+                $('.action-msg-notification').after('<div class="confirm-box hide" id="trashCan"></div>');
+                $('.confirm-box#trashCan').append('<p>Apakah Anda Yakin Ingin Menghapusnya?</p>');
+                $('.confirm-box#trashCan').append('<button class="button yes-btn">Ya</button>');
+                $('.confirm-box#trashCan').append('<button class="button no-btn">Tidak</button>');
+                //console.log('NEW INDEX: ' + index);
+                $('.table-container#trashCan .action-btn.remove#item' + index).unbind('click');
+                $('.table-container#trashCan .action-btn.remove#item' + index).click(function () {
+                    //console.log(index);
+                    var
+                        promptInp = false,
+                        uPass = '';
+                    $('#checkAll').attr('disabled', 'disabled');
+                    $('.checkmark.all').attr('disabled', 'disabled');
+                    $('.checkbox.item').attr('disabled', 'disabled');
+                    $('.confirm-box#trashCan').removeClass('hide');
+                    $('.confirm-box#trashCan .yes-btn').click(function () {
+                        $('.confirm-box#trashCan').addClass('hide');
+                        $('#checkAll').removeAttr('disabled');
+                        $('.checkmark.all').removeAttr('disabled');
+                        $('.checkbox.item').removeAttr('disabled');
+                        $('.prompt-box form .prompt-submit').remove();
+                        if ($('.prompt-box form .prompt-submit').length === 0) {
+                            $('<button></buton>').attr({
+                                type: 'submit',
+                                class: 'button prompt-submit',
+                                id: 'id' + index
+                            }).text('Submit').appendTo('.prompt-box form');
+                        }
+                        $('.prompt-box').removeClass('hide');
+                        $('.dim-light').removeClass('hide-elemet');
+                        $('.prompt-box form input#uPass').focus();
+                        $('.prompt-box form .prompt-submit#id' + index).click(function () {
+                            promptInp = true;
+                            uPass = $('.prompt-box form input#uPass').val();
+                            if (promptInp != false) {
+                                //console.log(uPass, index);
+                                actionExecutor.actionName = 'removeTrash';
+                                actionExecutor.actionUrl = baseURL() + '/remove_item';
+                                actionExecutor.actionData = {
+                                    id: index,
+                                    item_type: 'trash_can',
+                                    selected_item: false,
+                                    all_item: false,
+                                    item_data: {
+                                        mail_number: mailNumber,
+                                        password: uPass
+                                    },
+                                    t: $.cookie('t')
+                                };
+                                actionExecutor.itemTarget = '.item';
+                                actionExecutor.exec({
+                                    haveID: true,
+                                    removeTarget: true
+                                });
+                                $('.prompt-box form input#uPass').val('');
+                                $('.prompt-box').addClass('hide');
+                                $('.dim-light').addClass('hide-elemet');
+                                $('.prompt-box form .prompt-submit').remove();
+                                uPass = '';
+                                confirm = false;
+                                promptInp = false;
+                            }
+                        });
+                        $('.prompt-box .close-btn').click(function () {
+                            //console.log('prompt-box::before');
+                            $('.prompt-box').addClass('hide');
+                            $('.dim-light').addClass('hide-elemet');
+                        });
+                    });
+                    $('.confirm-box#trashCan .no-btn').click(function () {
+                        $('.confirm-box#trashCan').addClass('hide');
+                        $('#checkAll').removeAttr('disabled');
+                        $('.checkmark.all').removeAttr('disabled');
+                        $('.checkbox.item').removeAttr('disabled');
+                    });
+                });
+            },
+            recoverMail = function (index, mailData) {
+                var actionExecutor = new ASMPActionExecutor();
+                $('.table-container #mailAction .action-btn.recovery#item' + index).unbind('click');
+                $('.table-container #mailAction .action-btn.recovery#item' + index).click(function () {
+                    console.log(index);
+                    actionExecutor.actionName = 'recoverMail';
+                    actionExecutor.actionUrl = baseURL() + '/recovery_mail';
+                    actionExecutor.actionData = {
+                        id: index,
+                        token: $.cookie('t'),
+                        item_data: JSON.stringify(mailData),
+                        multiple: false
+                    };
+                    actionExecutor.itemTarget = '.item';
+                    actionExecutor.exec({
+                        multipleAction: false,
+                        haveID: true,
+                        removeTarget: true
+                    });
+                });
             },
             currTrigger = '';
 
@@ -1565,6 +1917,18 @@ function ActionTrigger() {
                 break;
             case 'edit_mail':
                 currTrigger = editMail;
+                break;
+            case 'send_mail':
+                currTrigger = sendMail;
+                break;
+            case 'print_mail':
+                currTrigger = printMail;
+                break;
+            case 'remove_trash':
+                currTrigger = removeTrash;
+                break;
+            case 'recover_mail':
+                currTrigger = recoverMail;
                 break;
             default:
                 console.log('No Trigger Found!');

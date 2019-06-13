@@ -155,16 +155,21 @@ $(document).ready(function () {
                 ma.defineAction('multipleAction2');
                 ma.defineAction('multipleAction3');
                 ma.defineAction('multipleAction4');
+                ma.defineAction('multipleAction5');
+                ma.defineAction('multipleAction6');
                 ma.multipleAction1('remove', 'user_management', true);
                 ma.multipleAction2('trash', 'incoming_mail', true);
                 ma.multipleAction3('trash', 'outgoing_mail', true);
-                ma.multipleAction4('remove', 'field_section', true);
+                ma.multipleAction4('remove', 'trash_can', true);
+                ma.multipleAction4('recovery', 'trash_can', true);
+                ma.multipleAction5('remove', 'field_section', true);
             } else if (checkedItemCount < 2) {
                 $('.multiple-action').addClass('hide');
                 ma.deleteAction('multipleAction1');
                 ma.deleteAction('multipleAction2');
                 ma.deleteAction('multipleAction3');
                 ma.deleteAction('multipleAction4');
+                ma.deleteAction('multipleAction5');
             }
         }
 
@@ -311,7 +316,7 @@ $(document).ready(function () {
                         '<button class="button action-btn view" id="item' + i + '"><i class="fa fa-eye"></i></button>'
                     );
                     $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
-                        '<button class="button action-btn trash" id="item' + i + '"><i class="fa fa-times"></i></button>'
+                        '<button class="button action-btn trash" id="item' + i + '"><i class="fa fa-trash"></i></button>'
                     );
                     atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
                     atrgr.defineTrigger('viewMailOM' + i, 'view_mail');
@@ -331,61 +336,63 @@ $(document).ready(function () {
         });
     });
 
-    // $('<div></div>').attr({
-    //     class: 'mail-top-number'
-    // }).html('<p><b>' + i + '.Surat Keluar</b></p>').appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+    $('.button.trash-can-btn').click(function(){
+        window.location.replace(baseURL() + '/tong-sampah');
+    });
 
-    // $('<div></div>').attr({
-    //     class: 'mail-header'
-    // }).html(
-    //     '<h1>PT.Casual Outfit</h1>' +
-    //     '<h5>Jln.InfityLoop No.32</h2>' +
-    //     '<h5>Telp.022-123-456 / Fax.13421423</h3>'
-    // ).appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
-    
-    // $('<div></div>').attr({
-    //     class: 'mail-information'
-    // }).html(
-    //     '<p class="info-txt"><b>Nomor Surat:</b> ' + result.data[i - 1].mail_number + '</p>' +
-    //     '<p class="info-txt"><b>Perihal:</b> ' + result.data[i - 1].subject + '</p>' +
-    //     '<p class="info-txt"><b>Dari:</b> ' + result.data[i - 1].sender + '</p>' +
-    //     '<p class="info-txt"><b>Kepada:</b> ' + result.data[i - 1].receiver + '</p>' +
-    //     '<p class="info-txt"><b>Tanggal:</b> ' + result.data[i - 1].date + '</p>'
-    // ).appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+    $('.table-container#trashCan .item-list').ready(function () {
+        $.ajax({
+            type: "POST",
+            url: baseURL() + '/trash_can/load',
+            dataType: "json",
+            data: {
+                t: $.cookie('t')
+            }
+        }).done(function () {
 
-    // $('<div></div>').attr({
-    //     class: 'mail-contents'
-    // }).html('<p>' + result.data[i - 1].contents + '</p>').appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
-    
-    // $('<button></button>').attr({
-    //     class: 'button mail-btn print'
-    // })
-    // .html('<i class="fa fa-print"></i>')
-    // .click(function() {
-            
-    // })
-    // .appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+        }).fail(function () {
 
-    // if (result.data[i - 1].mail_send == false) {
-    //     $('<button></button>').attr({
-    //         class: 'button mail-btn edit'
-    //     })
-    //     .html('<i class="fa fa-edit"></i>')
-    //     .click(function() {
-            
-    //     })
-    //     .appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
+        }).always(function (result) {
+            if ($.isArray(result.data)) {
+                var atrgr = new ActionTrigger(),
+                    itemData;
+                //console.log(result.data.length);
+                for (var i = 1; i < result.data.length + 1; i++) {
+                    console.log(result.data[i - 1].subject);
+                    itemData = itemData = JSON.stringify(result.data[i - 1]);
+                    $('.table-container#trashCan .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i).attr('data-itemdata', itemData);
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(4).text(result.data[i - 1].status);
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
+                    
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        '<button class="button action-btn recovery" id="item' + i + '"><i class="fa fa-recycle"></i></button>'
+                    );
 
-    //     $('<button></button>').attr({
-    //         class: 'button mail-btn send'
-    //     })
-    //     .html('<i class="fa fa-paper-plane"></i>')
-    //     .click(function() {
+                    $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        '<button class="button action-btn remove" id="item' + i + '"><i class="fa fa-times"></i></button>'
+                    );
+                    atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                    atrgr.defineTrigger('removeTrash' + i, 'remove_trash');
+                    atrgr.defineTrigger('recoverMail' + i, 'recover_mail');
+                    atrgr['checkboxAction' + i](i);
+                    atrgr['removeTrash' + i](i, result.data[i -1].mail_number);
+                    atrgr['recoverMail' + i](i, result.data[i - 1]);
+                }
 
-    //     })
-    //     .appendTo('.casual-theme.mail-views .casual-theme.mail-view#id' + i + ' .modal2ndlayer');
-    // }
-    
+                if (Number.parseInt(result.paging.status) == 1) {
+                    console.log('Entering...');
+                    var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
+                    pagination = pgnt.paginate();
+                }
+
+            }
+        });
+    });
 
     $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').unbind('click');
     $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function () {
@@ -395,18 +402,4 @@ $(document).ready(function () {
         $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
 
     });
-
-    // var
-    //     i = 1,
-    //     itemLength = $('.checkbox').length,
-    //     atrgr = new ActionTrigger();
-    // for (; i < itemLength + 1; i++) {
-    //     console.log(i);
-    //     atrgr.defineTrigger('chekboxAction' + i, 'checkbox_action');
-    //     atrgr.defineTrigger('throwMailToTrash' + i, 'throw_mail_tt');
-    //     atrgr.defineTrigger('viewMail' + i, 'view_mail');
-    //     atrgr.execTrigger('chekboxAction' + i, i);
-    //     atrgr.execTrigger('throwMailToTrash' + i, i);
-    //     atrgr.execTrigger('viewMail' + i, i);
-    // }
 });

@@ -1130,17 +1130,16 @@ class Admin extends CI_Controller
                     'id' => $layouts_count + 1,
                     'layout_name' => $data['layout_name'],
                     'layout_data' => $layout_data,
-                    'layout_items' => implode(',', $data['choiced_cd']),
-                    'pdf_page_setup' => $pdf_page_setup,
+                    'layout_page_setup' => $pdf_page_setup,
                 ));
                 if ($this->db->affected_rows())
                 {
                     $this->db->insert('pdf_layouts', array(
                         'id' => $layouts_count + 1,
-                        'pdf_layout_name' => $data['layout_name'],
-                        'pdf_layout_data' => $layout_data,
-                        'pdf_layout_status' => 'nonactive',
-                        'pdf_page_setup' => $pdf_page_setup,
+                        'layout_name' => $data['layout_name'],
+                        'layout_data' => $layout_data,
+                        'layout_status' => 'nonactive',
+                        'layout_page_setup' => $pdf_page_setup,
                     ));
                     if ($this->db->affected_rows())
                     {
@@ -1185,7 +1184,7 @@ class Admin extends CI_Controller
             $data = json_decode($data, TRUE);
             if ($data['t'] == $this->session->userdata('CSRF'))
             {
-                $this->db->where('pdf_layout_name', $data['layout_name'])->update('pdf_layouts', array('pdf_layout_status' => $data['pdf_status']));
+                $this->db->where('layout_name', $data['layout_name'])->update('pdf_layouts', array('layout_status' => $data['pdf_status']));
                 if ($this->db->affected_rows())
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
@@ -1219,7 +1218,7 @@ class Admin extends CI_Controller
             $data = $this->input->post('data', TRUE);
             $data = json_decode($data, TRUE);
             // add token checker
-            $this->db->where('pdf_layout_name', $data['layout_name'])->delete('pdf_layouts');
+            $this->db->where('layout_name', $data['layout_name'])->delete('pdf_layouts');
             if ($this->db->affected_rows())
             {
                 $this->db->where('layout_name', $data['layout_name'])->delete('pdf_editor');
@@ -1552,10 +1551,10 @@ class Admin extends CI_Controller
                     break;
                 case 'docContents':
                     $data_name = 'docContents';
-                    if (array_key_exists('font_family', $pdf_layout_data[$data_name]) && array_key_exists('font_style', $pdf_layout_data[$data_name]) && array_key_exists('font_size', $pdf_layout_data[$data_name]))
+                    if (array_key_exists('font_family', $pdf_layout_data[$data_name]) && array_key_exists('font_size', $pdf_layout_data[$data_name]))
                         {
                         $pdf->SetFont($pdf_layout_data[$data_name]['font_family'],
-                            $pdf_layout_data[$data_name]['font_style'], $pdf_layout_data[$data_name]['font_size']);
+                            '', $pdf_layout_data[$data_name]['font_size']);
                         if (array_key_exists('w', $pdf_layout_data[$data_name]) && array_key_exists('h', $pdf_layout_data[$data_name]) && array_key_exists('xpos', $pdf_layout_data[$data_name]) && array_key_exists('ypos', $pdf_layout_data[$data_name]))
                             {
                             $pdf->writeHTMLCell($pdf_layout_data[$data_name]['w'], $pdf_layout_data[$data_name]['h'],
@@ -1966,10 +1965,10 @@ class Admin extends CI_Controller
                     break;
                 case 'docContents':
                     $data_name = 'docContents';
-                    if (array_key_exists('font_family', $pdf_layout_data[$data_name]) && array_key_exists('font_style', $pdf_layout_data[$data_name]) && array_key_exists('font_size', $pdf_layout_data[$data_name]))
+                    if (array_key_exists('font_family', $pdf_layout_data[$data_name]) && array_key_exists('font_size', $pdf_layout_data[$data_name]))
                         {
                         $pdf->SetFont($pdf_layout_data[$data_name]['font_family'],
-                            $pdf_layout_data[$data_name]['font_style'], $pdf_layout_data[$data_name]['font_size']);
+                            '', $pdf_layout_data[$data_name]['font_size']);
                         if (array_key_exists('w', $pdf_layout_data[$data_name]) && array_key_exists('h', $pdf_layout_data[$data_name]) && array_key_exists('xpos', $pdf_layout_data[$data_name]) && array_key_exists('ypos', $pdf_layout_data[$data_name]))
                             {
                             $pdf->writeHTMLCell($pdf_layout_data[$data_name]['w'], $pdf_layout_data[$data_name]['h'],

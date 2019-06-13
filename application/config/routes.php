@@ -94,6 +94,8 @@ if ($app_language == 'indonesia')
     $route['user/dashboard'] = 'user/index';
     $route['logout'] = 'user/logout';
     $route['user/surat-keluar'] = 'user/outgoing_mail';
+    $route['user/tong-sampah'] = 'user/trash_can';
+    $route['user/pdf-layout/view/(:any)/(:any)/(:any)/(:any)'] = 'user/PDF_viewer/$1/$2/$3/$4';
 }
 else if ($app_language == 'english')
 {

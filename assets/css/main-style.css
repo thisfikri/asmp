@@ -2065,6 +2065,14 @@ section.casual-theme.activity-page.main-contents {
     background-color: rgb(36, 102, 160);
 }
 
+.casual-theme.table-container table.item-list td .action-btn.recovery {
+    background-color: #26C959;
+}
+
+.casual-theme.table-container table.item-list td .action-btn.recovery:hover {
+    background-color: rgb(34, 180, 81);
+}
+
 .casual-theme.table-container table.item-list td .action-btn:disabled {
     background-color: #cac7c7;
     cursor: no-drop;
@@ -2079,18 +2087,21 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.table-container#incomingMail table.item-list,
-.casual-theme.table-container#outgoingMail table.item-list {
+.casual-theme.table-container#outgoingMail table.item-list,
+.casual-theme.table-container#trashCan table.item-list {
     margin-left: 100px;
     width: 65%;
 }
 
 .casual-theme.table-container#incomingMail table.item-list th .checkmark,
-.casual-theme.table-container#outgoingMail table.item-list th .checkmark {
+.casual-theme.table-container#outgoingMail table.item-list th .checkmark
+.casual-theme.table-container#trashCan table.item-list th .checkmark {
     left: 11px;
 }
 
 .casual-theme.table-container#incomingMail table.item-list td .checkmark,
-.casual-theme.table-container#outgoingMail table.item-list td .checkmark {
+.casual-theme.table-container#outgoingMail table.item-list td .checkmark,
+.casual-theme.table-container#trashCan table.item-list td .checkmark {
     left: 11px;
 }
 
@@ -2098,18 +2109,21 @@ section.casual-theme.activity-page.main-contents {
     width: 40%;
 }
 
-.casual-theme.table-container#outgoingMail table.item-list td .action-btn {
+.casual-theme.table-container#outgoingMail table.item-list td .action-btn,
+.casual-theme.table-container#trashCan table.item-list td .action-btn {
     width: 30%;
 }
 
 .casual-theme.table-container#incomingMail .pagination,
-.casual-theme.table-container#outgoingMail .pagination {
+.casual-theme.table-container#outgoingMail .pagination,
+.casual-theme.table-container#trashCan .pagination {
     margin-left: 100px;
     width: 65%;
 }
 
 .casual-theme.table-container#incomingMail .table-header,
-.casual-theme.table-container#outgoingMail .table-header {
+.casual-theme.table-container#outgoingMail .table-header,
+.casual-theme.table-container#trashCan .table-header {
     border: 1px solid rgba(0, 0, 0, 0.1);
     margin-left: 100px;
     width: 65%;
@@ -2139,7 +2153,8 @@ section.casual-theme.activity-page.main-contents {
     display: none;
 }
 
-.casual-theme.table-container .table-header .multiple-action-btn.trash {
+.casual-theme.table-container .table-header .multiple-action-btn.trash ,
+.casual-theme.table-container .table-header .multiple-action-btn.remove {
     background-color: #FF4400;
     font-family: H-ChakraPetch-Bold;
 }
@@ -2149,7 +2164,8 @@ section.casual-theme.activity-page.main-contents {
     font-family: H-ChakraPetch-Bold;
 }
 
-.casual-theme.table-container .table-header .add-item-btn {
+.casual-theme.table-container .table-header .add-item-btn,
+.casual-theme.table-container .table-header .multiple-action-btn.recovery {
     background-color: #26C959;
     font-family: H-ChakraPetch-Bold;
 }
@@ -2990,7 +3006,10 @@ section.casual-theme.activity-page.main-contents {
     margin: 0 3px;
 }
 
-
+.table-container#trashCan .item-list tbody tr.item .button.action-btn {
+    width: 30px;
+    margin: 0 3px;
+}
 
 .casual-theme.mail-view {
     top: 80px;

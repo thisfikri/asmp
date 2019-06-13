@@ -31,7 +31,7 @@ $(document).ready(function () {
             // }).appendTo(containerSelector + ' .modal2ndlayer');
 
             // pdf layout selection
-            $('<label></label>').attr('for', 'pdf_layout').text('PDF Layout:')
+            $('<label></label>').attr('for', 'pdf_layouts').text('PDF Layout:')
                 .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
             $('<select></select>').attr({
                 name: 'pdf_layouts'
@@ -83,7 +83,7 @@ $(document).ready(function () {
             $('<button></button>').attr({
                     type: 'submit',
                     name: 'save_om',
-                    class: 'add-om-submit save'
+                    class: 'button add-om-submit save'
                 }).html('<i class="fa fa-save"></i> Simpan').click(function () {
                     let
                         form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
@@ -136,7 +136,7 @@ $(document).ready(function () {
                                 '<button class="button action-btn view" id="item' + id + '"><i class="fa fa-eye"></i></button>'
                             );
                             $('.table-container#outgoingMail .item-list tbody tr.item.id' + id + ' td').eq(6).append(
-                                '<button class="button action-btn trash" id="item' + id + '"><i class="fa fa-times"></i></button>'
+                                '<button class="button action-btn trash" id="item' + id + '"><i class="fa fa-trash"></i></button>'
                             );
                             atrgr.defineTrigger('checkboxAction' + id, 'checkbox_action');
                             atrgr.defineTrigger('viewMail' + id, 'view_mail');
@@ -168,6 +168,13 @@ $(document).ready(function () {
                                 }
                             });
                         } else if (result.status == 'failed') {
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('error');
@@ -181,6 +188,13 @@ $(document).ready(function () {
                                 }
                             });
                         } else if (result.status == 'error') {
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('failed');
@@ -202,7 +216,7 @@ $(document).ready(function () {
             $('<button></button>').attr({
                     type: 'submit',
                     name: 'send_om',
-                    class: 'add-om-submit send'
+                    class: 'button add-om-submit send'
                 }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
                     let
                         form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
@@ -231,7 +245,101 @@ $(document).ready(function () {
                     }).fail(function () {
 
                     }).always(function (result) {
+                        if (result.status == 'success') {
+                            var pgnt = new Pagination(result.data.user_setting['row_limit'], '.item', 'page-link', '.pagination');
+                            var hideElement = '';
+                            var atrgr = new ActionTrigger();
+                            var id = 0;
+                            var itemData = JSON.stringify(result.data);
+                            id = $('.table-container#outgoingMail .item-list tbody .item').length + 1;
+                            // tambahkan item lenght untuk fungsi pagniate
+                            if ($(pgnt.itemToPaginate).not(pgnt.itemToPaginate + '.hide').length == pgnt.itemLimit) {
+                                hideElement = ' hide';
+                            }
+                            $('.table-container#outgoingMail .item-list tbody').append('<tr class="item id' + id + hideElement + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                            $('.table-container#outgoingMail .item-list tbody tr.item.id' + id).attr('data-itemdata', itemData);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(0).html('<input type="checkbox" class="checkbox item' + id + '"><span class="checkmark item' + id + '"><i class="fa fa-check"></i></span>');
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(1).text(result.data['mail_number']);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(2).text(result.data['subject']);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(3).text(result.data['sender']);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(4).text(result.data['status']);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(5).text(result.data['date']);
+                            $('.table-container#outgoingMail .item-list tbody tr.item.id' + id + ' td').eq(6).append(
+                                '<button class="button action-btn view" id="item' + id + '"><i class="fa fa-eye"></i></button>'
+                            );
+                            $('.table-container#outgoingMail .item-list tbody tr.item.id' + id + ' td').eq(6).append(
+                                '<button class="button action-btn trash" id="item' + id + '"><i class="fa fa-trash"></i></button>'
+                            );
+                            atrgr.defineTrigger('checkboxAction' + id, 'checkbox_action');
+                            atrgr.defineTrigger('viewMail' + id, 'view_mail');
+                            atrgr.defineTrigger('throwMailToTrashOM' + id, 'throw_mail_tt');
+                            atrgr['checkboxAction' + id](id);
+                            atrgr['throwMailToTrashOM' + id](id, 'om', result.data);
+                            atrgr['viewMail' + id](id);
+                            if (result.data.user_setting['paging_status'] !== 1) {
+                                paginate = pgnt.updatePgNav();
+                            }
 
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').addClass('success');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'failed') {
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+                            
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').addClass('failed');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'error') {
+                            $('.add-om-modal').css('display', 'none');
+                            $('#addOm').removeAttr('disabled');
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input select').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
+                            $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
+                            
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        }
                     });
                 })
                 .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');

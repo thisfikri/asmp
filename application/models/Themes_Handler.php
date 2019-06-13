@@ -83,6 +83,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			'id-ID' => 'surat-keluar',
 			'en-US' => 'outgoing-mail'
 		),
+		'trash-can' => array(
+			'id-ID' => 'tong-sampah',
+			'en-US' => 'trash-can'
+		),
 		'create-om' => array(
 			'id-ID' => 'buat-baru-surat-keluar',
 			'en-US' => 'create-outgoing-mail'
