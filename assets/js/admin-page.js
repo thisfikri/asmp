@@ -361,88 +361,215 @@ $(document).ready(function () {
         });
     });
 
-    // user management item loader
-    $('.table-container#userManagement .item-list').ready(function () {
-        $.ajax({
-            type: "POST",
-            url: baseURL() + '/admin/user_management/load',
-            dataType: "json",
-            data: {
-                t: $.cookie('t')
-            }
-        }).done(function () {
-
-        }).fail(function () {
-
-        }).always(function (result) {
-            if ($.isArray(result.data)) {
-                var atrgr = new ActionTrigger();
-                //console.log(result.data.length);
-                for (var i = 1; i < result.data.length + 1; i++) {
-                    $('.table-container#userManagement .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td></tr>');
-                    $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
-                    $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].true_name);
-                    $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].position);
-                    $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(3).append(
-                        '<button class="button action-btn remove" id="item' + i + '"><i class="fa fa-times"></i></button>'
-                    );
-                    atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
-                    atrgr.defineTrigger('deleteUser' + i, 'delete_user');
-                    atrgr['checkboxAction' + i](i);
-                    atrgr['deleteUser' + i](i, result.data[i - 1].true_name);
+    console.log(window.location.href, baseURL() + '/bidang-bagian');
+    if (window.location.href == baseURL() + '/admin/user-management') {
+        // user management item loader
+        $('.table-container#userManagement .item-list').ready(function () {
+            $.ajax({
+                type: "POST",
+                url: baseURL() + '/admin/user_management/load',
+                dataType: "json",
+                data: {
+                    t: $.cookie('t')
                 }
-            } else {
-                $('</p>').addClass('not-found-msg').html(result.data).appendTo('.table-container#userManagement .table-header');
-            }
-        });
-    });
+            }).done(function () {
 
-    // field/sections item loader
-    $('.table-container#fieldSections .item-list').ready(function () {
-        $.ajax({
-            type: "POST",
-            url: baseURL() + '/admin/field_sections/load',
-            dataType: "json",
-            data: {
-                t: $.cookie('t')
-            }
-        }).done(function () {
+            }).fail(function () {
 
-        }).fail(function () {
-
-        }).always(function (result) {
-            if ($.isArray(result.data)) {
-                var atrgr = new ActionTrigger();
-                for (var i = 1; i < result.data.length + 1; i++) {
-                    $('.table-container#fieldSections .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td></tr>');
-                    $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
-                    $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].field_section_name);
-                    $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].task);
-                    $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(3).append(
-                        '<button class="button action-btn remove" id="item' + i + '"><i class="fa fa-times"></i></button>'
-                    );
-
-                    if (result.data[i - 1].disable_action) {
-                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td .checkbox.item' + i).attr('disabled', true);
-                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td .checkmark.item' + i).attr('disabled', true);
-                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td .action-btn.remove#item' + i).attr('disabled', true);
+            }).always(function (result) {
+                if ($.isArray(result.data)) {
+                    var atrgr = new ActionTrigger();
+                    //console.log(result.data.length);
+                    for (var i = 1; i < result.data.length + 1; i++) {
+                        $('.table-container#userManagement .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td></tr>');
+                        $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                        $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].true_name);
+                        $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].position);
+                        $('.table-container#userManagement .item-list tbody tr.item.id' + i + ' td').eq(3).append(
+                            '<button class="button action-btn remove" id="item' + i + '"><i class="fa fa-times"></i></button>'
+                        );
+                        atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                        atrgr.defineTrigger('deleteUser' + i, 'delete_user');
+                        atrgr['checkboxAction' + i](i);
+                        atrgr['deleteUser' + i](i, result.data[i - 1].true_name);
                     }
-                    atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
-                    atrgr.defineTrigger('deleteFieldSection' + i, 'delete_field_section');
-                    atrgr['checkboxAction' + i](i);
-                    atrgr['deleteFieldSection' + i](i, result.data[i - 1].field_section_name);
+                } else {
+                    $('</p>').addClass('not-found-msg').html(result.data).appendTo('.table-container#userManagement .table-header');
                 }
-                //console.log(Number.parseInt(result.paging.limit));
-                if (Number.parseInt(result.paging.status) == 1) {
-                    //console.log('Entering...');
-                    var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
-                    pagination = pgnt.paginate();
-                }
-            } else {
-                $('</p>').addClass('not-found-msg').html(result.data).appendTo('.table-container#fieldSections .table-header');
-            }
+            });
         });
+    } else if (window.location.href == baseURL() + '/admin/bidang-bagian') {
+        // field/sections item loader
+        $('.table-container#fieldSections .item-list').ready(function () {
+            $.ajax({
+                type: "POST",
+                url: baseURL() + '/admin/field_sections/load',
+                dataType: "json",
+                data: {
+                    t: $.cookie('t')
+                }
+            }).done(function () {
+
+            }).fail(function () {
+
+            }).always(function (result) {
+                if ($.isArray(result.data)) {
+                    var atrgr = new ActionTrigger();
+                    for (var i = 1; i < result.data.length + 1; i++) {
+                        $('.table-container#fieldSections .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td></tr>');
+                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].field_section_name);
+                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].task);
+                        $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td').eq(3).append(
+                            '<button class="button action-btn remove" id="item' + i + '"><i class="fa fa-times"></i></button>'
+                        );
+
+                        if (result.data[i - 1].disable_action) {
+                            $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td .checkbox.item' + i).attr('disabled', true);
+                            $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td .checkmark.item' + i).attr('disabled', true);
+                            $('.table-container#fieldSections .item-list tbody tr.item.id' + i + ' td .action-btn.remove#item' + i).attr('disabled', true);
+                        }
+                        atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                        atrgr.defineTrigger('deleteFieldSection' + i, 'delete_field_section');
+                        atrgr['checkboxAction' + i](i);
+                        atrgr['deleteFieldSection' + i](i, result.data[i - 1].field_section_name);
+                    }
+                    //console.log(Number.parseInt(result.paging.limit));
+                    if (Number.parseInt(result.paging.status) == 1) {
+                        //console.log('Entering...');
+                        var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
+                        pagination = pgnt.paginate();
+                    }
+                } else {
+                    $('</p>').addClass('not-found-msg').html(result.data).appendTo('.table-container#fieldSections .table-header');
+                }
+            });
+        });
+    } else if (window.location.href == baseURL() + '/admin/surat-masuk') {
+        console.log('SURAT MASUK');
+        $('.table-container#incomingMail .item-list').ready(function () {
+            $.ajax({
+                type: "POST",
+                url: baseURL() + '/admin/incoming_mail/load',
+                dataType: "json",
+                data: {
+                    t: $.cookie('t')
+                }
+            }).done(function () {
+
+            }).fail(function () {
+
+            }).always(function (result) {
+                if ($.isArray(result.data)) {
+                    var atrgr = new ActionTrigger(),
+                        itemData;
+                    //console.log(result.data.length);
+                    for (var i = 1; i < result.data.length + 1; i++) {
+                        console.log(result.data[i - 1].subject);
+                        itemData = itemData = JSON.stringify(result.data[i - 1]);
+                        $('.table-container#incomingMail .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i).attr('data-itemdata', itemData);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(4).html(result.data[i - 1].status);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
+                        // $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        //     '<button class="button action-btn edit" id="item' + i + '"><i class="fa fa-edit"></i></button>'
+                        // );
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                            '<button class="button action-btn view" id="item' + i + '"><i class="fa fa-eye"></i></button>'
+                        );
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                            '<button class="button action-btn trash" id="item' + i + '"><i class="fa fa-trash"></i></button>'
+                        );
+                        atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                        atrgr.defineTrigger('viewMailOM' + i, 'view_mail');
+                        atrgr.defineTrigger('throwMailToTrashOM' + i, 'throw_mail_tt');
+                        atrgr['checkboxAction' + i](i);
+                        atrgr['throwMailToTrashOM' + i](i, 'om', result.data[i - 1]);
+                        atrgr['viewMailOM' + i](i);
+                    }
+
+                    if (Number.parseInt(result.paging.status) == 1) {
+                        console.log('Entering...');
+                        var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
+                        pagination = pgnt.paginate();
+                    }
+
+                }
+            });
+        });
+
+        $('.button.trash-can-btn').click(function () {
+            window.location.replace(baseURL() + '/admin/tong-sampah');
+        });
+    } else if (window.location.href == baseURL() + '/admin/tong-sampah') {
+        $('.table-container#trashCan .item-list').ready(function () {
+            $.ajax({
+                type: "POST",
+                url: baseURL() + '/trash_can/load',
+                dataType: "json",
+                data: {
+                    t: $.cookie('t')
+                }
+            }).done(function () {
+
+            }).fail(function () {
+
+            }).always(function (result) {
+                if ($.isArray(result.data)) {
+                    var atrgr = new ActionTrigger(),
+                        itemData;
+                    //console.log(result.data.length);
+                    for (var i = 1; i < result.data.length + 1; i++) {
+                        console.log(result.data[i - 1].subject);
+                        itemData = itemData = JSON.stringify(result.data[i - 1]);
+                        $('.table-container#trashCan .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i).attr('data-itemdata', itemData);
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(4).html(result.data[i - 1].status);
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
+
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                            '<button class="button action-btn recovery" id="item' + i + '"><i class="fa fa-recycle"></i></button>'
+                        );
+
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                            '<button class="button action-btn remove" id="item' + i + '"><i class="fa fa-times"></i></button>'
+                        );
+                        atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                        atrgr.defineTrigger('removeTrash' + i, 'remove_trash');
+                        atrgr.defineTrigger('recoverMail' + i, 'recover_mail');
+                        atrgr['checkboxAction' + i](i);
+                        atrgr['removeTrash' + i](i, result.data[i - 1].mail_number);
+                        atrgr['recoverMail' + i](i, result.data[i - 1]);
+                    }
+
+                    if (Number.parseInt(result.paging.status) == 1) {
+                        console.log('Entering...');
+                        var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
+                        pagination = pgnt.paginate();
+                    }
+
+                }
+            });
+        });
+    }
+
+    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').unbind('click');
+    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function () {
+        $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+        $('.casual-theme.mail-views').addClass('hide');
+        $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+        $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
     });
+
 
     // add field section
     $('.button.add-item-btn').click(function () {
@@ -561,7 +688,7 @@ $(document).ready(function () {
             //console.log($(this).is(':checked'));
         }
     });
-    
+
     $('.settings-container .save-all-settings-btn').click(function () {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         var
@@ -1544,4 +1671,145 @@ $(document).ready(function () {
             }
         });
     }
+
+    // check for update
+    $('.check-for-update').click(function(event) {
+        $('.check-for-update .fa').toggleClass('fa-circle-notch fa-spin');
+        $('.check-for-update').css('background', '#8f8f8f');
+        var
+            csrf_token = $(this).data('token');
+        $.ajax({
+                url: baseURL() + '/check_for_update/' + csrf_token,
+            })
+            .done(function() {
+                //console.log("success");
+            })
+            .fail(function() {
+                //console.log("error");
+            })
+            .always(function(result) {
+                //console.log("complete");
+                result = result.split('-');
+                if (result[0] === 'true') {
+                    $('.check-for-update .fa').toggleClass('fa-circle-notch fa-spin');
+                    $('.check-for-update').css('background', 'linear-gradient(90deg, #26C959, #23B650)');
+                    var
+                        confirm_todown = confirm('Pembaharuan Ditemukan ->' + result[1] + ' | ' + result[2] + ',  apakah anda ingin memperbaharui aplikasi?'),
+                        app_ver = result[1].split(':');
+                    app_ver = app_ver[1];
+                    if (confirm_todown === true) {
+                        $('.update-dialogue-box').css('display', 'block');
+                        $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-chevron-right\"></i> Downloading......</p>");
+                        $.ajax({
+                                url: baseURL() + '/download_new_update/' + csrf_token + '/' + app_ver,
+                                type: 'POST',
+                                data: {
+                                    file_size: result[2]
+                                }
+                            })
+                            .done(function() {
+                                //console.log("success");
+                            })
+                            .fail(function() {
+                                //console.log("error");
+                            })
+                            .always(function(result) {
+                                if (result.search('-') !== -1) {
+                                    result = result.split('-');
+                                    var msg = result[1];
+                                    result = result[0];
+                                }
+                                //console.log("complete");
+                                if (result == 'complete') {
+                                    $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-check-circle\"></i> Download Complete</p>");
+                                    $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-chevron-right\"></i> Extracting......</p>");
+                                    $.ajax({
+                                            url: baseURL() + '/extract_new_update/' + csrf_token + '/' + app_ver,
+                                        })
+                                        .done(function() {
+                                            //console.log("success");
+                                        })
+                                        .fail(function() {
+                                            //console.log("error");
+                                        })
+                                        .always(function(result) {
+                                            //console.log("complete");
+                                            if (result.search('-') !== -1) {
+                                                result = result.split('-');
+                                                var msg = result[1];
+                                                result = result[0];
+                                            }
+
+                                            if (result == 'complete') {
+                                                $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-check-circle\"></i> Extract Complete</p>");
+                                                $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-chevron-right\"></i> Memvalidasi Versi Terbaru......</p>");
+                                                $.ajax({
+                                                        url: baseURL() + '/validate_new_version/' + csrf_token + '/' + app_ver,
+                                                    })
+                                                    .done(function() {
+                                                        //console.log("success");
+                                                    })
+                                                    .fail(function() {
+                                                        //console.log("error");
+                                                    })
+                                                    .always(function(result) {
+                                                        //console.log("complete");
+                                                        if (result == 'complete') {
+                                                            $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-check-circle\"></i> Update Complete</p>");
+                                                            $('.update-dialogue-box .process-log .refresh').css('display', 'block');
+                                                        } else if (result == 'failed') {
+                                                            $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-times-circle\"></i> Validasi Gagal, Versi Bukan Versi Terbaru</p>");
+                                                            $('.update-dialogue-box .process-log .refresh').css('display', 'block');
+                                                        }
+                                                    });
+
+                                            } else if (result == 'failed') {
+                                                $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-times-circle\"></i> Extracting Failed</p>");
+                                            } else if (result == 'error') {
+                                                $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-times-circle\"></i> Error: " + msg + "</p>");
+                                                $('.update-dialogue-box .process-log .refresh').css('display', 'block');
+                                            }
+                                        });
+
+                                } else if (result == 'failed') {
+                                    if (!msg) {
+                                        $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-times-circle\"></i> Downloading Failed</p>");
+                                    } else {
+                                        $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-times-circle\"></i> " + msg + "</p>");
+                                    }
+                                }
+                            });
+
+                    }
+                } else if (result[0] === 'false') {
+                    $('.check-for-update .fa').toggleClass('fa-circle-notch fa-spin');
+                    $('.check-for-update').css('background', 'linear-gradient(90deg, #26C959, #23B650)');
+                    alert('Versi Aplikasi Anda Adalah Versi Terbaru');
+                } else {
+                    $('.check-for-update .fa').toggleClass('fa-circle-notch fa-spin');
+                    $('.check-for-update').css('background', 'linear-gradient(90deg, #26C959, #23B650)');
+                    alert('Tidak Ada Hasil');
+                }
+            });
+
+    });
+
+    $('.changelogs-container-close-btn').click(function(event) {
+        $('.changelogs-container').css('display', 'none');
+        var
+            csrf_token = $('.check-for-update').data('token');
+        $.ajax({
+                url: baseURL() + '/close_changelogs/' + csrf_token,
+            })
+            .done(function() {
+                console.log("success");
+            })
+            .fail(function() {
+                console.log("error");
+            })
+            .always(function() {
+                console.log("complete");
+            });
+
+    });
 });

@@ -43,15 +43,15 @@ $(document).ready(function () {
             });
         }
 
-        this.showFormProperties = function() {
+        this.showFormProperties = function () {
             return Object.getOwnPropertyNames(this.cFInpProp);
         }
 
-        this.getFormInputBy = function(dataType) {
+        this.getFormInputBy = function (dataType) {
             var
                 propertyNames = this.showFormProperties(),
                 finalResult = null;
-            if (dataType == 'string' ) {
+            if (dataType == 'string') {
                 finalResult = '';
                 for (let i = 0; i < propertyNames.length - 2; i++) {
                     finalResult += propertyNames[i] + ': ' + this.cFInpProp[propertyNames[i]] + ', ';
@@ -242,16 +242,37 @@ $(document).ready(function () {
                         $(".msg-box.hide").removeClass('success');
                         $(".msg-box.hide").removeClass('warning');
                         $(".msg-box.hide").addClass('error');
-                        console.log(result.message.search('~'));
+                        // console.log(result.message.search('~'));
                         if (result.message.search('~') !== -1) {
                             console.log('Found');
                             var
                                 msglist = result.message.split('~'),
                                 i = 0;
-                            console.log(msglist);
+                            // console.log(msglist);
                             for (; i < msglist.length - 1; i++) {
                                 $(".msg-box.hide").append('<p class="msg-txt">' + msglist[i] + '</p>');
-                                console.log(i);
+                                // console.log(i);
+                            }
+                        } else {
+                            $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
+                        }
+                        break;
+                    case 'warning':
+                        $('.login-btn').html('Masuk <i class="fa fa-sign-in-alt"></i>');
+                        $(".msg-box.hide").css("display", "block");
+                        $(".msg-box.hide").removeClass('success');
+                        $(".msg-box.hide").removeClass('error');
+                        $(".msg-box.hide").addClass('warning');
+                        console.log(result.message.search('~'));
+                        if (result.message.search('~') !== -1) {
+                            // console.log('Found');
+                            var
+                                msglist = result.message.split('~'),
+                                i = 0;
+                            // console.log(msglist);
+                            for (; i < msglist.length - 1; i++) {
+                                $(".msg-box.hide").append('<p class="msg-txt">' + msglist[i] + '</p>');
+                                // console.log(i);
                             }
                         } else {
                             $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
@@ -522,73 +543,73 @@ $(document).ready(function () {
             cnaForm = new ASMPFormHandler($('.cna-box form')),
             formInput = cnaForm.getFormInputBy('pureObject');
         $.ajax({
-            url: baseURL() + '/regnuser',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                username: formInput['username'],
-                true_name: formInput['true_name'],
-                password: formInput['password'],
-                passconfirm: formInput['passconfirm'],
-                email: formInput['email'],
-                field_section: formInput['field_section'],
-                recovery_id: formInput['recovery_id'],
-                t: $.cookie('t')
-            }
+                url: baseURL() + '/regnuser',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    username: formInput['username'],
+                    true_name: formInput['true_name'],
+                    password: formInput['password'],
+                    passconfirm: formInput['passconfirm'],
+                    email: formInput['email'],
+                    field_section: formInput['field_section'],
+                    recovery_id: formInput['recovery_id'],
+                    t: $.cookie('t')
+                }
 
-        })
-        .done(function () {
-            console.log("success");
-        })
-        .fail(function () {
-            console.log("error");
-            $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
-        })
-        .always(function (result) {
-            console.log("complete");
-            switch (result.status) {
-                case 'success':
-                    window.location.replace(result.message);
-                    break;
-                case 'failed':
-                    window.location.replace(result.message);
-                    break;
-                case 'error':
-                    $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
-                    $(".msg-box.hide").css("display", "block");
-                    $(".msg-box.hide").removeClass('success');
-                    $(".msg-box.hide").removeClass('warning');
-                    $(".msg-box.hide").addClass('error');
-                    console.log(result.message.search('~'));
-                    if (result.message.search('~') !== -1) {
-                        console.log('Found');
-                        var
-                            msglist = result.message.split('~'),
-                            i = 0;
-                        console.log(msglist);
-                        for (; i < msglist.length - 1; i++) {
-                            $(".msg-box.hide").append('<p class="msg-txt">' + msglist[i] + '</p>');
-                            console.log(i);
+            })
+            .done(function () {
+                console.log("success");
+            })
+            .fail(function () {
+                console.log("error");
+                $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
+            })
+            .always(function (result) {
+                console.log("complete");
+                switch (result.status) {
+                    case 'success':
+                        window.location.replace(result.message);
+                        break;
+                    case 'failed':
+                        window.location.replace(result.message);
+                        break;
+                    case 'error':
+                        $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
+                        $(".msg-box.hide").css("display", "block");
+                        $(".msg-box.hide").removeClass('success');
+                        $(".msg-box.hide").removeClass('warning');
+                        $(".msg-box.hide").addClass('error');
+                        console.log(result.message.search('~'));
+                        if (result.message.search('~') !== -1) {
+                            console.log('Found');
+                            var
+                                msglist = result.message.split('~'),
+                                i = 0;
+                            console.log(msglist);
+                            for (; i < msglist.length - 1; i++) {
+                                $(".msg-box.hide").append('<p class="msg-txt">' + msglist[i] + '</p>');
+                                console.log(i);
+                            }
+                        } else {
+                            $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
                         }
-                    } else {
-                        $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
-                    }
-                    break;
-                default:
-                    $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
-                    if (result.message.search('~') !== -1) {
-                        var
-                            msglist = result.message.split('~'),
-                            i = 0;
-                        console.log(msglist);
-                        for (; i < msglist.length - 1; i++) {
-                            $(".msg-box.hide").append('<p class="msg-txt">' + msglist[i] + '</p>');
-                            console.log(i);
+                        break;
+                    default:
+                        $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
+                        if (result.message.search('~') !== -1) {
+                            var
+                                msglist = result.message.split('~'),
+                                i = 0;
+                            console.log(msglist);
+                            for (; i < msglist.length - 1; i++) {
+                                $(".msg-box.hide").append('<p class="msg-txt">' + msglist[i] + '</p>');
+                                console.log(i);
+                            }
+                        } else {
+                            $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
                         }
-                    } else {
-                        $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
-                    }
-            }
-        });
+                }
+            });
     });
 });

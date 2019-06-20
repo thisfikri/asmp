@@ -8,9 +8,14 @@
     <link rel="icon" href="<?php echo base_url('assets/images/logo/asmp-browser-icon.png');?>" type="image/png">
     <link rel="stylesheet" href="<?php echo base_url('assets/css/main-style.css');?>">
     <link rel="stylesheet" href="<?php echo base_url('assets/framework/font-awesome/css/fontawesome-all.min.css');?>">
+    <style type="text/css" media="all">
+		@import "<?php echo site_url().'assets/widgEditor_1.0.1/css/widgEditor.css';?>";
+	</style>
 </head>
 
 <body class="casual-theme" id="adminDashboard">
+<iframe src="<?php echo site_url('assets/audio/2-seconds-of-silence.mp3');?>" allow="autoplay" style="display:none"></iframe>
+<audio src="<?php echo site_url('assets/audio/system-fault.mp3');?>" type="audio/mp3"></audio>
     <!-- Main Header -->
     <header class="casual-theme activity-page header">
         <!-- <button class="navbar-icon arrow">
@@ -25,9 +30,8 @@
 
         <button class="button options"><i class="fa fa-ellipsis-v"></i></button>
         <div class="notification-area">
-            <?php if ($new_im['display']) :?>
-                <span class="fa-stack mail-count-num"><i class="fa fa-circle fa-stack-2x"></i><b class="fa-stack-1x" style="color: #48c8d1"><?php echo $new_im['count']; ?></b></span>
-            <?php endif;?>
+        <span class="fa-stack mail-count-num" style="<?php echo ($new_im['display']) ? 'display: inline-block' : 'display: none';?>">
+                <i class="fa fa-circle fa-stack-2x"></i><b class="fa-stack-1x" style="color: #48c8d1"><?php echo $new_im['count']; ?></b></span>
             <button class="button notification"><i class="fa fa-bell fa-fw"></i></button>
         </div>
     </header>
@@ -149,6 +153,6 @@
             <li><a href="<?php echo site_url('admin/surat-masuk');?>"><i class="fa fa-inbox"></i> Incoming Mail</a></li>
             <li><a href="<?php echo site_url('admin/pdf-layouts');?>"><i class="fa fa-file-pdf"></i> PDF Layouts</a></li>
             <li><a href="<?php echo site_url('admin/bidang-bagian');?>"><i class="fa fa-list"></i> Field/Sections</a></li>
-            <li><a href="<?php echo site_url('admin/tentang');?>"><i class="fa fa-info-circle"></i> About</a></li>
+            <li><a href="<?php echo site_url('admin/tentang-aplikasi');?>"><i class="fa fa-info-circle"></i> About</a></li>
         </ul>
     </nav>

@@ -15,7 +15,6 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Aplikasi ini dibuat dan dikembangkan untuk dipergunakan dalam hal administrasi perkantoran
  */
 
-
 /**
  * Admin Class
  *
@@ -174,16 +173,9 @@ class Admin extends CI_Controller
         $user_profile_data = $query->result();
 
         /**
-         * $wdata - Where Data
          *
-         * @var array
          */
-        $wdata = array(
-            'username' => $username,
-            'status' => 'baru',
-        );
-
-        $query = $this->db->where($wdata)->get('incoming_mail');
+        $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
 
         /**
          * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
@@ -191,6 +183,16 @@ class Admin extends CI_Controller
          * @var int
          */
         $new_im_count = $query->num_rows();
+
+        /**
+         *
+         */
+        $query = $this->db->where_in('status', array('lawas', 'lawas-dpss', 'lawas-dpssf', 'lawas-accepted', 'lawas-replied'))->like('username', $this->_username)->get('incoming_mail');
+
+        /**
+         *
+         */
+        $old_im = $query->num_rows();
 
         /**
          * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
@@ -217,24 +219,6 @@ class Admin extends CI_Controller
                 'count' => $new_im_count,
             );
         }
-
-        $query = $this->db->where('username', $username)->get('incoming_mail');
-
-        /**
-         * $im_count - Menampung jumlah surat masuk yang ada pada incoming_mail
-         *
-         * @var int
-         */
-        $im_count = $query->num_rows();
-
-        $query = $this->db->where('username', $username)->get('outgoing_mail');
-
-        /**
-         * $om_count - Digunakan untuk menampilkan jumlah surat keluar yang ada pada table
-         *
-         * @var int
-         */
-        $om_count = $query->num_rows();
 
         $query = $this->db->where(array('username' => $username, 'mail_type' => 'incoming_mail'))->get('trash_can');
 
@@ -266,21 +250,14 @@ class Admin extends CI_Controller
         $query = $this->db->where('username', $username)->get('users');
 
         /**
-         * $row - Menapung data dari table user $username dan mengubah status welcome
+         * $row - Menapung data dari table user $username dan mengubah status logged
          *
          * @var object
          */
         $row = $query->result();
 
         //Cek status notifikasi welcome
-        if ($row[0]->welcome_status == 'TRUE')
-        {
-            $welcome_status = TRUE;
-        }
-        else
-        {
-            $welcome_status = false;
-        }
+        $logged_status = $row[0]->logged;
 
         /**
          * $vdata - View Data
@@ -288,16 +265,15 @@ class Admin extends CI_Controller
          */
         $vdata = array(
             'uprof_data' => $user_profile_data[0],
-            'im_count' => $im_count,
-            'om_count' => $om_count,
             'imtr_count' => $imtr_count,
             //'omtr_count' => $omtr_count,
             'user_count' => $user_count,
             'user_logs' => $this->activity_log->get_activity_log(),
-            'welcome_status' => $welcome_status,
+            'logged_status' => $logged_status,
             'name' => $row[0]->true_name,
             'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
             'new_im' => $new_im,
+            'old_im' => $old_im,
         );
 
         $this->load->view('admin/dashboard', $vdata);
@@ -321,15 +297,26 @@ class Admin extends CI_Controller
 
             if ($data['CSRF_client'] === $data['CSRF_server'])
             {
-                $this->session->unset_userdata(array('admin_login'));
-                //$this->session->sess_destroy();
-                $this->session->set_userdata('login_pg_msg', 'logout_true');
-                // Tulis log
-                $this->activity_log->create_activity_log('logout_activity', ' Telah Log Out', null, $this->_username);
-                // Ubah tipe content ke JSON
-                header('Content-Type: application/json');
-                // Mengirim output data ke client
-                echo json_encode(array('status' => 'success', 'message' => site_url('login')));
+                $this->db->where('username', $this->_username)->update('users', array('logged' => 0));
+                if ($this->db->affected_rows())
+                {
+                    $this->session->unset_userdata(array('admin_login'));
+                    //$this->session->sess_destroy();
+                    $this->session->set_userdata('login_pg_msg', 'logout_true');
+                    // Tulis log
+                    $this->activity_log->create_activity_log('logout_activity', ' Telah Log Out', null, $this->_username);
+                    // Ubah tipe content ke JSON
+                    header('Content-Type: application/json');
+                    // Mengirim output data ke client
+                    echo json_encode(array('status' => 'success', 'message' => site_url('login')));
+                }
+                else
+                {
+                    // Ubah tipe content ke JSON
+                    header('Content-Type: application/json');
+                    // Mengirim output data ke client
+                    echo json_encode(array('status' => 'failed', 'message' => $this->lang->line('logout_f')));
+                }
             }
             else
             {
@@ -479,7 +466,7 @@ class Admin extends CI_Controller
                         'paging_status' => $data['settings_data']['pagingItem'],
                         'row_limit' => $data['settings_data']['pagingLimit'],
                         'multiple_remove_action' => $data['settings_data']['mulRemAct'],
-                        'multiple_recovery_action' => $data['settings_data']['mulRecAct']
+                        'multiple_recovery_action' => $data['settings_data']['mulRecAct'],
                     );
 
                     $this->output->set_content_type('application/json')->set_output(json_encode(
@@ -504,14 +491,14 @@ class Admin extends CI_Controller
                         'app_settings' => array(
                             'mail_document_heading' => $data['settings_data']['companyName'],
                             'mail_document_address' => $data['settings_data']['companyAddress'],
-                            'mail_document_contact' => $data['settings_data']['companyContact']
+                            'mail_document_contact' => $data['settings_data']['companyContact'],
                         ),
                         'user_settings' => array(
                             'paging_status' => $data['settings_data']['pagingItem'],
                             'row_limit' => $data['settings_data']['pagingLimit'],
                             'multiple_remove_action' => $data['settings_data']['mulRemAct'],
-                            'multiple_recovery_action' => $data['settings_data']['mulRecAct']
-                        )
+                            'multiple_recovery_action' => $data['settings_data']['mulRecAct'],
+                        ),
                     );
 
                     $this->output->set_content_type('application/json')->set_output(json_encode(
@@ -539,16 +526,9 @@ class Admin extends CI_Controller
             $row = $query->result();
 
             /**
-             * $wdata - Where Data
              *
-             * @var array
              */
-            $wdata = array(
-                'username' => $this->_username,
-                'status' => 'baru',
-            );
-
-            $query = $this->db->where($wdata)->get('incoming_mail');
+            $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
 
             /**
              * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
@@ -653,16 +633,9 @@ class Admin extends CI_Controller
             $row = $query->result();
 
             /**
-             * $wdata - Where Data
              *
-             * @var array
              */
-            $wdata = array(
-                'username' => $this->_username,
-                'status' => 'baru',
-            );
-
-            $query = $this->db->where($wdata)->get('incoming_mail');
+            $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
 
             /**
              * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
@@ -713,76 +686,375 @@ class Admin extends CI_Controller
 
     // ------------------------------------------------------------------------
 
-    public function incoming_mail()
+    public function check_new_im()
     {
-        $query = $this->db->where('username', $this->_username)->get('users');
-
-        /**
-         * $user_profile_data - Data profil pengguna yang diambil dari database
-         *
-         * @var object
-         */
-        $user_profile_data = $query->result();
-
-        $row = $query->result();
-
-        /**
-         * $wdata - Where Data
-         *
-         * @var array
-         */
-        $wdata = array(
-            'username' => $this->_username,
-            'status' => 'baru',
-        );
-
-        $query = $this->db->where($wdata)->get('incoming_mail');
-
-        /**
-         * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
-         *
-         * @var int
-         */
-        $new_im_count = $query->num_rows();
-
-        /**
-         * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
-         *
-         * @var array
-         */
-        $new_im = array(
-            'display' => false,
-            'count' => 0,
-        );
-
-        // Cek jumlah surat masuk baru
-        if ($new_im_count > 0)
+        if ($this->checker->is_admin())
         {
-            $new_im = array(
-                'display' => TRUE,
-                'count' => $new_im_count,
-            );
+            $query = $this->db->where_in('status', array('baru', 'baru-accepted', 'baru-dpss', 'baru-dpssf'))->like('username', $this->_username)->get('incoming_mail');
+            $result = $query->result();
+            $im_count = $query->num_rows();
+
+            if ($result)
+            {
+                $im_status = true;
+                header('Content-Type: application/json');
+                echo json_encode(array('status' => 'success', 'newSMstatus' => $im_status, 'newSMCount' => $im_count));
+            }
+            else
+            {
+                $im_status = false;
+                header('Content-Type: application/json');
+                echo json_encode(array('status' => 'failed', 'newSMstatus' => $im_status, 'newSMCount' => $im_count));
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function view_activity()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            if ($this->checker->is_admin())
+            {
+                $mail_data = $this->input->post('mail_data', TRUE);
+                $mail_data = json_decode($mail_data, TRUE);
+                $token = $this->input->post('token', TRUE);
+                if ($token == $this->session->userdata('CSRF'))
+                {
+                    // Tulis log
+                    $this->activity_log->create_activity_log('view', 'Telah Melihat', $mail_data, $this->_username);
+
+                    $page_url = urldecode($this->input->post('page_url', TRUE));
+                    $page_url = explode('/', $page_url);
+
+                    if ($page_url[5] == 'surat-masuk')
+                    {
+                        if ($mail_data['status'] == 'baru' || $mail_data['status'] == 'baru-accepted' || $mail_data['status'] == 'baru-dpss' || $mail_data['status'] == 'baru-dpssf')
+                        {
+                            if ($mail_data['status'] == 'baru-accepted')
+                            {
+                                $status = 'lawas-accepted';
+                            }
+                            else if ($mail_data['status'] == 'baru-dpss')
+                            {
+                                $status = 'lawas-dpss';
+                            }
+                            else if ($mail_data['status'] == 'baru-dpssf')
+                            {
+                                $status = 'lawas-dpssf';
+                            }
+                            else
+                            {
+                                $status = 'lawas';
+                            }
+
+                            $this->db->where(array(
+                                'username' => $this->_username,
+                                'mail_number' => $mail_data['mail_number'],
+                            ))->update('incoming_mail', array('status' => $status));
+
+                            if ($this->db->affected_rows())
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(
+                                    array(
+                                        'status' => 'success',
+                                        'mail_status' => $status,
+                                    )
+                                ));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    log_message('error', 'token tidak sama!');
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    public function incoming_mail($load_item = '')
+    {
+        if ($this->input->is_ajax_request() && $load_item === 'load')
+        {
+            $token = $this->input->post('t', TRUE);
+            if ($token === $this->session->userdata('CSRF'))
+            {
+                $query = $this->db->where('username', $this->_username)->get('incoming_mail');
+                $result = array();
+                $result = $query->result_array();
+                $im_count = $query->num_rows();
+                $im_data_keys = array_keys($result);
+                $im_data = array();
+                $settings = $this->app_settings->get_user_settings($this->_username);
+                $paging = array();
+                $paging['status'] = $settings[0]->paging_status;
+                $paging['limit'] = $settings[0]->row_limit;
+
+                $i = 0;
+                if ($im_count > 0)
+                {
+                    for (; $i < $im_count; $i++)
+                    {
+                        unset($result[$i]['username']);
+                        unset($result[$i]['last_modified']);
+                    }
+
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'data' => $result,
+                            'paging' => $paging,
+                        )
+                    ));
+                }
+                else if ($im_count === 0)
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'data' => '<i class="fa fa-exclamation-circle"></i> Tidak Ada Surat Keluar.',
+                            'paging' => $paging,
+                        )
+                    ));
+                }
+            }
         }
         else
         {
+            $query = $this->db->where('username', $this->_username)->get('users');
+
+            /**
+             * $user_profile_data - Data profil pengguna yang diambil dari database
+             *
+             * @var object
+             */
+            $user_profile_data = $query->result();
+
+            $row = $query->result();
+
+            /**
+             *
+             */
+            $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
+
+            /**
+             * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
+             *
+             * @var int
+             */
+            $new_im_count = $query->num_rows();
+
+            /**
+             * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
+             *
+             * @var array
+             */
             $new_im = array(
-                'display' => FALSE,
-                'count' => $new_im_count,
+                'display' => false,
+                'count' => 0,
             );
+
+            // Cek jumlah surat masuk baru
+            if ($new_im_count > 0)
+            {
+                $new_im = array(
+                    'display' => TRUE,
+                    'count' => $new_im_count,
+                );
+            }
+            else
+            {
+                $new_im = array(
+                    'display' => FALSE,
+                    'count' => $new_im_count,
+                );
+            }
+
+            $data = array(
+                'uprof_data' => $user_profile_data[0],
+                'new_im' => $new_im,
+                'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
+                'app_settings' => $this->app_settings->get_app_settings()[0],
+            );
+
+            $this->load->view('admin/incoming-mail', $data, FALSE);
         }
-
-        $query = $this->db->where('username', $this->_username)->get('incoming_mail');
-        $im_result = $query->result();
-
-        $data = array(
-            'uprof_data' => $user_profile_data[0],
-            'new_im' => $new_im,
-            'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
-            'incoming_mail' => $im_result,
-        );
-
-        $this->load->view('admin/incoming-mail', $data, FALSE);
     }
+
+    // ------------------------------------------------------------------------
+
+    public function im_action_exec()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $requested_data = $this->input->post('request_data', TRUE);
+            $requested_data = json_decode($requested_data, TRUE);
+            if ($requested_data['token'] == $this->session->userdata('CSRF'))
+            {
+                switch ($requested_data['action'])
+                {
+                case 'disposition':
+                    $this->im_handler->disposition($requested_data['im_data'], 'json');
+                    break;
+                case 'reply':
+                    if (isset($requested_data['im_data'][0]['reply_response']) && isset($requested_data['im_data'][0]['mail_contents']))
+                        {
+                        if (empty($requested_data['im_data'][0]['reply_response']) == FALSE && empty($requested_data['im_data'][0]['mail_contents']) == FALSE)
+                            {
+                            $this->im_handler->reply($requested_data['im_data'], 'json');
+                        }
+                            else
+                            {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(
+                                array('status' => 'warning',
+                                    'message' => '<i class="fa fa-exclamation-circle"></i> tidak ada yang boleh kosong saat membuat surat masuk balasan',
+                                )
+                            ));
+                        }
+                    }
+                    break;
+                case 'throw':
+                    $this->im_handler->throw_im($requested_data['mail_data'], 'json');
+                    break;
+                default:
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'error',
+                            'message' => '<i class="fa fa-exclamation-circle"></i> action not found!',
+                        )
+                    ));
+                    break;
+                    break;
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(
+                    array(
+                        'status' => 'warning',
+                        'data' => '<i class="fa fa-exclamation-triangle"></i> Token Tidak Sama.',
+                        'paging' => $paging,
+                    )
+                ));
+            }
+        }
+        else
+        {
+            redirect('login', 'refresh');
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function trash_can($load_item = '')
+    {
+        if ($this->input->is_ajax_request() && $load_item === 'load')
+        {
+            $token = $this->input->post('t', TRUE);
+            if ($token === $this->session->userdata('CSRF'))
+            {
+                $query = $this->db->where('username', $this->_username)->get('trash_can');
+                $result = array();
+                $result = $query->result_array();
+                $trash_count = $query->num_rows();
+
+                $settings = $this->app_settings->get_user_settings($this->_username);
+                $paging = array();
+                $paging['status'] = $settings[0]->paging_status;
+                $paging['limit'] = $settings[0]->row_limit;
+
+                if ($trash_count !== 0)
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'data' => $result,
+                            'paging' => $paging,
+                        )
+                    ));
+                }
+                else if ($trash_count === 0)
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'success',
+                            'data' => '<i class="fa fa-exclamation-circle"></i> Tidak Ada Sampah.',
+                            'paging' => $paging,
+                        )
+                    ));
+                }
+            }
+        }
+        else
+        {
+            $query = $this->db->where('username', $this->_username)->get('users');
+
+            /**
+             * $user_profile_data - Data profil pengguna yang diambil dari database
+             *
+             * @var object
+             */
+            $user_profile_data = $query->result();
+
+            $row = $query->result();
+
+            /**
+             *
+             */
+            $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
+
+            /**
+             * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
+             *
+             * @var int
+             */
+            $new_im_count = $query->num_rows();
+
+            /**
+             * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
+             *
+             * @var array
+             */
+            $new_im = array(
+                'display' => false,
+                'count' => 0,
+            );
+
+            // Cek jumlah surat masuk baru
+            if ($new_im_count > 0)
+            {
+                $new_im = array(
+                    'display' => TRUE,
+                    'count' => $new_im_count,
+                );
+            }
+            else
+            {
+                $new_im = array(
+                    'display' => FALSE,
+                    'count' => $new_im_count,
+                );
+            }
+
+            $data = array(
+                'uprof_data' => $user_profile_data[0],
+                'new_im' => $new_im,
+                'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
+                'app_settings' => $this->app_settings->get_app_settings()[0],
+            );
+
+            $this->load->view('user/trash-can', $data, FALSE);
+        }
+    }
+
+    // ------------------------------------------------------------------------
 
     public function field_sections($load_fs = '')
     {
@@ -857,16 +1129,9 @@ class Admin extends CI_Controller
             $row = $query->result();
 
             /**
-             * $wdata - Where Data
              *
-             * @var array
              */
-            $wdata = array(
-                'username' => $this->_username,
-                'status' => 'baru',
-            );
-
-            $query = $this->db->where($wdata)->get('incoming_mail');
+            $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
 
             /**
              * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
@@ -1049,16 +1314,9 @@ class Admin extends CI_Controller
         $row = $query->result();
 
         /**
-         * $wdata - Where Data
          *
-         * @var array
          */
-        $wdata = array(
-            'username' => $this->_username,
-            'status' => 'baru',
-        );
-
-        $query = $this->db->where($wdata)->get('incoming_mail');
+        $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
 
         /**
          * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
@@ -1264,16 +1522,9 @@ class Admin extends CI_Controller
         $row = $query->result();
 
         /**
-         * $wdata - Where Data
          *
-         * @var array
          */
-        $wdata = array(
-            'username' => $this->_username,
-            'status' => 'baru',
-        );
-
-        $query = $this->db->where($wdata)->get('incoming_mail');
+        $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-dpssf', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
 
         /**
          * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
@@ -1733,7 +1984,7 @@ class Admin extends CI_Controller
             {
                 $query = $this->db->where(array(
                     'username' => $this->_username,
-                    'mail_number' => $mail_number
+                    'mail_number' => $mail_number,
                 ))->get('incoming_mail');
                 $mail_data = $query->result();
                 $mail_type = 'Surat Masuk';
@@ -1742,12 +1993,12 @@ class Admin extends CI_Controller
             {
                 $query = $this->db->where(array(
                     'username' => $this->_username,
-                    'mail_number' => $mail_number
+                    'mail_number' => $mail_number,
                 ))->get('outgoing_mail');
                 $mail_data = $query->result();
                 $mail_type = 'Surat Keluar';
             }
-            
+
             //
             $query = $this->db->get('app_settings');
             $settings_data = $query->result();
@@ -2467,8 +2718,64 @@ class Admin extends CI_Controller
      *
      * @return void
      */
-    public function about()
+    public function about_app()
     {
+        $query = $this->db->where('username', $this->_username)->get('users');
 
+        /**
+         * $user_profile_data - Data profil pengguna yang diambil dari database
+         *
+         * @var object
+         */
+        $user_profile_data = $query->result();
+
+        $row = $query->result();
+
+        /**
+         *
+         */
+        $query = $this->db->where_in('status', array('baru', 'baru-dpss', 'baru-accepted'))->like('username', $this->_username)->get('incoming_mail');
+
+        /**
+         * $new_im_count - Varible yang menampung jumlah bari dari incoming_mail
+         *
+         * @var int
+         */
+        $new_im_count = $query->num_rows();
+
+        /**
+         * $new_im - Variable yang digunakan untuk menyetel notifikasi untuk surat masuk baru
+         *
+         * @var array
+         */
+        $new_im = array(
+            'display' => false,
+            'count' => 0,
+        );
+
+        // Cek jumlah surat masuk baru
+        if ($new_im_count > 0)
+        {
+            $new_im = array(
+                'display' => TRUE,
+                'count' => $new_im_count,
+            );
+        }
+        else
+        {
+            $new_im = array(
+                'display' => FALSE,
+                'count' => $new_im_count,
+            );
+        }
+
+        $data = array(
+            'uprof_data' => $user_profile_data[0],
+            'new_im' => $new_im,
+            'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
+            'app_settings' => $this->app_settings->get_app_settings()[0]
+        );
+
+        $this->load->view('admin/about', $data, FALSE);
     }
 }

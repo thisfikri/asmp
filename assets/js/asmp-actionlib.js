@@ -4,10 +4,24 @@
 
 var checkedItemCount = 0;
 
+function getAccess() {
+	var url = window.location.href,
+	finalResult = '';
+	url = url.split('/');
+	finalResult = url[4];
+	if (finalResult == 'user' || finalResult == 'admin') {
+		return finalResult;
+	} else {
+		console.log('unknown access');
+	}
+}
+
+
 // -- Get Base URL --
 function baseURL() {
     var
-        baseURL = window.location.origin + '/' + window.location.pathname.split('/')[1];
+        baseURL = window.location.origin + '/' + window.location.pathname.split('/')[1] + '/' + getAccess();
+
     return encodeURI(baseURL);
 }
 
@@ -195,6 +209,7 @@ function ASMPActionExecutor() {
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('error');
                     $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').removeClass('warning');
                     $('.action-msg-notification').addClass('success');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
@@ -213,6 +228,7 @@ function ASMPActionExecutor() {
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').removeClass('warning');
                     $('.action-msg-notification').addClass('error');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
@@ -231,7 +247,22 @@ function ASMPActionExecutor() {
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('error');
+                    $('.action-msg-notification').removeClass('warning');
                     $('.action-msg-notification').addClass('failed');
+                    $('.action-msg-notification').removeClass('hide');
+                    $('.action-msg-notification').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.action-msg-notification').addClass('hide');
+                            $('.action-msg-notification').removeAttr('style');
+                        }
+                    });
+                } else if (result.status === 'warning') {
+                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    $('.action-msg-notification').removeClass('success');
+                    $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').removeClass('error');
+                    $('.action-msg-notification').addClass('warning');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
                         duration: 3000,
@@ -270,6 +301,7 @@ function ASMPActionExecutor() {
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('error');
                     $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').removeClass('warning');
                     $('.action-msg-notification').addClass('success');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
@@ -284,10 +316,11 @@ function ASMPActionExecutor() {
                     $('.checkbox').prop('checked', false);
                     $('.checkmark').css('display', 'none');
                     checkedItemCount = 0;
-                    
+
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').removeClass('warning');
                     $('.action-msg-notification').addClass('error');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
@@ -306,7 +339,22 @@ function ASMPActionExecutor() {
                     $('.action-msg-notification').html('<p>' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('error');
+                    $('.action-msg-notification').removeClass('warning');
                     $('.action-msg-notification').addClass('failed');
+                    $('.action-msg-notification').removeClass('hide');
+                    $('.action-msg-notification').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.action-msg-notification').addClass('hide');
+                            $('.action-msg-notification').removeAttr('style');
+                        }
+                    });
+                } else if (result.status === 'warning') {
+                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    $('.action-msg-notification').removeClass('success');
+                    $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').removeClass('error');
+                    $('.action-msg-notification').addClass('warning');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
                         duration: 3000,
@@ -326,21 +374,41 @@ function ASMPActionExecutor() {
                 sortMailType = '',
                 mtFirstChar = '',
                 i = 0,
+                mainUrl = window.location.href.split('/'),
+                userUrl = window.location.origin + '/' + window.location.pathname.split('/')[1] + '/user',
                 atrgr = new ActionTrigger();
-                $.ajax({
-                    type: "POST",
-                    url: this.actionUrl,
-                    data: {
-                        mail_data: JSON.stringify(mailData),
-                        token: $.cookie('t')
-                    },
-                    dataType: "json",
-                }).done(function () {
+            mainUrl.pop();
+            mainUrl = mainUrl.join('/');
+            console.log(mainUrl, userUrl);
+            $.ajax({
+                type: "POST",
+                url: this.actionUrl,
+                data: {
+                    mail_data: JSON.stringify(mailData),
+                    page_url: encodeURI(window.location.href),
+                    token: $.cookie('t')
+                },
+                dataType: "json",
+            }).done(function () {
 
-                }).fail(function () {
+            }).fail(function () {
 
-                }).always(function (result) {
-                });
+            }).always(function (result) {
+                if (result.status == 'success') {
+                    let newMailCount = Number.parseInt($('.mail-count-num b').text());
+                    if (newMailCount !== 0) {
+                        newMailCount -= 1;
+
+                        if (newMailCount === 0) {
+                            $('.mail-count-num').css('display', 'none');
+                        }
+
+                        $('.mail-count-num b').text(newMailCount);
+                    }
+
+                    $('.table-container#incomingMail .item-list tbody .item.id' + itemID + ' td').eq(4).text(result.mail_status);
+                }
+            });
             mailType = mailType.split('/');
             mailType = mailType[mailType.length - 1];
             mailType = mailType.split('-');
@@ -406,7 +474,27 @@ function ASMPActionExecutor() {
                         atrgr.defineTrigger('editMail' + itemID, 'edit_mail');
                         atrgr.defineTrigger('sendMail' + itemID, 'send_mail');
                         atrgr['editMail' + itemID](itemID, '.edit-om-modal', mailData, [settings.mailFunction.mailContainer, itemTarget]);
-                        atrgr['sendMail' + itemID](itemID, mailData, settings.mailFunction.mailContainer + ' ' + itemTarget);
+                        atrgr['sendMail' + itemID](itemID, mailData);
+                    } else if (mailData.status == 'lawas' || mailData.status == 'baru' || mailData.status == 'baru-dpss' && mainUrl == userUrl) {
+                        $('<button></button>').attr({
+                                class: 'button mail-btn disposition',
+                                id: itemID
+                            })
+                            .html('<i class="fa fa-share"></i>')
+                            .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
+
+                        atrgr.defineTrigger('dispositionMail' + itemID, 'disposition_mail');
+                        atrgr['dispositionMail' + itemID](itemID, mailData);
+                    } else if (mailData.status == 'baru-dpssf' || mailData.status == 'lawas-dpssf') {
+                        $('<button></button>').attr({
+                                class: 'button mail-btn reply',
+                                id: itemID
+                            })
+                            .html('<i class="fa fa-reply"></i>')
+                            .appendTo(settings.mailFunction.mailContainer + ' ' + itemTarget + ' .modal2ndlayer');
+
+                        atrgr.defineTrigger('replyMail' + itemID, 'reply_mail');
+                        atrgr['replyMail' + itemID](itemID, '.reply-im-modal', mailData, [settings.mailFunction.mailContainer, itemTarget]);
                     }
                 }
 
@@ -1348,8 +1436,8 @@ function ActionTrigger() {
                     actionExecutor.actionUrl = baseURL() + '/' + mailType + '_action_exec';
                     actionExecutor.actionData = {
                         id: index,
-                        token: $.cookie('t'),
                         request_data: JSON.stringify({
+                            t: $.cookie('t'),
                             action: 'throw',
                             mail_data: mailData
                         }),
@@ -1518,13 +1606,23 @@ function ActionTrigger() {
                 });
             },
             viewMail = function (index) {
-                var actionExecutor = new ASMPActionExecutor();
+                var
+                    actionExecutor = new ASMPActionExecutor(),
+                    actionUrl = baseURL() + '/view_activity',
+                    mainUrl = window.location.href.split('/');
+                mainUrl.pop();
+                mainUrl = mainUrl.join('/');
+
+                if (baseURL() !== mainUrl) {
+                    actionUrl = baseURL() + '/admin/view_activity';
+                }
                 $('.table-container #mailAction .action-btn.view#item' + index).unbind('click');
                 $('.table-container #mailAction .action-btn.view#item' + index).click(function () {
                     //console.log('View' + index);.table-container #mailAction .action-btn.view
                     $('.table-container #mailAction .action-btn.view').attr('disabled', 'disabled');
+
                     actionExecutor.actionName = actionName;
-                    actionExecutor.actionUrl = baseURL() + '/view_activity';
+                    actionExecutor.actionUrl = actionUrl;
                     actionExecutor.actionData = {
                         id: index,
                         token: $.cookie('t'),
@@ -1646,7 +1744,7 @@ function ActionTrigger() {
                                 $('.casual-theme.edit-om-modal .modal2ndlayer .form-input label').remove();
                                 $('.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form  button').remove();
                                 $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
-                            if (result.status == 'success') {
+                                if (result.status == 'success') {
 
                                     $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
                                     $('.table-container .item-list tbody .item.id' + index + ' td').eq(1).text(result.data['mail_number']);
@@ -1747,7 +1845,7 @@ function ActionTrigger() {
                             }).fail(function () {
 
                             }).always(function (result) {
-
+                                // add code
                             });
                         })
                         .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
@@ -1777,7 +1875,109 @@ function ActionTrigger() {
                 }
                 window.open(baseURL() + '/pdf-layout/view/' + pdfLayout + '/' + mailType + '/' + encodeURIComponent(mailNumber) + '/' + $.cookie('t'));
             },
-            sendMail = function (index, mailData, targetToHide) {
+            dispositionMail = function (index, mailData) {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.disposition').unbind('click');
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.disposition').click(function () {
+                    $.ajax({
+                        type: "POST",
+                        url: baseURL() + '/im_action_exec',
+                        data: {
+                            request_data: JSON.stringify({
+                                im_data: mailData,
+                                action: 'disposition',
+                                token: $.cookie('t')
+                            })
+                        },
+                        dataType: "json",
+                    }).done(function () {
+
+                    }).fail(function () {
+
+                    }).always(function (result) {
+                        if (result.status == 'success') {
+                            $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
+                            $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
+
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('warning');
+                            $('.action-msg-notification').addClass('success');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'failed') {
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').removeClass('warning');
+                            $('.action-msg-notification').addClass('failed');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'error') {
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('warning');
+                            $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'warning') {
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').addClass('warning');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        }
+                    });
+                });
+            },
+            sendMail = function (index, mailData) {
                 $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').unbind('click');
                 $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').click(function () {
                     $.ajax({
@@ -1808,6 +2008,7 @@ function ActionTrigger() {
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('error');
                             $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').addClass('success');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
@@ -1818,9 +2019,15 @@ function ActionTrigger() {
                                 }
                             });
                         } else if (result.status == 'failed') {
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').addClass('failed');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
@@ -1831,10 +2038,35 @@ function ActionTrigger() {
                                 }
                             });
                         } else if (result.status == 'error') {
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
                             $('.action-msg-notification').html('<p>' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').addClass('error');
+                            $('.action-msg-notification').removeClass('hide');
+                            $('.action-msg-notification').fadeOut({
+                                duration: 3000,
+                                complete: () => {
+                                    $('.action-msg-notification').addClass('hide');
+                                    $('.action-msg-notification').removeAttr('style');
+                                }
+                            });
+                        } else if (result.status == 'warning') {
+                            $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                            $('.casual-theme.mail-views').addClass('hide');
+                            $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+                            $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').removeClass('success');
+                            $('.action-msg-notification').removeClass('failed');
+                            $('.action-msg-notification').removeClass('error');
+                            $('.action-msg-notification').addClass('warning');
                             $('.action-msg-notification').removeClass('hide');
                             $('.action-msg-notification').fadeOut({
                                 duration: 3000,
@@ -1845,6 +2077,168 @@ function ActionTrigger() {
                             });
                         }
                     });
+                });
+            },
+            replyMail = function (index, containerSelector, mailData, currWindowToClose) {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.reply').unbind('click');
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.reply').click(function () {
+                    var
+                        itemID = index;
+
+                    if ($.isArray(currWindowToClose)) {
+                        let i = 0;
+                        for (; i < currWindowToClose.length; i++) {
+                            $(currWindowToClose[i]).addClass('hide');
+                        }
+                    } else {
+                        $(currWindowToClose).addClass('hide');
+                    }
+
+                    $(containerSelector).css('display', 'block');
+
+                    // reply response
+                    $('<label></label>').attr('for', 'reply_response').text('Respon:')
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+
+                    $('<input>').attr({
+                        type: 'radio',
+                        name: 'reply_response',
+                        value: 'accepted'
+                    }).appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+                    $('<span> Accepted </span>').addClass('reply-radion-title').appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+
+                    $('<input>').attr({
+                        type: 'radio',
+                        name: 'reply_response',
+                        value: 'declined'
+                    }).appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+                    $('<span> Declined </span>').addClass('reply-radion-title').appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form .form-input');
+
+                    // button reply
+                    $('<button></button>').attr({
+                            type: 'submit',
+                            name: 'reply_im',
+                            class: 'button reply-submit send'
+                        }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
+                            let
+                                form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
+                                fdata = {},
+                                i = 0,
+                                iframeData = $("#mailContentsEditorWidgIframe").contents().find('body').html();
+
+                            $("#mailContentsEditor").val(iframeData);
+                            $(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=editor_data]').val(iframeData);
+                            for (; i < form[0].length; i++) {
+                                fdata[form[0][i].name] = form[0][i].value;
+                            }
+
+                            fdata['prev_mailnum'] = mailData.mail_number;
+                            fdata['reply_response'] = $(containerSelector + ' .modal2ndlayer .mail-modal-form input[name=reply_response]:checked').val();
+                            console.log(fdata, iframeData);
+
+                            $.ajax({
+                                type: "POST",
+                                url: baseURL() + '/admin/im_action_exec',
+                                data: {
+                                    request_data: JSON.stringify({
+                                        action: 'reply',
+                                        im_data: [fdata, mailData],
+                                        token: $.cookie('t')
+                                    })
+                                },
+                                dataType: "json",
+                            }).done(function () {
+
+                            }).fail(function () {
+
+                            }).always(function (result) {
+                                $('.reply-im-modal').css('display', 'none');
+                                $('.casual-theme.reply-im-modal .modal2ndlayer .form-input input').remove();
+                                $('.casual-theme.reply-im-modal .modal2ndlayer .form-input label').remove();
+                                $('.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form  button').remove();
+                                $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                                $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                                $('.casual-theme.mail-views').addClass('hide');
+                                $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+
+                                if (result.status == 'success') {
+
+                                    $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
+                                    $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
+
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('error');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').removeClass('warning');
+                                    $('.action-msg-notification').addClass('success');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'failed') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('warning');
+                                    $('.action-msg-notification').removeClass('error');
+                                    $('.action-msg-notification').addClass('failed');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'error') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('warning');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').addClass('error');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                } else if (result.status == 'warning') {
+                                    $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                                    $('.action-msg-notification').removeClass('success');
+                                    $('.action-msg-notification').removeClass('failed');
+                                    $('.action-msg-notification').removeClass('error');
+                                    $('.action-msg-notification').addClass('warning');
+                                    $('.action-msg-notification').removeClass('hide');
+                                    $('.action-msg-notification').fadeOut({
+                                        duration: 3000,
+                                        complete: () => {
+                                            $('.action-msg-notification').addClass('hide');
+                                            $('.action-msg-notification').removeAttr('style');
+                                        }
+                                    });
+                                }
+                            });
+                        })
+                        .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
+                });
+                $('.casual-theme.reply-im-modal .modal2ndlayer' + ' .close-btn').unbind('click');
+                $('.casual-theme.reply-im-modal .modal2ndlayer' + ' .close-btn').click(function () {
+                    $('.reply-im-modal').css('display', 'none');
+                    $('.casual-theme.reply-im-modal .modal2ndlayer .form-input input').remove();
+                    $('.casual-theme.reply-im-modal .modal2ndlayer .form-input label').remove();
+                    $('.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form  button').remove();
+                    $('.table-container #mailAction .action-btn.view').removeAttr('disabled');
+
+                    $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
+                    $('.casual-theme.mail-views').addClass('hide');
+                    $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
+
                 });
             },
             removeTrash = function (index, mailNumber) {
@@ -1971,6 +2365,12 @@ function ActionTrigger() {
                 break;
             case 'send_mail':
                 currTrigger = sendMail;
+                break;
+            case 'disposition_mail':
+                currTrigger = dispositionMail;
+                break;
+            case 'reply_mail':
+                currTrigger = replyMail;
                 break;
             case 'print_mail':
                 currTrigger = printMail;

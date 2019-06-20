@@ -2874,7 +2874,8 @@ section.casual-theme.activity-page.main-contents {
 
 
 .casual-theme.add-om-modal,
-.casual-theme.edit-om-modal {
+.casual-theme.edit-om-modal,
+.casual-theme.reply-im-modal {
     top: 80px;
     display: none;
     position: fixed;
@@ -2889,7 +2890,8 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.add-om-modal .modal2ndlayer,
-.casual-theme.edit-om-modal .modal2ndlayer {
+.casual-theme.edit-om-modal .modal2ndlayer,
+.casual-theme.reply-im-modal .modal2ndlayer {
     width: 100%;
     height: 100%;
     background-color: #f1f1f1;
@@ -2899,20 +2901,23 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .modal-title ,
-.casual-theme.edit-om-modal .modal2ndlayer .modal-title  {
+.casual-theme.edit-om-modal .modal2ndlayer .modal-title,
+.casual-theme.reply-im-modal .modal2ndlayer .modal-title  {
     position: absolute;
     text-align: center;
     width: 100%;
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .modal-title h3,
-.casual-theme.edit-om-modal .modal2ndlayer .modal-title h3 {
+.casual-theme.edit-om-modal .modal2ndlayer .modal-title h3,
+.casual-theme.reply-im-modal .modal2ndlayer .modal-title h3 {
     padding: 4px;
     text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .close-btn,
-.casual-theme.edit-om-modal .modal2ndlayer .close-btn {
+.casual-theme.edit-om-modal .modal2ndlayer .close-btn,
+.casual-theme.reply-im-modal .modal2ndlayer .close-btn {
     position: absolute;
     top: 13px;
     right: 13px;
@@ -2927,14 +2932,16 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .close-btn:hover,
-.casual-theme.edit-om-modal .modal2ndlayer .close-btn:hover {
+.casual-theme.edit-om-modal .modal2ndlayer .close-btn:hover,
+.casual-theme.reply-im-modal .modal2ndlayer .close-btn:hover {
     background-color: #FF4400;
     color: #ffffff;
     cursor: pointer;
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .close-btn:active,
-.casual-theme.edit-om-modal .modal2ndlayer .close-btn:active {
+.casual-theme.edit-om-modal .modal2ndlayer .close-btn:active,
+.casual-theme.reply-im-modal .modal2ndlayer .close-btn:active {
     background-color: rgb(223, 63, 5);
     cursor: default;
 }
@@ -2955,7 +2962,8 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .mail-modal-form label,
-.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form label {
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form label,
+.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form label {
     display: block;
     font-family: H-ChakraPetch-Bold;
     font-size: 14px;
@@ -2963,15 +2971,22 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .mail-modal-form input,
-.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form input {
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form input,
+.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form input {
     padding: 6px;
     border: 1px solid rgb(0, 0, 0, 0.1);
     border-radius: 5px;
     box-shadow: 0 0 7px 1px rgb(0, 0, 0, 0.1) inset;
 }
 
+.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form .reply-radion-title {
+    font-size: 12px;
+    font-weight: bold;
+}
+
 .casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button[type="submit"],
-.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button[type="submit"] {
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button[type="submit"],
+.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form button[type="submit"] {
     padding: 5px;
     margin: 0 3px;
     display: inline-block;
@@ -2988,7 +3003,8 @@ section.casual-theme.activity-page.main-contents {
 }
 
 .casual-theme.add-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.send,
-.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.send {
+.casual-theme.edit-om-modal .modal2ndlayer .mail-modal-form button.add-om-submit.send,
+.casual-theme.reply-im-modal .modal2ndlayer .mail-modal-form button.reply-submit.send {
     background: linear-gradient(90deg, rgb(41, 221, 98), rgb(38, 202, 87));
     color: #ffffff;
 }
@@ -3001,11 +3017,8 @@ section.casual-theme.activity-page.main-contents {
     display: none;
 }
 
-.table-container#outgoingMail .item-list tbody tr.item .button.action-btn {
-    width: 30px;
-    margin: 0 3px;
-}
-
+.table-container#incomingMail .item-list tbody tr.item .button.action-btn,
+.table-container#outgoingMail .item-list tbody tr.item .button.action-btn,
 .table-container#trashCan .item-list tbody tr.item .button.action-btn {
     width: 30px;
     margin: 0 3px;
@@ -3100,8 +3113,146 @@ section.casual-theme.activity-page.main-contents {
     background: linear-gradient(90deg, rgb(33, 175, 78), rgb(24, 187, 73));
 }
 
-.casual-theme.mail-view .modal2ndlayer .button.mail-btn.send {
+.casual-theme.mail-view .modal2ndlayer .button.mail-btn.send,
+.casual-theme.mail-view .modal2ndlayer .button.mail-btn.disposition,
+.casual-theme.mail-view .modal2ndlayer .button.mail-btn.reply {
     background: linear-gradient(90deg, rgb(36, 102, 160), rgb(32, 120, 197));
+}
+
+/* About App */
+.casual-theme.about-app-container {
+    background-color: #ece7e7;
+    width: 81.5%;
+    margin: 50px 10px;
+    padding: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.check-for-update {
+	padding: 5px;
+	margin: 5px;
+	font-weight: bold;
+	background: linear-gradient(90deg, #26C959, #23B650);
+	color: #ffffff;
+	border: 1px solid rgba(0,0,0,0.1);
+	border-radius: 5px;
+}
+
+.update-dialogue-box {
+	position: fixed;
+	z-index: 99;
+	width: 50%;
+	height: 300px;
+	top: 200px;
+	right: 170px;
+	padding: 8px;
+	border-radius: 5px;
+	display: none;
+}
+
+.update-dialogue-title {
+	border: 1px solid rgba(0,0,0,0.1);
+	padding: 5px;
+	border-radius: 5px 5px 0 0;
+	background-color: #4f4f4f;
+	color: #ffffff;
+}
+
+.process-log {
+	width: 100%;
+	height: 75%;
+	border: 1px solid rgba(66,66,66,0.3);
+	border-radius: 0 0 5px 5px;
+	background-color: #ffffff;
+	color: #4f4f4f;
+	padding: 8px;
+}
+
+.update-dialogue-box .process-log .refresh {
+	float: right;
+	background: linear-gradient(90deg, #26C959, #23B650);
+	padding: 5px;
+	border: 1px solid rgba(0,0,0,0.1);
+	color: #ffffff;
+	font-weight: bold;
+	border-radius: 5px;
+	display: none;
+	font-size: 14px;
+}
+
+.update-dialogue-box .process-log .refresh:hover {
+	background: linear-gradient(90deg, #38D363, #38D363);
+}
+
+.update-dialogue-box .process-log .refresh:active {
+	background: linear-gradient(90deg, #00A93C, #00A93C);
+}
+
+.changelogs-container {
+	position: fixed;
+	z-index: 99;
+	width: 50%;
+	height: 50%;
+	border: 1px solid rgba(66,66,66,0.3);
+	border-radius: 0 0 5px 5px;	top: 200px;
+	right: 170px;
+	border-radius: 5px;	
+	background-color: #ffffff;
+	color: #4f4f4f;
+	overflow: auto;
+}
+
+.changelogs-container-title {
+	border-bottom: 1px solid rgba(0,0,0,0.1);
+	padding: 5px;
+	border-radius: 5px 5px 0 0;
+	background-color: #4f4f4f;
+	color: #ffffff;
+}
+
+.changelogs-container ul {
+	padding: 6px;
+}
+
+.changelogs-container ul li.header {
+	box-sizing: border-box;
+	padding: 5px;
+	border-bottom: 2px solid rgba(66,66,66, 1);
+	border-left: 2px solid rgba(66,66,66, 1);
+	width: 25%;
+	background-color: rgba(66,66,66, 0.8);
+	color: #ffffff;
+	font-size: 16px;
+}
+
+.changelogs-container ul li {
+	font-size: 14px;
+}
+
+.changelogs-container-close-btn {
+	position: absolute;
+	right: 0;
+	background: linear-gradient(#555555, #595959);
+	color: #ffffff;
+	padding: 8px;
+	font-weight: bold;
+	border: 1px solid rgba(0,0,0,0.1);
+	font-size: 15px;
+	outline: none;
+}
+
+.changelogs-container-close-btn:hover {
+	background: linear-gradient(90deg, #FF4400, #E33C00);
+}
+
+.changelogs-container-close-btn:active {
+	background: #4a4a4a;
+}
+
+.casual-theme.casual-theme.about-app-container ul li strong {
+    font-family: H-ChakraPetch-Bold;
 }
 
 /* Activity Page Main Footer */

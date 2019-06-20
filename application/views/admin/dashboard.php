@@ -14,10 +14,10 @@
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-envelope fa-lg"></i> New: <?php echo $im_count;?></li>
-                        <li><i class="fa fa-envelope-open fa-lg"></i> Old: <?php echo $om_count;?></li>
+                        <li><i class="fa fa-envelope fa-lg"></i> New: <?php echo $new_im['count'];?></li>
+                        <li><i class="fa fa-envelope-open fa-lg"></i> Old: <?php echo $old_im;?></li>
                         <li><i class="fa fa-reply-all fa-lg"></i> Reply Incoming Mail: 0</li>
-                        <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $im_count + $om_count;?></li>
+                        <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $new_im['count'] + $old_im;?></li>
                     </ul>
                 </div>
             </div>

@@ -14,12 +14,13 @@
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-envelope fa-lg"></i> New: <?php echo $im_count;?></li>
-                        <li><i class="fa fa-envelope-open fa-lg"></i> Old: 0</li>
-                        <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $im_count + $om_count;?></li>
+                        <li><i class="fa fa-envelope fa-lg"></i> New: <?php echo $new_im['count'];?></li>
+                        <li><i class="fa fa-envelope-open fa-lg"></i> Old: <?php echo $old_im;?></li>
+                        <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $im_count;?></li>
                     </ul>
                 </div>
             </div>
+            <?php if ($om_auth) :?>
             <div class="di-box outgoing-mail">
                 <div class="title">
                     <h2><i class="fa fa-paper-plane"></i> Outgoing Mail</h2>
@@ -33,6 +34,7 @@
                     </ul>
                 </div>
             </div>
+            <?php endif;?>
             <div class="di-box trash-can">
                 <div class="title">
                     <h2><i class="fa fa-trash-alt"></i> Trash Can</h2>
@@ -81,5 +83,6 @@
     <script src="<?php echo base_url('assets/js/asmp-actionlib.js');?>"></script>
     <script src="<?php echo base_url('assets/js/user-page.js');?>"></script>
     <script src="<?php echo base_url('assets/js/photos-box.js');?>"></script>
+    <script src="<?php echo base_url('assets/js/workers.js');?>"></script>
 </body>
 </html>

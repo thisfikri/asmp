@@ -308,7 +308,7 @@ $(document).ready(function () {
                         $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
                         $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
                         $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
-                        $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(4).text(result.data[i - 1].status);
+                        $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(4).html(result.data[i - 1].status);
                         $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
                         // $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
                         //     '<button class="button action-btn edit" id="item' + i + '"><i class="fa fa-edit"></i></button>'
@@ -341,6 +341,63 @@ $(document).ready(function () {
             window.location.replace(baseURL() + '/tong-sampah');
         });
     } else if (window.location.href == baseURL() + '/surat-masuk') {
+        console.log('Surat Masuk');
+        $('.table-container#incomingMail .item-list').ready(function () {
+            console.log($.cookie('t'));
+            $.ajax({
+                type: "POST",
+                url: baseURL() + '/incoming_mail/load',
+                dataType: "json",
+                data: {
+                    t: $.cookie('t')
+                }
+            }).done(function () {
+
+            }).fail(function () {
+
+            }).always(function (result) {
+                if ($.isArray(result.data)) {
+                    var atrgr = new ActionTrigger(),
+                        itemData;
+                    //console.log(result.data.length);
+                    for (var i = 1; i < result.data.length + 1; i++) {
+                        console.log(result.data[i - 1].subject);
+                        itemData = itemData = JSON.stringify(result.data[i - 1]);
+                        $('.table-container#incomingMail .item-list tbody').append('<tr class="item id' + i + '"><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>');
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i).attr('data-itemdata', itemData);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(0).append('<input type="checkbox" class="checkbox item' + i + '"><span class="checkmark item' + i + '"><i class="fa fa-check"></i></span>');
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(4).html(result.data[i - 1].status);
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
+                        // $('.table-container#outgoingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                        //     '<button class="button action-btn edit" id="item' + i + '"><i class="fa fa-edit"></i></button>'
+                        // );
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                            '<button class="button action-btn view" id="item' + i + '"><i class="fa fa-eye"></i></button>'
+                        );
+                        $('.table-container#incomingMail .item-list tbody tr.item.id' + i + ' td').eq(6).append(
+                            '<button class="button action-btn trash" id="item' + i + '"><i class="fa fa-trash"></i></button>'
+                        );
+                        atrgr.defineTrigger('checkboxAction' + i, 'checkbox_action');
+                        atrgr.defineTrigger('viewMailOM' + i, 'view_mail');
+                        atrgr.defineTrigger('throwMailToTrashOM' + i, 'throw_mail_tt');
+                        atrgr['checkboxAction' + i](i);
+                        atrgr['throwMailToTrashOM' + i](i, 'im', result.data[i - 1]);
+                        atrgr['viewMailOM' + i](i);
+                    }
+
+                    if (Number.parseInt(result.paging.status) == 1) {
+                        console.log('Entering...');
+                        var pgnt = new Pagination(Number.parseInt(result.paging.limit), '.item', 'page-link', '.pagination');
+                        pagination = pgnt.paginate();
+                    }
+
+                }
+            });
+        });
+
         $('.button.trash-can-btn').click(function () {
             window.location.replace(baseURL() + '/tong-sampah');
         });
@@ -371,7 +428,7 @@ $(document).ready(function () {
                         $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(1).text(result.data[i - 1].mail_number);
                         $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(2).text(result.data[i - 1].subject);
                         $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(3).text(result.data[i - 1].sender);
-                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(4).text(result.data[i - 1].status);
+                        $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(4).html(result.data[i - 1].status);
                         $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(5).text(result.data[i - 1].date);
 
                         $('.table-container#trashCan .item-list tbody tr.item.id' + i + ' td').eq(6).append(

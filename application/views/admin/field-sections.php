@@ -80,5 +80,6 @@
     <script src="<?php echo base_url('assets/js/asmp-actionlib.js');?>"></script>
     <script src="<?php echo base_url('assets/js/admin-page.js');?>"></script>
     <script src="<?php echo base_url('assets/js/photos-box.js');?>"></script>
+    <script type="text/javascript" src="<?php echo base_url() . 'assets/widgEditor_1.0.1/scripts/widgeditor.js'; ?>"></script>
 </body>
 </html>

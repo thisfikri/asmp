@@ -81,6 +81,7 @@ if ($app_language == 'indonesia')
     $route['logout'] = 'admin/logout';
     $route['admin/user-management'] = 'admin/user_management';
     $route['admin/surat-masuk'] = 'admin/incoming_mail';
+    $route['admin/tong-sampah'] = 'admin/trash_can';
     $route['admin/pdf-layouts'] = 'admin/PDF_layout_list';
     $route['admin/pdf-editor/(:any)/(:any)'] = 'admin/PDF_editor/$1/$2';
     $route['admin/pdf-editor/view/(:any)/(:any)'] = 'admin/PDF_editor_viewer/$1/$2';
@@ -90,12 +91,15 @@ if ($app_language == 'indonesia')
     $route['admin/gedtrdta'] = 'admin/get_editor_data';
     $route['admin/upedtrdta'] = 'admin/update_pdf_e_laydata';
     $route['admin/bidang-bagian'] = 'admin/field_sections';
+    $route['admin/tentang-aplikasi'] = 'admin/about_app';
     // User
     $route['user/dashboard'] = 'user/index';
     $route['logout'] = 'user/logout';
+    $route['user/surat-masuk'] = 'user/incoming_mail';
     $route['user/surat-keluar'] = 'user/outgoing_mail';
     $route['user/tong-sampah'] = 'user/trash_can';
     $route['user/pdf-layout/view/(:any)/(:any)/(:any)/(:any)'] = 'user/PDF_viewer/$1/$2/$3/$4';
+    $route['user/tentang-aplikasi'] = 'user/about_app';
 }
 else if ($app_language == 'english')
 {

@@ -93,29 +93,11 @@
 /******************************************************************************
 **    CONFIGURATION VARIABLES
 ******************************************************************************/
-
-function baseURL() {
-        curr_url = window.location.href,
-            sburl = curr_url.split('/'),
-            base_url = '';
-        if (sburl.length == 5) {
-            base_url = sburl[0] + '//' + sburl[2];
-        } else if (sburl.length >= 6) {
-            base_url = sburl[0] + '//' + sburl[2] + '/' + sburl[3] + '/' + sburl[4];
-        }
-        return base_url;
-    }
 var
-baseUrlArr = baseURL().split('/'),
-baseUrlReplace = '',
-i = 0;
-
-if (baseUrlArr.length == 5) {
-	baseUrlReplace = baseUrlArr[0] + '//' + baseUrlArr[2] + '/' + baseUrlArr[3];
-}
+base_url = window.location.origin + '/' + window.location.pathname.split('/')[1];
 
 /* Location of stylesheet file for editor content */
-var widgStylesheet = baseUrlReplace+"/assets/widgEditor_1.0.1/css/widgContent.css";
+var widgStylesheet = base_url +"/assets/widgEditor_1.0.1/css/widgContent.css";
 
 /* Items to appear in toolbar. */
 var widgToolbarItems = new Array();

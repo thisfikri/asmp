@@ -44,5 +44,6 @@
     <script src="<?php echo base_url('assets/js/asmp-actionlib.js');?>"></script>
     <script src="<?php echo base_url('assets/js/user-page.js');?>"></script>
     <script src="<?php echo base_url('assets/js/photos-box.js');?>"></script>
+    <script src="<?php echo base_url('assets/js/workers.js');?>"></script>
 </body>
 </html>

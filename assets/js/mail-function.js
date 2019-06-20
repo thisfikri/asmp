@@ -130,7 +130,7 @@ $(document).ready(function () {
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(1).text(result.data['mail_number']);
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(2).text(result.data['subject']);
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(3).text(result.data['sender']);
-                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(4).text(result.data['status']);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(4).html(result.data['status']);
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(5).text(result.data['date']);
                             $('.table-container#outgoingMail .item-list tbody tr.item.id' + id + ' td').eq(6).append(
                                 '<button class="button action-btn view" id="item' + id + '"><i class="fa fa-eye"></i></button>'
@@ -286,7 +286,7 @@ $(document).ready(function () {
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(1).text(result.data['mail_number']);
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(2).text(result.data['subject']);
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(3).text(result.data['sender']);
-                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(4).text(result.data['status']);
+                            $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(4).html(result.data['status']);
                             $('.table-container#outgoingMail .item-list tbody .item.id' + id + ' td').eq(5).text(result.data['date']);
                             $('.table-container#outgoingMail .item-list tbody tr.item.id' + id + ' td').eq(6).append(
                                 '<button class="button action-btn view" id="item' + id + '"><i class="fa fa-eye"></i></button>'

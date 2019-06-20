@@ -16,6 +16,8 @@
 </head>
 
 <body class="casual-theme" id="userDashboard">
+<iframe src="<?php echo site_url('assets/audio/2-seconds-of-silence.mp3');?>" allow="autoplay" style="display:none"></iframe>
+<audio src="<?php echo site_url('assets/audio/system-fault.mp3');?>" type="audio/mp3"></audio>
     <!-- Main Header -->
     <header class="casual-theme activity-page header">
         <!-- <button class="navbar-icon arrow">
@@ -30,17 +32,17 @@
 
         <button class="button options"><i class="fa fa-ellipsis-v"></i></button>
         <div class="notification-area">
-            <?php if ($new_im['display']) :?>
-                <span class="fa-stack mail-count-num"><i class="fa fa-circle fa-stack-2x"></i><b class="fa-stack-1x" style="color: #48c8d1"><?php echo $new_im['count']; ?></b></span>
-            <?php endif;?>
-            <button class="button notification"><i class="fa fa-bell fa-fw"></i></button>
+                <span class="fa-stack mail-count-num" style="<?php echo ($new_im['display']) ? 'display: inline-block' : 'display: none';?>">
+                <i class="fa fa-circle fa-stack-2x"></i><b class="fa-stack-1x" style="color: #48c8d1"><?php echo $new_im['count']; ?></b></span>
+            <!-- <button class="button notification"><i class="fa fa-bell fa-fw"></i></button> -->
         </div>
     </header>
-    <div class="casual-theme activity-page notification-box outerdiv">
+    <!-- This Notification feature is avaible soon as possible -->
+    <!-- <div class="casual-theme activity-page notification-box outerdiv">
         <div class="casual-theme activity-page notification-box innerdiv">
             <div class="notification-item incoming-mail">
                 <ul>
-                    <li class="item-notification-type"><i class="fa fa-envelope"></i> Incoming Mail</li>
+                    <li class="item-notification-type"><i class="fa fa-envelope"></i> Surat Masuk</li>
                     <li class="subject">Subject: CEO Important Meeting</li>
                     <li class="sender">Sender: Secretary</li>
                 </ul>
@@ -62,7 +64,7 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="casual-theme activity-page options-dropdown">
         <ul>
@@ -151,7 +153,9 @@
         <ul>
             <li><a href="<?php echo site_url('user/dashboard');?>"><i class="fa fa-tachometer-alt"></i> Dashboard</a></li>
             <li><a href="<?php echo site_url('user/surat-masuk');?>"><i class="fa fa-inbox"></i> Incoming Mail</a></li>
+            <?php if ($om_auth) : ?>
             <li><a href="<?php echo site_url('user/surat-keluar');?>"><i class="fa fa-paper-plane"></i> Outgoing Mail</a></li>
-            <li><a href="<?php echo site_url('user/tentang');?>"><i class="fa fa-info-circle"></i> About</a></li>
+            <?php endif;?>
+            <li><a href="<?php echo site_url('user/tentang-aplikasi');?>"><i class="fa fa-info-circle"></i> About</a></li>
         </ul>
     </nav>

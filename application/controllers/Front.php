@@ -309,15 +309,15 @@ class Front extends CI_Controller
                 'type' => 'VARCHAR',
                 'constraint' => '150',
             ),
-            'welcome_status' => array(
-                'type' => 'VARCHAR',
-                'constraint' => '5',
-                'default' => 'FALSE',
-            ),
             'gallery_dir' => array(
                 'type' => 'VARCHAR',
                 'constraint' => '28',
                 'unique' => TRUE,
+            ),
+            'logged' => array(
+                'type' => 'INT',
+                'constraint' => 1,
+                'default' => 0
             ),
             'last_modified' => array(
                 'type' => 'TIMESTAMP',
