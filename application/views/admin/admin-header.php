@@ -32,10 +32,10 @@
         <div class="notification-area">
         <span class="fa-stack mail-count-num" style="<?php echo ($new_im['display']) ? 'display: inline-block' : 'display: none';?>">
                 <i class="fa fa-circle fa-stack-2x"></i><b class="fa-stack-1x" style="color: #48c8d1"><?php echo $new_im['count']; ?></b></span>
-            <button class="button notification"><i class="fa fa-bell fa-fw"></i></button>
+            <!-- <button class="button notification"><i class="fa fa-bell fa-fw"></i></button> -->
         </div>
     </header>
-    <div class="casual-theme activity-page notification-box outerdiv">
+    <!-- <div class="casual-theme activity-page notification-box outerdiv">
         <div class="casual-theme activity-page notification-box innerdiv">
             <div class="notification-item incoming-mail">
                 <ul>
@@ -61,7 +61,7 @@
                 </ul>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <div class="casual-theme activity-page options-dropdown">
         <ul>
@@ -118,7 +118,7 @@
                     <li>Posisi: <?php echo $uprof_data->position;?></li>
                 </ul>
 
-                <form class="update-type 01 hide" method="POST">
+                <form class="update-type 01 hide" action="javascript:void(0)" method="POST">
                     <h3><i class="fa fa-user-circle"></i> Name Changes</h3>
                     <label for="true_name">True Name</label>
                     <input type="text" name="true_name" value="<?php echo $uprof_data->true_name?>"><span class="hint"></span>
@@ -132,7 +132,7 @@
                     <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
                 </form>
 
-                <form class="update-type 02 hide" method="POST">
+                <form class="update-type 02 hide" action="javascript:void(0)" method="POST">
                         <h3><i class="fa fa-key"></i> Password Changes</h3>
                     <label for="old_password">Old Password</label>
                     <input type="password" name="old_password" value=""><span class="hint"></span>
@@ -143,7 +143,7 @@
                     <label for="new_password_confirm">New Password Confirm</label>
                     <input type="password" name="new_password_confirm" value=""><span class="hint"></span>
                     <div class="clearfix"></div>
-                    <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                    <button type="submit" name="update-type-02-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
                     </form>
             </div>
         </div>

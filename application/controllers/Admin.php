@@ -42,6 +42,13 @@ class Admin extends CI_Controller
     private $_app_lang;
 
     /**
+     * Host untuk mengupdate aplikasi
+     *
+     * @var string
+     */
+    private $_update_app_host = 'http://localhost:7575';
+
+    /**
      * constructor ini digunakan untuk membuat table awal untuk registrasi awal
      * DOC[01] - ASMP Program Documentation
      */
@@ -447,6 +454,227 @@ class Admin extends CI_Controller
         else
         {
             redirect('login', 'refresh');
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function update_profile()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = json_decode($this->input->post('requested_data', TRUE), TRUE);
+            if ($data['token'] == $this->session->userdata('CSRF'))
+            {
+                if ($data['change_type'] == 'name')
+                {
+                    $query = $this->db->where('username', $this->_username)->get('users');
+                    $user_data = $query->result()[0];
+    
+                    if (!empty($data['fdata']['password']))
+                    {
+                        if ($this->asmp_security->verify_hashed_password($data['fdata']['password'], $user_data->password))
+                        {
+                            if ($data['fdata']['username'] !== $user_data->username && $data['fdata']['true_name'] !== $user_data->true_name)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'username' => $data['fdata']['username']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->session->unset_userdata(array('admin_login'));
+
+                                    $new_sess = array(
+                                        'admin_login' => $data['fdata']['username']
+                                    );
+
+                                    $this->session->set_userdata($new_sess);
+
+                                    $this->db->where('username', $data['fdata']['username'])->update('users', array(
+                                        'true_name' => $data['fdata']['true_name']
+                                    ));
+                                    
+                                    if ($this->db->affected_rows())
+                                    {
+                                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                            'status' => 'success',
+                                            'message' => 'nama pengguna dan nama asli berhasil diubah',
+                                            'data' => array(
+                                                'change_count' => 2,
+                                                'change_name1' => 'username',
+                                                'change_name2' => 'true_name',
+                                                'change_value1' => $data['fdata']['username'],
+                                                'change_value2' => $data['fdata']['true_name']
+                                            )
+                                        )));
+                                    }
+                                    else
+                                    {
+                                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                            'status' => 'success',
+                                            'message' => 'nama pengguna berhasil diubah tapi nama asli gagal diubah',
+                                            'data' => array(
+                                                'change_count' => 1,
+                                                'change_name' => 'username',
+                                                'change_value' => $data['fdata']['username']
+                                            )
+                                        )));
+                                    }
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'nama pengguna dan nama asli gagal diubah'
+                                    )));
+                                }
+                            }
+                            else if ($data['fdata']['username'] !== $user_data->username)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'username' => $data['fdata']['username']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->session->unset_userdata(array('admin_login'));
+
+                                    $new_sess = array(
+                                        'admin_login' => $data['fdata']['username']
+                                    );
+
+                                    $this->session->set_userdata($new_sess);
+
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'nama pengguna berhasil diubah',
+                                        'data' => array(
+                                            'change_count' => 1,
+                                            'change_name' => 'username',
+                                            'change_value' => $data['fdata']['username']
+                                        )
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'nama pengguna gagal diubah'
+                                    )));
+                                }
+                            }
+                            else if ($data['fdata']['true_name'] !== $user_data->true_name)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'true_name' => $data['fdata']['true_name']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'nama asli berhasil diubah',
+                                        'data' => array(
+                                            'change_count' => 1,
+                                            'change_name' => 'true_name',
+                                            'change_value' => $data['fdata']['true_name']
+                                        )
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'nama asli gagal diubah'
+                                    )));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'password tidak valid'
+                            )));
+                        }
+                    }
+                    else
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'warning',
+                            'message' => 'password tidak boleh kosong'
+                        )));
+                    }
+                }
+                else if ($data['change_type'] == 'password')
+                {
+                    $query = $this->db->where('username', $this->_username)->get('users');
+                    $user_data = $query->result()[0];
+    
+                    if (!empty($data['fdata']['old_password']))
+                    {
+                        if ($this->asmp_security->verify_hashed_password($data['fdata']['old_password'], $user_data->password))
+                        {
+                            if ($data['fdata']['new_password'] === $data['fdata']['new_password_confirm'])
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'password' => $this->asmp_security->get_hashed_password($data['fdata']['new_password'])
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'password berhasil diubah'
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'password gagal diubah'
+                                    )));
+                                }
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'error',
+                                    'message' => 'password baru dan konfirmasi password baru harus sama'
+                                )));
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'password tidak valid'
+                            )));
+                        }
+                    }
+                    else
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'warning',
+                            'message' => 'password lama tidak boleh kosong'
+                        )));
+                    }   
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'warning',
+                    'message' => 'token tidak sama'
+                )));
+            }
+        }
+        else
+        {
+            
+            redirect('login','refresh');
+            
         }
     }
 
@@ -2777,5 +3005,218 @@ class Admin extends CI_Controller
         );
 
         $this->load->view('admin/about', $data, FALSE);
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * check_for_update - Digunakan untuk mengecek versi terbaru dari aplikasi
+     * @param  string $token CSRF Token
+     * @return void
+     */
+    public function check_for_update($token)
+    {
+        if ($this->checker->is_admin())
+        {
+            if ($token == $this->session->userdata('CSRF'))
+            {
+                $this->activity_log->create_activity_log('check_for_update', 'Mengecek Pembaharuan', null, $this->session->userdata('admin_login'));
+                // comparing version
+                //$url = 'http://muramasa.hol.es/app-updates/simakwapp';
+                $url = $this->_update_app_host . '/updates';
+                $app_s_ver = file_get_contents($url . '/asmpver.txt');
+                $app_s_ver = explode(':', $app_s_ver);
+                $app_s_ver = (float) $app_s_ver[1];
+
+                // if app version in server greater than current version
+                if ($app_s_ver > $this->aboutapp->get_version())
+                {
+                    set_time_limit(0);
+                    echo 'true-Versi:' . $app_s_ver . '-Ukuran:' . FileSizeConvert(strlen(file_get_contents($url . '/asmp-v' . $app_s_ver . '.zip')));
+                }
+                else
+                {
+                    echo 'false-';
+                }
+            }
+            else
+            {
+                echo 'token tidak sama';
+            }
+        }
+        else
+        {
+            redirect('login/login_required', 'refresh');
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * download_new_update - Digunakan untuk mendownload update terbaru
+     * @param  string $token   CSRF Token
+     * @param  float or string $app_ver versi aplikasi pada server
+     * @return void
+     */
+    public function download_new_update($token, $app_ver)
+    {
+        $file_size = $this->input->post('file_size');
+        if ($this->checker->is_admin())
+        {
+            if ($token == $this->session->userdata('CSRF'))
+            {
+                $this->activity_log->create_activity_log('download_update', 'Mengunduh Pembaharuan', null, $this->session->userdata('admin_login'));
+                // if app version in server greater than current version
+                if ($app_ver > $this->aboutapp->get_version())
+                {
+                    //$url = 'http://muramasa.hol.es/app-updates/simakwapp';
+                    $url = $this->_update_app_host . '/updates';
+                    $url .= '/asmp-v' . $app_ver . '.zip';
+                    $path = '../asmp-v' . $app_ver . '.zip';
+                    $newfname = $path;
+                    set_time_limit(0);
+                    $file = fopen($url, 'rb');
+                    if ($file)
+                    {
+                        $newf = fopen($newfname, 'wb');
+                        if ($newf)
+                        {
+                            while (!feof($file))
+                            {
+                                fwrite($newf, fread($file, 1024 * 8), 1024 * 8);
+                            }
+                        }
+                    }
+                    if ($file)
+                    {
+                        $status_file1 = true;
+                        fclose($file);
+                    }
+                    if ($newf)
+                    {
+                        $status_file2 = true;
+                        fclose($newf);
+                    }
+
+                    if (file_exists('../asmp-v' . $app_ver . '.zip'))
+                    {
+                        echo 'complete';
+                    }
+                    else
+                    {
+                        $this->activity_log->create_activity_log('download_update_failed', 'Gagal Mengunduh Pembaharuan', null, $this->session->userdata('admin_login'));
+                        echo 'failed';
+                    }
+                }
+                else
+                {
+                    echo 'failed-versi aplikasi sama';
+                }
+            }
+            else
+            {
+                echo 'failed-token tidak sama';
+            }
+        }
+        else
+        {
+            redirect('login/login_required', 'refresh');
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * extract_new_update - Digunakan untuk mengekstrak update terbaru
+     * @param  string $token   CSRF Token
+     * @param  float or string$app_ver versi aplikasi pada server
+     * @return void
+     */
+    public function extract_new_update($token, $app_ver, $app_folder)
+    {
+        $this->activity_log->create_activity_log('extract_update', 'Mengekstrak Pembaharuan', null, $this->session->userdata('admin_login'));
+        $ZIP_ERROR = [
+            ZipArchive::ER_EXISTS => 'File already exists.',
+            ZipArchive::ER_INCONS => 'Zip archive inconsistent.',
+            ZipArchive::ER_INVAL => 'Invalid argument.',
+            ZipArchive::ER_MEMORY => 'Malloc failure.   ',
+            ZipArchive::ER_NOENT => 'No such file.',
+            ZipArchive::ER_NOZIP => 'Not a zip archive.',
+            ZipArchive::ER_OPEN => "Can't open file.",
+            ZipArchive::ER_READ => 'Read error.',
+            ZipArchive::ER_SEEK => 'Seek error.',
+        ];
+
+        $zip = new ZipArchive;
+        $zip_file = $zip->open('../asmp-v' . $app_ver . '.zip');
+        if ($zip_file === TRUE)
+        {
+            $zip->extractTo('../' . $app_folder . '/');
+            if ($zip->getStatusString())
+            {
+                echo 'complete';
+            }
+            else
+            {
+                echo 'failed';
+            }
+            $zip->close();
+        }
+        else
+        {
+            if ($zip_file !== true)
+            {
+                $msg = isset($ZIP_ERROR[$zip_file]) ? $ZIP_ERROR[$zip_file] : 'Unknown error.';
+                $this->activity_log->create_activity_log('extract_update_failed', 'Gagal Mengekstrak Pembaharuan', null, $this->session->userdata('admin_login'));
+                log_message('error', 'Extracting Failed: ' . $msg);
+                echo 'error-' . $msg;
+            }
+        }
+    }
+
+    // --------------------------------------------------------------------
+
+    /**
+     * validate_new_version - Digunakan untuk memvalidasi versi aplikasi
+     * @param  string $token   CSRF Token
+     * @param  float or string$app_ver versi aplikasi pada server
+     * @return void
+     */
+    public function validate_new_version($token, $app_ver)
+    {
+        if ($this->aboutapp->get_version() == $app_ver)
+        {
+            //$url = 'http://muramasa.hol.es/app-updates/simakwapp/changelogs-html.txt';
+            $url = $url = $this->_update_app_host . '/updates/changelogs-html.txt';
+            $changelogs = file_get_contents($url);
+            if ($changelogs)
+            {
+                $array = array(
+                    'changelog-on' => 'on',
+                );
+
+                $this->session->set_userdata($array);
+
+                if ($this->session->userdata('changelog-on'))
+                {
+                    $array = array(
+                        'changelogs' => $changelogs,
+                    );
+
+                    $this->session->set_userdata($array);
+                }
+            }
+
+            echo 'complete';
+        }
+        else
+        {
+            echo 'failed';
+        }
+    }
+
+    public function close_changelogs($token)
+    {
+        $this->session->unset_userdata('changelog-on');
     }
 }

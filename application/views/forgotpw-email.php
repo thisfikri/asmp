@@ -29,6 +29,7 @@
         <div class="front-title">
             <h2>Lupa Kata Sandi <span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-envelope fa-stack-1x" style="color: #47b2ab"></i></span></h2>
         </div>
+        <?php if ($respass_status === FALSE) :?>
         <form action="javascript:void(0)" method="post">
             <!-- Username Field -->
             <div class="field-div">
@@ -48,5 +49,27 @@
             <div class="clearfix"></div>
             <button type="submit" class="button fpw-btn" name="fpwm-email">Kirim <i class="fa fa-paper-plane"></i></button>
         </form>
+        <?php elseif ($respass_status === TRUE) : ?>
+        <p style="font-size: 12px;padding: 5px;">* Reset Kata Sandi, kata sandi lama akan diganti dengan yang baru</p>
+        <form action="javascript:void(0)" method="post">
+            <!-- Username Field -->
+            <div class="field-div">
+                <label for="new_password">
+                    <i class="fa fa-user"></i>
+                </label>
+                <input type="password" name="new_password" id="uPass" placeholder="Kata Sandi Baru"><span class="form-hint"></span>
+            </div>
+            <div class="clearfix"></div>
+            <!-- Password Field -->
+            <div class="field-div">
+                <label for="new_password_confirm">
+                    <i class="fa fa-key"></i>
+                </label>
+                <input type="password" name="new_password_confirm" id="uPassConfirm" placeholder="Konfirmasi Kata Sandi Baru"><span class="form-hint"></span>
+            </div>
+            <div class="clearfix"></div>
+            <button type="submit" class="button fpw-btn" name="respass-rid">Proses <i class="fa fa-sync"></i></button>
+        </form>
+        <?php endif;?>
     </section>
 <?php $this->theme->get_footer('front');?>

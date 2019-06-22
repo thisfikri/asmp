@@ -36,8 +36,8 @@ class Email_Handler extends CI_Model {
     		$mail->isSMTP();                                      // Set mailer to use SMTP
     		$mail->Host = 'smtp.gmail.com';  // Specify main and backup SMTP servers
     		$mail->SMTPAuth = true;                               // Enable SMTP authentication
-    		$mail->Username = 'wisethinklab@gmail.com';                 // SMTP username (Must Change To codecoretech email)
-    		$mail->Password = 'hnobnfslvcaozmpk';                           // SMTP password
+    		$mail->Username = 'corecodetech@gmail.com';                 // SMTP username (Must Change To codecoretech email)
+    		$mail->Password = 'makdxbxogynooojf';                           // SMTP password
     		$mail->SMTPSecure = 'tls';                            // Enable TLS encryption, `ssl` also accepted
     		$mail->Port = 587;
     		$mail->SMTPOptions = array(
@@ -49,7 +49,7 @@ class Email_Handler extends CI_Model {
 			);
 
 			//Recipients
-   			$mail->setFrom('postmaster@localhost', 'SIMAKWAPP');
+   			$mail->setFrom('noreply@localhost', 'ASMP');
     		$mail->addAddress($to);
 
     		//Contents

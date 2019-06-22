@@ -80,7 +80,7 @@ $(document).ready(function () {
 
     $('.logout-btn').click(function () {
         $.ajax({
-                url: baseURL() + '/admin/logout',
+                url: baseURL() + '/logout',
                 type: 'POST',
                 dataType: 'json',
                 data: {
@@ -111,9 +111,211 @@ $(document).ready(function () {
                 }
             });
     });
+
+    // update profile
+    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function(){
+        let
+        form = $('.profile-info form.update-type.01'),
+        fData = {},
+        i = 0;
+        for (; i < form[0].length; i++) {
+            fData[form[0][i].name] = form[0][i].value;
+        }
+
+        console.log(fData);
+        $.ajax({
+            url: baseURL() + '/update_profile',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                requested_data: JSON.stringify({
+                    token: $.cookie('t'),
+                    change_type: 'name',
+                    fdata: fData
+                })
+            },
+        })
+        .done(function () {
+            //console.log("success");
+        })
+        .fail(function () {
+            //console.log("error");
+        })
+        .always(function (result) {
+            console.log(result);
+            if (result.status == 'success') {
+                $('.profile-info form.update-type.01 input[name=password]').val('');
+                if (result.data['change_count'] == 1) {
+                    console.log($('.profile-info ul li').eq(0));
+                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
+                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
+                } else if (result.data['change_count'] == 2) {
+                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
+                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
+                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
+                }
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').addClass('success');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'failed') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('failed');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'error') {
+                window.alert(result.message);
+            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+            //     $('.action-msg-notification').removeClass('success');
+            //     $('.action-msg-notification').removeClass('warning');
+            //     $('.action-msg-notification').removeClass('failed');
+            //     $('.action-msg-notification').addClass('error');
+            //     $('.action-msg-notification').removeClass('hide');
+            //     $('.action-msg-notification').fadeOut({
+            //         duration: 3000,
+            //         complete: () => {
+            //             $('.action-msg-notification').addClass('hide');
+            //             $('.action-msg-notification').removeAttr('style');
+            //         }
+            //     });
+            } else if (result.status == 'warning') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('warning');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            }
+        });
+    });
+
+    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function(){
+        let
+        form = $('.profile-info form.update-type.02'),
+        fData = {},
+        i = 0;
+        for (; i < form[0].length; i++) {
+            fData[form[0][i].name] = form[0][i].value;
+        }
+
+        console.log(fData);
+        $.ajax({
+            url: baseURL() + '/update_profile',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                requested_data: JSON.stringify({
+                    token: $.cookie('t'),
+                    change_type: 'password',
+                    fdata: fData
+                })
+            },
+        })
+        .done(function () {
+            //console.log("success");
+        })
+        .fail(function () {
+            //console.log("error");
+        })
+        .always(function (result) {
+            console.log(result);
+            if (result.status == 'success') {
+                $('.profile-info form.update-type.02 input[name=old_password]').val('');
+                $('.profile-info form.update-type.02 input[name=new_password]').val('');
+                $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').addClass('success');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'failed') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('failed');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'error') {
+                window.alert(result.message);
+            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+            //     $('.action-msg-notification').removeClass('success');
+            //     $('.action-msg-notification').removeClass('warning');
+            //     $('.action-msg-notification').removeClass('failed');
+            //     $('.action-msg-notification').addClass('error');
+            //     $('.action-msg-notification').removeClass('hide');
+            //     $('.action-msg-notification').fadeOut({
+            //         duration: 3000,
+            //         complete: () => {
+            //             $('.action-msg-notification').addClass('hide');
+            //             $('.action-msg-notification').removeAttr('style');
+            //         }
+            //     });
+            } else if (result.status == 'warning') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('warning');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            }
+        });
+    });
     // move this checkboxAction function to asmp-actionlib, and make defineAction method for this function
     // function checkboxAction(index) {
-    //     var ma = new MultipleAction(baseURL() + '/admin/remove_item');
+    //     var ma = new MultipleAction(baseURL() + '/remove_item');
     //     $('.checkbox.item'   + index).click(function () {
     //         var mailIds = $('.multiple-action').data('mail-ids');
     //         checkedItemCount += 1;
@@ -223,7 +425,7 @@ $(document).ready(function () {
     //                         console.log(uPass);
     //                         if (promptInp != false) {
     //                             actionExecutor.actionName = 'Remove Field/Section';
-    //                             actionExecutor.actionUrl = baseURL() + '/admin/remove_item';
+    //                             actionExecutor.actionUrl = baseURL() + '/remove_item';
     //                             actionExecutor.actionData = {
     //                                 id: itemIds,
     //                                 t: $.cookie('t'),
@@ -302,7 +504,7 @@ $(document).ready(function () {
     // }
 
     $('#checkAll').click(function () {
-        var ma = new MultipleAction(baseURL() + '/admin/remove_item');
+        var ma = new MultipleAction(baseURL() + '/remove_item');
         if ($(this).is(':checked') && $('.item td .checkbox').not('.item.hide td .checkbox').length !== 0) {
             var mailIds = $('.multiple-action').data('mail-ids'),
                 i = 1,
@@ -362,12 +564,12 @@ $(document).ready(function () {
     });
 
     console.log(window.location.href, baseURL() + '/bidang-bagian');
-    if (window.location.href == baseURL() + '/admin/user-management') {
+    if (window.location.href == baseURL() + '/user-management') {
         // user management item loader
         $('.table-container#userManagement .item-list').ready(function () {
             $.ajax({
                 type: "POST",
-                url: baseURL() + '/admin/user_management/load',
+                url: baseURL() + '/user_management/load',
                 dataType: "json",
                 data: {
                     t: $.cookie('t')
@@ -398,12 +600,12 @@ $(document).ready(function () {
                 }
             });
         });
-    } else if (window.location.href == baseURL() + '/admin/bidang-bagian') {
+    } else if (window.location.href == baseURL() + '/bidang-bagian') {
         // field/sections item loader
         $('.table-container#fieldSections .item-list').ready(function () {
             $.ajax({
                 type: "POST",
-                url: baseURL() + '/admin/field_sections/load',
+                url: baseURL() + '/field_sections/load',
                 dataType: "json",
                 data: {
                     t: $.cookie('t')
@@ -445,12 +647,12 @@ $(document).ready(function () {
                 }
             });
         });
-    } else if (window.location.href == baseURL() + '/admin/surat-masuk') {
+    } else if (window.location.href == baseURL() + '/surat-masuk') {
         console.log('SURAT MASUK');
         $('.table-container#incomingMail .item-list').ready(function () {
             $.ajax({
                 type: "POST",
-                url: baseURL() + '/admin/incoming_mail/load',
+                url: baseURL() + '/incoming_mail/load',
                 dataType: "json",
                 data: {
                     t: $.cookie('t')
@@ -503,9 +705,9 @@ $(document).ready(function () {
         });
 
         $('.button.trash-can-btn').click(function () {
-            window.location.replace(baseURL() + '/admin/tong-sampah');
+            window.location.replace(baseURL() + '/tong-sampah');
         });
-    } else if (window.location.href == baseURL() + '/admin/tong-sampah') {
+    } else if (window.location.href == baseURL() + '/tong-sampah') {
         $('.table-container#trashCan .item-list').ready(function () {
             $.ajax({
                 type: "POST",
@@ -601,7 +803,7 @@ $(document).ready(function () {
         $('.button.add-item-btn').removeAttr('disabled');
         $.ajax({
             type: "POST",
-            url: baseURL() + '/admin/add_field_section',
+            url: baseURL() + '/add_field_section',
             dataType: "json",
             data: {
                 t: $.cookie('t'),
@@ -711,7 +913,7 @@ $(document).ready(function () {
         }
         $.ajax({
             type: "POST",
-            url: baseURL() + '/admin/settings',
+            url: baseURL() + '/settings',
             data: {
                 data: JSON.stringify({
                     cmd: 'save_all_setting',
@@ -782,7 +984,7 @@ $(document).ready(function () {
             currObj = $(this);
         $.ajax({
             type: "POST",
-            url: baseURL() + '/admin/settings',
+            url: baseURL() + '/settings',
             data: {
                 data: JSON.stringify({
                     cmd: 'save_app_settings',
@@ -853,7 +1055,7 @@ $(document).ready(function () {
             currObj = $(this);
         $.ajax({
             type: "POST",
-            url: baseURL() + '/admin/settings',
+            url: baseURL() + '/settings',
             data: {
                 data: JSON.stringify({
                     cmd: 'save_user_settings',
@@ -1056,7 +1258,7 @@ $(document).ready(function () {
             // add xss_clean (escape all special characters)
             $.ajax({
                 type: "POST",
-                url: baseURL() + '/admin/add_pdf_layout',
+                url: baseURL() + '/add_pdf_layout',
                 data: {
                     data: JSON.stringify({
                         t: $.cookie('t'),
@@ -1158,7 +1360,7 @@ $(document).ready(function () {
             var
                 layoutName = $('#layout' + id + ' .pdf-layout-name').text(),
                 t = $.cookie('t');
-            window.open(baseURL() + '/admin/pdf-editor/' + layoutName + '/' + t);
+            window.open(baseURL() + '/pdf-editor/' + layoutName + '/' + t);
         });
     }
 
@@ -1168,7 +1370,7 @@ $(document).ready(function () {
             var
                 layoutName = $('#layout' + id + ' .pdf-layout-name').text(),
                 t = $.cookie('t');
-            window.open(baseURL() + '/admin/pdf-layout/view/' + layoutName + '/im/' + encodeURIComponent("XII&sol;23") + '/' + t);
+            window.open(baseURL() + '/pdf-layout/view/' + layoutName + '/im/' + encodeURIComponent("XII&sol;23") + '/' + t);
         });
     }
 
@@ -1189,7 +1391,7 @@ $(document).ready(function () {
             }
             $.ajax({
                 type: "POST",
-                url: baseURL() + '/admin/plsc', // pdf layout status changer
+                url: baseURL() + '/plsc', // pdf layout status changer
                 data: {
                     data: JSON.stringify({
                         t: $.cookie('t'),
@@ -1225,7 +1427,7 @@ $(document).ready(function () {
 
             $.ajax({
                 type: "POST",
-                url: baseURL() + '/admin/rempl', // remove pdf layout
+                url: baseURL() + '/rempl', // remove pdf layout
                 data: {
                     data: JSON.stringify({
                         t: $.cookie('t'),
@@ -1358,7 +1560,7 @@ $(document).ready(function () {
         lang = lang[$.cookie('language')];
         $.ajax({
             type: "POST",
-            url: baseURL() + '/admin/gedtrdta', // get editor data
+            url: baseURL() + '/gedtrdta', // get editor data
             data: {
                 data: JSON.stringify({
                     t: $.cookie('t'),
@@ -1377,7 +1579,7 @@ $(document).ready(function () {
 
                 if (editorData !== null && pdfPageSetup !== null) {
                     $('<iframe></iframe>').attr({
-                        src: baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'),
+                        src: baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'),
                         class: 'pdf-editor-viewer'
                     }).appendTo(viewerClass);
 
@@ -1410,7 +1612,7 @@ $(document).ready(function () {
                         pdfPageSetup['orientation'] = $(configsClass + ' form #orientation').val();
                         $.ajax({
                             type: "POST",
-                            url: baseURL() + '/admin/upedtrdta', // update editor data
+                            url: baseURL() + '/upedtrdta', // update editor data
                             data: {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
@@ -1427,7 +1629,7 @@ $(document).ready(function () {
 
                         }).always(function (result) {
                             //console.log(result);
-                            $('.pdf-editor-viewer').attr('src', baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
+                            $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                         });
                     }).appendTo(configsClass + ' form');
                     $('<option></option>').attr('value', 'P').text('Potrait').appendTo(configsClass + ' form #orientation');
@@ -1451,7 +1653,7 @@ $(document).ready(function () {
                         pdfPageSetup['unit'] = $(configsClass + ' form #unit').val();
                         $.ajax({
                             type: "POST",
-                            url: baseURL() + '/admin/upedtrdta', // update editor data
+                            url: baseURL() + '/upedtrdta', // update editor data
                             data: {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
@@ -1467,7 +1669,7 @@ $(document).ready(function () {
                         }).fail(function () {
 
                         }).always(function (result) {
-                            $('.pdf-editor-viewer').attr('src', baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
+                            $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                         });
                     }).appendTo(configsClass + ' form');
                     $('<option></option>').attr('value', 'mm').text('mm').appendTo(configsClass + ' form #unit');
@@ -1492,7 +1694,7 @@ $(document).ready(function () {
                         pdfPageSetup['format'] = $(configsClass + ' form #format').val();
                         $.ajax({
                             type: "POST",
-                            url: baseURL() + '/admin/upedtrdta', // update editor data
+                            url: baseURL() + '/upedtrdta', // update editor data
                             data: {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
@@ -1508,7 +1710,7 @@ $(document).ready(function () {
                         }).fail(function () {
 
                         }).always(function (result) {
-                            $('.pdf-editor-viewer').attr('src', baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
+                            $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                         });
                     }).appendTo(configsClass + ' form');
                     $('<option></option>').attr('value', 'A4').text('A4').appendTo(configsClass + ' form #format');
@@ -1540,7 +1742,7 @@ $(document).ready(function () {
                                     editorData[$(this).parent().attr('id')][$(this).attr('name')] = $(this).val();
                                     $.ajax({
                                         type: "POST",
-                                        url: baseURL() + '/admin/upedtrdta', // update editor data
+                                        url: baseURL() + '/upedtrdta', // update editor data
                                         data: {
                                             data: JSON.stringify({
                                                 t: $.cookie('t'),
@@ -1556,7 +1758,7 @@ $(document).ready(function () {
                                     }).fail(function () {
 
                                     }).always(function (result) {
-                                        $('.pdf-editor-viewer').attr('src', baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
+                                        $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                                     });
                                 }).appendTo(configsClass + ' form #' + componentNames[i]);
                             } else {
@@ -1571,7 +1773,7 @@ $(document).ready(function () {
                                     //console.log(editorData[$(this).parent().attr('id')][$(this).attr('name')]);
                                     $.ajax({
                                         type: "POST",
-                                        url: baseURL() + '/admin/upedtrdta', // update editor data
+                                        url: baseURL() + '/upedtrdta', // update editor data
                                         data: {
                                             data: JSON.stringify({
                                                 t: $.cookie('t'),
@@ -1587,7 +1789,7 @@ $(document).ready(function () {
                                     }).fail(function () {
 
                                     }).always(function (result) {
-                                        $('.pdf-editor-viewer').attr('src', baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
+                                        $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                                     });
                                 }).appendTo(configsClass + ' form #' + componentNames[i]);
                             }
@@ -1606,7 +1808,7 @@ $(document).ready(function () {
                         }
                         $.ajax({
                             type: "POST",
-                            url: baseURL() + '/admin/upedtrdta', // update editor data
+                            url: baseURL() + '/upedtrdta', // update editor data
                             data: {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
@@ -1637,7 +1839,7 @@ $(document).ready(function () {
                                         $('.action-msg-notification').removeAttr('style');
                                     }
                                 });
-                                $('.pdf-editor-viewer').attr('src', baseURL() + '/admin/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
+                                $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                             } else if (result.status === 'error') {
                                 $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
                                 $('.action-msg-notification').removeClass('success');
@@ -1677,7 +1879,7 @@ $(document).ready(function () {
         $('.check-for-update .fa').toggleClass('fa-circle-notch fa-spin');
         $('.check-for-update').css('background', '#8f8f8f');
         var
-            csrf_token = $(this).data('token');
+            csrf_token = $.cookie('t');
         $.ajax({
                 url: baseURL() + '/check_for_update/' + csrf_token,
             })
@@ -1724,7 +1926,7 @@ $(document).ready(function () {
                                     $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-check-circle\"></i> Download Complete</p>");
                                     $('.update-dialogue-box .process-log .refresh').before("<p><i class=\"fa fa-chevron-right\"></i> Extracting......</p>");
                                     $.ajax({
-                                            url: baseURL() + '/extract_new_update/' + csrf_token + '/' + app_ver,
+                                            url: baseURL() + '/extract_new_update/' + csrf_token + '/' + app_ver + '/asmp-test',
                                         })
                                         .done(function() {
                                             //console.log("success");

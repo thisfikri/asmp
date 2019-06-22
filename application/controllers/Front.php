@@ -1214,6 +1214,7 @@ class Front extends CI_Controller
                     $query = $this->db->get('users');
                     $row_count = $query->num_rows();
                     $row_count += 1;
+                    $img_file_name = random_string('alnum', 8) . '_default-profile.png';
                     unset($input_data['t']);
                     unset($input_data['passconfirm']);
                     $input_data['id'] = $row_count;
@@ -1221,7 +1222,81 @@ class Front extends CI_Controller
                     $input_data['recovery_id'] = $this->asmp_security->get_hashed_password($input_data['recovery_id']);
                     $input_data['position'] = $input_data['field_section'];
                     $input_data['role'] = 'user';
+                    $input_data['profile_picture'] = $img_file_name;
                     $input_data['gallery_dir'] = random_string('alnum', 28);
+                    $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $input_data['gallery_dir'];
+                    if (is_dir($gallery_dir) === FALSE)
+                    {
+                        if (mkdir($gallery_dir, 0755))
+                        {
+                            $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/default-profile.png';
+                            $handle = fopen($filename, 'r');
+                            if (is_readable($filename))
+                            {
+                                $filewr = fread($handle, filesize($filename));
+                                fclose($handle);
+                                $filename = $gallery_dir . '/' . $img_file_name;
+                                $handle = fopen($filename, 'w');
+                                if (is_writable($filename))
+                                {
+                                    if (fwrite($handle, $filewr))
+                                    {
+                                        log_message('info', 'default-profile.png has move to gallery');
+                                    }
+                                    else
+                                    {
+                                        log_message('error', 'failed to write default-profile.png to ' . $gallery_dir);
+                                    }
+                                }
+                                else
+                                {
+                                    log_message('error', $filename . ' is not writeable.');
+                                }
+                            }
+                            else
+                            {
+                                log_message('error', $filename . ' is not readable.');
+                            }
+
+                            fclose($handle);
+                        }
+                        else
+                        {
+                            log_message('error', 'failed to make directory ' . $gallery_dir);
+                        }
+                    }
+                    else
+                    {
+                        $filename = base_url('assets/images/default-profile.png');
+                        $handle = fopen($filename, 'r');
+                        if (is_readable($filename))
+                        {
+                            $filewr = fread($handle, filesize($filename));
+                            fclose($handle);
+                            $filename = $gallery_dir . '/' . $img_file_name;
+                            $handle = fopen($filename, 'w');
+                            if (is_writable($filename))
+                            {
+                                if (fwrite($handle, $filename))
+                                {
+                                    log_message('info', 'default-profile.png has move to gallery');
+                                }
+                                else
+                                {
+                                    log_message('error', 'failed to write default-profile.png to ' . $gallery_dir);
+                                }
+                            }
+                            else
+                            {
+                                log_message('error', $filename . ' is not writeable.');
+                            }
+                        }
+                        else
+                        {
+                            log_message('error', $filename . ' is not readable.');
+                        }
+                    }
+
                     unset($input_data['field_section']);
                     $this->db->insert('users', $input_data);
                     if ($this->db->affected_rows())

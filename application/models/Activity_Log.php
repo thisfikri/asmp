@@ -215,13 +215,16 @@ class Activity_Log extends CI_Model {
 				}
 				$this->_detail_text .= ')';
 				break;
+			case 'check_for_update':
+				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-circle-notch fa-spin fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
+				break;
 			case 'check_version':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-check-circle fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				break;
 			case 'download_update':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-download fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				break;
-			case 'extract_file':
+			case 'extract_update':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-archive fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				break;
 			default:
