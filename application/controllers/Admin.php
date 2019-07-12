@@ -46,7 +46,7 @@ class Admin extends CI_Controller
      *
      * @var string
      */
-    private $_update_app_host = 'http://localhost:7575';
+    private $_update_app_host = 'https://simak-official.000webhostapp.com';
 
     /**
      * constructor ini digunakan untuk membuat table awal untuk registrasi awal
@@ -3024,10 +3024,11 @@ class Admin extends CI_Controller
                 // comparing version
                 //$url = 'http://muramasa.hol.es/app-updates/simakwapp';
                 $url = $this->_update_app_host . '/updates';
+                log_message('error' ,'URL: ' . $url);
                 $app_s_ver = file_get_contents($url . '/asmpver.txt');
                 $app_s_ver = explode(':', $app_s_ver);
-                $app_s_ver = (float) $app_s_ver[1];
-
+                $app_s_ver = $app_s_ver[1];
+                log_message('error', $app_s_ver);
                 // if app version in server greater than current version
                 if ($app_s_ver > $this->aboutapp->get_version())
                 {
