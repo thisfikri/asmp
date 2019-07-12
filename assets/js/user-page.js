@@ -122,6 +122,208 @@ $(document).ready(function () {
             });
     });
 
+    // update profile
+    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function(){
+        let
+        form = $('.profile-info form.update-type.01'),
+        fData = {},
+        i = 0;
+        for (; i < form[0].length; i++) {
+            fData[form[0][i].name] = form[0][i].value;
+        }
+
+        console.log(fData);
+        $.ajax({
+            url: baseURL() + '/update_profile',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                requested_data: JSON.stringify({
+                    token: $.cookie('t'),
+                    change_type: 'name',
+                    fdata: fData
+                })
+            },
+        })
+        .done(function () {
+            //console.log("success");
+        })
+        .fail(function () {
+            //console.log("error");
+        })
+        .always(function (result) {
+            console.log(result);
+            if (result.status == 'success') {
+                $('.profile-info form.update-type.01 input[name=password]').val('');
+                if (result.data['change_count'] == 1) {
+                    console.log($('.profile-info ul li').eq(0));
+                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
+                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
+                } else if (result.data['change_count'] == 2) {
+                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
+                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
+                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
+                }
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').addClass('success');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'failed') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('failed');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'error') {
+                window.alert(result.message);
+            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+            //     $('.action-msg-notification').removeClass('success');
+            //     $('.action-msg-notification').removeClass('warning');
+            //     $('.action-msg-notification').removeClass('failed');
+            //     $('.action-msg-notification').addClass('error');
+            //     $('.action-msg-notification').removeClass('hide');
+            //     $('.action-msg-notification').fadeOut({
+            //         duration: 3000,
+            //         complete: () => {
+            //             $('.action-msg-notification').addClass('hide');
+            //             $('.action-msg-notification').removeAttr('style');
+            //         }
+            //     });
+            } else if (result.status == 'warning') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('warning');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            }
+        });
+    });
+
+    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function(){
+        let
+        form = $('.profile-info form.update-type.02'),
+        fData = {},
+        i = 0;
+        for (; i < form[0].length; i++) {
+            fData[form[0][i].name] = form[0][i].value;
+        }
+
+        console.log(fData);
+        $.ajax({
+            url: baseURL() + '/update_profile',
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                requested_data: JSON.stringify({
+                    token: $.cookie('t'),
+                    change_type: 'password',
+                    fdata: fData
+                })
+            },
+        })
+        .done(function () {
+            //console.log("success");
+        })
+        .fail(function () {
+            //console.log("error");
+        })
+        .always(function (result) {
+            console.log(result);
+            if (result.status == 'success') {
+                $('.profile-info form.update-type.02 input[name=old_password]').val('');
+                $('.profile-info form.update-type.02 input[name=new_password]').val('');
+                $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').addClass('success');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'failed') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('warning');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('failed');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            } else if (result.status == 'error') {
+                window.alert(result.message);
+            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+            //     $('.action-msg-notification').removeClass('success');
+            //     $('.action-msg-notification').removeClass('warning');
+            //     $('.action-msg-notification').removeClass('failed');
+            //     $('.action-msg-notification').addClass('error');
+            //     $('.action-msg-notification').removeClass('hide');
+            //     $('.action-msg-notification').fadeOut({
+            //         duration: 3000,
+            //         complete: () => {
+            //             $('.action-msg-notification').addClass('hide');
+            //             $('.action-msg-notification').removeAttr('style');
+            //         }
+            //     });
+            } else if (result.status == 'warning') {
+                window.alert(result.message);
+                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                // $('.action-msg-notification').removeClass('success');
+                // $('.action-msg-notification').removeClass('failed');
+                // $('.action-msg-notification').removeClass('error');
+                // $('.action-msg-notification').addClass('warning');
+                // $('.action-msg-notification').removeClass('hide');
+                // $('.action-msg-notification').fadeOut({
+                //     duration: 3000,
+                //     complete: () => {
+                //         $('.action-msg-notification').addClass('hide');
+                //         $('.action-msg-notification').removeAttr('style');
+                //     }
+                // });
+            }
+        });
+    });
+
     $('#checkAll').click(function () {
         var ma = new MultipleAction(baseURL() + '/remove_item');
         if ($(this).is(':checked') && $('.item td .checkbox').not('.item.hide td .checkbox').length !== 0) {

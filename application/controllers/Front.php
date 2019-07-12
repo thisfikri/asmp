@@ -720,12 +720,16 @@ class Front extends CI_Controller
                     $recovery_id = implode('', $recovery_id);
                     $img_file_name = random_string('alnum', 8) . '_default-profile.png';
 
+                    $query = $this->db->get('users');
+                    $user_count = $query->num_rows();
+
                     /**
                      * Variabel ini digunakan untuk menyimpan nilai data yang akan dimasukan kedalam table
                      *
                      * @var array
                      */
                     $requested_data = array(
+                        'id' => $user_count + 1,
                         'true_name' => $this->input->post('true_name', TRUE),
                         'username' => $this->input->post('username', TRUE),
                         'password' => $this->asmp_security->get_hashed_password($this->input->post('password', TRUE)),
@@ -740,38 +744,54 @@ class Front extends CI_Controller
                     $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $requested_data['gallery_dir'];
                     if (is_dir($gallery_dir) === FALSE)
                     {
-                        if (mkdir($gallery_dir, 0755))
+                        $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery';
+                        
+                        if (is_dir($gallery_dir) === FALSE)
                         {
-                            $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/default-profile.png';
-                            $handle = fopen($filename, 'r');
-                            if (is_readable($filename))
+                            mkdir($gallery_dir, 0755);
+                        }
+                        
+                        if (is_dir($gallery_dir) !== FALSE)
+                        {
+                            $gallery_dir .= '/' . $requested_data['gallery_dir'];
+                            log_message('error', $gallery_dir);
+                            if (mkdir($gallery_dir, 0755))
                             {
-                                $filewr = fread($handle, filesize($filename));
-                                fclose($handle);
-                                $filename = $gallery_dir . '/' . $img_file_name;
-                                $handle = fopen($filename, 'w');
-                                if (is_writable($filename))
+                                $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/default-profile.png';
+                                $handle = fopen($filename, 'r');
+                                if (is_readable($filename))
                                 {
-                                    if (fwrite($handle, $filewr))
+                                    $filewr = fread($handle, filesize($filename));
+                                    fclose($handle);
+                                    $filename = $gallery_dir . '/' . $img_file_name;
+                                    $handle = fopen($filename, 'w');
+                                    if (is_writable($filename))
                                     {
-                                        log_message('info', 'default-profile.png has move to gallery');
+                                        if (fwrite($handle, $filewr))
+                                        {
+                                            log_message('info', 'default-profile.png has move to gallery');
+                                        }
+                                        else
+                                        {
+                                            log_message('error', 'failed to write default-profile.png to ' . $gallery_dir);
+                                        }
                                     }
                                     else
                                     {
-                                        log_message('error', 'failed to write default-profile.png to ' . $gallery_dir);
+                                        log_message('error', $filename . ' is not writeable.');
                                     }
                                 }
                                 else
                                 {
-                                    log_message('error', $filename . ' is not writeable.');
+                                    log_message('error', $filename . ' is not readable.');
                                 }
+
+                                fclose($handle);                                
                             }
                             else
                             {
-                                log_message('error', $filename . ' is not readable.');
+                                log_message('error', 'failed to make directory ' . $gallery_dir);
                             }
-
-                            fclose($handle);
                         }
                         else
                         {
@@ -780,6 +800,7 @@ class Front extends CI_Controller
                     }
                     else
                     {
+                        $gallery_dir .= '/' . $requested_data['gallery_dir'];
                         $filename = base_url('assets/images/default-profile.png');
                         $handle = fopen($filename, 'r');
                         if (is_readable($filename))
@@ -1039,7 +1060,11 @@ class Front extends CI_Controller
                             // Mengubah status preregister dari 'not_registered' menjadi 'registered'
                             $this->db->where(array('status' => 'not_registered'))->update('preregister_status', array('status' => 'registered'));
                             // Memasukkan data pada field_sections
-                            $this->db->insert('field_sections', array('field_section_name' => $requested_data['position'], 'task' => 'leader_accept_lvl3_reply'));
+                            $this->db->insert('field_sections', array(
+                                'id' => $requested_data['id'],
+                                'field_section_name' => $requested_data['position'],
+                                'task' => 'leader_accept_lvl3_reply'
+                            ));
 
                             // jika query sebelumnya berhasil
                             if ($this->db->affected_rows())
@@ -1052,7 +1077,10 @@ class Front extends CI_Controller
 
                             if ($query->result())
                             {
-                                $this->db->insert('user_settings', array('username' => $requested_data['username']));
+                                $this->db->insert('user_settings', array(
+                                    'id' => $requested_data['id'],
+                                    'username' => $requested_data['username']
+                                ));
 
                                 $sess = array(
                                     'pre_user_status' => 'success',

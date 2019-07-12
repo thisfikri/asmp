@@ -481,6 +481,227 @@ class User extends CI_Controller
 
     // ------------------------------------------------------------------------
 
+    public function update_profile()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = json_decode($this->input->post('requested_data', TRUE), TRUE);
+            if ($data['token'] == $this->session->userdata('CSRF'))
+            {
+                if ($data['change_type'] == 'name')
+                {
+                    $query = $this->db->where('username', $this->_username)->get('users');
+                    $user_data = $query->result()[0];
+    
+                    if (!empty($data['fdata']['password']))
+                    {
+                        if ($this->asmp_security->verify_hashed_password($data['fdata']['password'], $user_data->password))
+                        {
+                            if ($data['fdata']['username'] !== $user_data->username && $data['fdata']['true_name'] !== $user_data->true_name)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'username' => $data['fdata']['username']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->session->unset_userdata(array('user_login'));
+
+                                    $new_sess = array(
+                                        'user_login' => $data['fdata']['username']
+                                    );
+
+                                    $this->session->set_userdata($new_sess);
+
+                                    $this->db->where('username', $data['fdata']['username'])->update('users', array(
+                                        'true_name' => $data['fdata']['true_name']
+                                    ));
+                                    
+                                    if ($this->db->affected_rows())
+                                    {
+                                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                            'status' => 'success',
+                                            'message' => 'nama pengguna dan nama asli berhasil diubah',
+                                            'data' => array(
+                                                'change_count' => 2,
+                                                'change_name1' => 'username',
+                                                'change_name2' => 'true_name',
+                                                'change_value1' => $data['fdata']['username'],
+                                                'change_value2' => $data['fdata']['true_name']
+                                            )
+                                        )));
+                                    }
+                                    else
+                                    {
+                                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                            'status' => 'success',
+                                            'message' => 'nama pengguna berhasil diubah tapi nama asli gagal diubah',
+                                            'data' => array(
+                                                'change_count' => 1,
+                                                'change_name' => 'username',
+                                                'change_value' => $data['fdata']['username']
+                                            )
+                                        )));
+                                    }
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'nama pengguna dan nama asli gagal diubah'
+                                    )));
+                                }
+                            }
+                            else if ($data['fdata']['username'] !== $user_data->username)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'username' => $data['fdata']['username']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->session->unset_userdata(array('user_login'));
+
+                                    $new_sess = array(
+                                        'user_login' => $data['fdata']['username']
+                                    );
+
+                                    $this->session->set_userdata($new_sess);
+
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'nama pengguna berhasil diubah',
+                                        'data' => array(
+                                            'change_count' => 1,
+                                            'change_name' => 'username',
+                                            'change_value' => $data['fdata']['username']
+                                        )
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'nama pengguna gagal diubah'
+                                    )));
+                                }
+                            }
+                            else if ($data['fdata']['true_name'] !== $user_data->true_name)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'true_name' => $data['fdata']['true_name']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'nama asli berhasil diubah',
+                                        'data' => array(
+                                            'change_count' => 1,
+                                            'change_name' => 'true_name',
+                                            'change_value' => $data['fdata']['true_name']
+                                        )
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'nama asli gagal diubah'
+                                    )));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'password tidak valid'
+                            )));
+                        }
+                    }
+                    else
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'warning',
+                            'message' => 'password tidak boleh kosong'
+                        )));
+                    }
+                }
+                else if ($data['change_type'] == 'password')
+                {
+                    $query = $this->db->where('username', $this->_username)->get('users');
+                    $user_data = $query->result()[0];
+    
+                    if (!empty($data['fdata']['old_password']))
+                    {
+                        if ($this->asmp_security->verify_hashed_password($data['fdata']['old_password'], $user_data->password))
+                        {
+                            if ($data['fdata']['new_password'] === $data['fdata']['new_password_confirm'])
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'password' => $this->asmp_security->get_hashed_password($data['fdata']['new_password'])
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'password berhasil diubah'
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'password gagal diubah'
+                                    )));
+                                }
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'error',
+                                    'message' => 'password baru dan konfirmasi password baru harus sama'
+                                )));
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'password tidak valid'
+                            )));
+                        }
+                    }
+                    else
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'warning',
+                            'message' => 'password lama tidak boleh kosong'
+                        )));
+                    }   
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'warning',
+                    'message' => 'token tidak sama'
+                )));
+            }
+        }
+        else
+        {
+            
+            redirect('login','refresh');
+            
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
     /**
      * Undocumented function
      *

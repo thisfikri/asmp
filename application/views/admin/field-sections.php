@@ -40,7 +40,7 @@
                 <tr>
                     <th class="table-title"><input type="checkbox" id="checkAll"><span class="checkmark all"><i class="fa fa-check"></i></span></th>
                     <th class="table-title"><i class="fa fa-sort"></i> Nama Bidang/Bagian</th>
-                    <th class="table-title"><i class="fa fa-sort"></i> Tugs</th>
+                    <th class="table-title"><i class="fa fa-sort"></i> Tugas</th>
                     <th class="table-title">Aksi</th>
                 </tr>
                 <!-- <tr class="item id1">

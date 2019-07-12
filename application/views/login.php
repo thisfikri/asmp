@@ -59,7 +59,7 @@
         </form>
         <!-- Link Option Box -->
         <div class="link-option-box">
-        <?php if ($register_limit != 0): ?>
+        <?php if ($register_limit > 0): ?>
             <a href="<?php echo site_url('buat-akun-baru');?>">Buat Akun Baru <i class="fa fa-user-plus"></i></a> |
         <?php endif;?>
             <a href="<?php echo site_url('lupa-kata-sandi');?>">Lupa Kata Sandi <i class="fa fa-question"></i></a>

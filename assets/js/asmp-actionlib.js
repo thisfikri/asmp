@@ -1346,7 +1346,6 @@ function ActionTrigger() {
     this.defineTrigger = function (actionName, triggerName) {
         var
             usefullapi = new ASMPUsefulAPI(),
-            userRole = usefullapi.getFullURL()[0],
             deleteUser = function (index, uTrueName) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.confirm-box#userManagement').remove();
@@ -1387,7 +1386,7 @@ function ActionTrigger() {
                             if (promptInp != false) {
                                 //console.log(uPass, index);
                                 actionExecutor.actionName = 'Delete User';
-                                actionExecutor.actionUrl = baseURL() + '/' + userRole + '/remove_item';
+                                actionExecutor.actionUrl = baseURL() + '/remove_item';
                                 actionExecutor.actionData = {
                                     id: index,
                                     item_type: 'user_management',
@@ -1491,7 +1490,7 @@ function ActionTrigger() {
                             if (promptInp != false) {
                                 //console.log(uPass, index);
                                 actionExecutor.actionName = 'Delete field section';
-                                actionExecutor.actionUrl = baseURL() + '/' + userRole + '/remove_item';
+                                actionExecutor.actionUrl = baseURL() + '/remove_item';
                                 actionExecutor.actionData = {
                                     id: index,
                                     item_type: 'field_sections',

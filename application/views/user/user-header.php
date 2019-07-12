@@ -121,7 +121,7 @@
                     <li>Posisi: <?php echo $uprof_data->position;?></li>
                 </ul>
 
-                <form class="update-type 01 hide" method="POST">
+                <form class="update-type 01 hide" action="javascript:void(0)" method="POST">
                     <h3><i class="fa fa-user-circle"></i> Name Changes</h3>
                     <label for="true_name">True Name</label>
                     <input type="text" name="true_name" value="<?php echo $uprof_data->true_name?>"><span class="hint"></span>
@@ -135,7 +135,7 @@
                     <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
                 </form>
 
-                <form class="update-type 02 hide" method="POST">
+                <form class="update-type 02 hide" action="javascript:void(0)" method="POST">
                         <h3><i class="fa fa-key"></i> Password Changes</h3>
                     <label for="old_password">Old Password</label>
                     <input type="password" name="old_password" value=""><span class="hint"></span>
