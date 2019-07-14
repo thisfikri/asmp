@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
     var pagination = false;
 
     function xss_clean(str) {
@@ -13,7 +13,7 @@ $(document).ready(function () {
 
 
     //Navbar Menu Icon
-    $('.navbar-icon').click(function () {
+    $('.navbar-icon').click(function() {
         let
             iconType = $(this).attr('class');
         if (iconType.search('arrow') !== -1) {
@@ -32,7 +32,7 @@ $(document).ready(function () {
     });
 
     // Options Button
-    $('.button.options').click(function () {
+    $('.button.options').click(function() {
         let
             dropdownS = $('.casual-theme.activity-page.options-dropdown').css('height');
         //console.log(dropdownS);
@@ -46,7 +46,7 @@ $(document).ready(function () {
     });
 
     // Notification Button
-    $('.button.notification').click(function () {
+    $('.button.notification').click(function() {
         let
             displayStat = $('.casual-theme.activity-page.notification-box.outerdiv').css('display');
         if (displayStat == 'none') {
@@ -63,7 +63,7 @@ $(document).ready(function () {
     });
 
     // Profile Edit Button
-    $('.side-profile button.edit-profile').click(function () {
+    $('.side-profile button.edit-profile').click(function() {
         let
             buttonHTML = $(this).html();
         //console.log(buttonHTML);
@@ -88,7 +88,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.logout-btn').click(function () {
+    $('.logout-btn').click(function() {
         $.ajax({
                 url: baseURL() + '/logout',
                 type: 'POST',
@@ -97,13 +97,13 @@ $(document).ready(function () {
                     token: $(this).data('token')
                 },
             })
-            .done(function () {
+            .done(function() {
                 //console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 //console.log("error");
             })
-            .always(function (result) {
+            .always(function(result) {
                 //console.log("complete");
                 switch (result.status) {
                     case 'success':
@@ -123,208 +123,208 @@ $(document).ready(function () {
     });
 
     // update profile
-    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function(){
+    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function() {
         let
-        form = $('.profile-info form.update-type.01'),
-        fData = {},
-        i = 0;
+            form = $('.profile-info form.update-type.01'),
+            fData = {},
+            i = 0;
         for (; i < form[0].length; i++) {
             fData[form[0][i].name] = form[0][i].value;
         }
 
         console.log(fData);
         $.ajax({
-            url: baseURL() + '/update_profile',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                requested_data: JSON.stringify({
-                    token: $.cookie('t'),
-                    change_type: 'name',
-                    fdata: fData
-                })
-            },
-        })
-        .done(function () {
-            //console.log("success");
-        })
-        .fail(function () {
-            //console.log("error");
-        })
-        .always(function (result) {
-            console.log(result);
-            if (result.status == 'success') {
-                $('.profile-info form.update-type.01 input[name=password]').val('');
-                if (result.data['change_count'] == 1) {
-                    console.log($('.profile-info ul li').eq(0));
-                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
-                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
-                } else if (result.data['change_count'] == 2) {
-                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
-                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
-                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
+                url: baseURL() + '/update_profile',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    requested_data: JSON.stringify({
+                        token: $.cookie('t'),
+                        change_type: 'name',
+                        fdata: fData
+                    })
+                },
+            })
+            .done(function() {
+                //console.log("success");
+            })
+            .fail(function() {
+                //console.log("error");
+            })
+            .always(function(result) {
+                console.log(result);
+                if (result.status == 'success') {
+                    $('.profile-info form.update-type.01 input[name=password]').val('');
+                    if (result.data['change_count'] == 1) {
+                        console.log($('.profile-info ul li').eq(0));
+                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
+                        $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
+                    } else if (result.data['change_count'] == 2) {
+                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
+                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
+                        $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
+                    }
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').addClass('success');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'failed') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('failed');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'error') {
+                    window.alert(result.message);
+                    //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    //     $('.action-msg-notification').removeClass('success');
+                    //     $('.action-msg-notification').removeClass('warning');
+                    //     $('.action-msg-notification').removeClass('failed');
+                    //     $('.action-msg-notification').addClass('error');
+                    //     $('.action-msg-notification').removeClass('hide');
+                    //     $('.action-msg-notification').fadeOut({
+                    //         duration: 3000,
+                    //         complete: () => {
+                    //             $('.action-msg-notification').addClass('hide');
+                    //             $('.action-msg-notification').removeAttr('style');
+                    //         }
+                    //     });
+                } else if (result.status == 'warning') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('warning');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
                 }
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').addClass('success');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'failed') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('failed');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'error') {
-                window.alert(result.message);
-            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
-            //     $('.action-msg-notification').removeClass('success');
-            //     $('.action-msg-notification').removeClass('warning');
-            //     $('.action-msg-notification').removeClass('failed');
-            //     $('.action-msg-notification').addClass('error');
-            //     $('.action-msg-notification').removeClass('hide');
-            //     $('.action-msg-notification').fadeOut({
-            //         duration: 3000,
-            //         complete: () => {
-            //             $('.action-msg-notification').addClass('hide');
-            //             $('.action-msg-notification').removeAttr('style');
-            //         }
-            //     });
-            } else if (result.status == 'warning') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('warning');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            }
-        });
+            });
     });
 
-    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function(){
+    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function() {
         let
-        form = $('.profile-info form.update-type.02'),
-        fData = {},
-        i = 0;
+            form = $('.profile-info form.update-type.02'),
+            fData = {},
+            i = 0;
         for (; i < form[0].length; i++) {
             fData[form[0][i].name] = form[0][i].value;
         }
 
         console.log(fData);
         $.ajax({
-            url: baseURL() + '/update_profile',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                requested_data: JSON.stringify({
-                    token: $.cookie('t'),
-                    change_type: 'password',
-                    fdata: fData
-                })
-            },
-        })
-        .done(function () {
-            //console.log("success");
-        })
-        .fail(function () {
-            //console.log("error");
-        })
-        .always(function (result) {
-            console.log(result);
-            if (result.status == 'success') {
-                $('.profile-info form.update-type.02 input[name=old_password]').val('');
-                $('.profile-info form.update-type.02 input[name=new_password]').val('');
-                $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').addClass('success');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'failed') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('failed');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'error') {
-                window.alert(result.message);
-            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
-            //     $('.action-msg-notification').removeClass('success');
-            //     $('.action-msg-notification').removeClass('warning');
-            //     $('.action-msg-notification').removeClass('failed');
-            //     $('.action-msg-notification').addClass('error');
-            //     $('.action-msg-notification').removeClass('hide');
-            //     $('.action-msg-notification').fadeOut({
-            //         duration: 3000,
-            //         complete: () => {
-            //             $('.action-msg-notification').addClass('hide');
-            //             $('.action-msg-notification').removeAttr('style');
-            //         }
-            //     });
-            } else if (result.status == 'warning') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('warning');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            }
-        });
+                url: baseURL() + '/update_profile',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    requested_data: JSON.stringify({
+                        token: $.cookie('t'),
+                        change_type: 'password',
+                        fdata: fData
+                    })
+                },
+            })
+            .done(function() {
+                //console.log("success");
+            })
+            .fail(function() {
+                //console.log("error");
+            })
+            .always(function(result) {
+                console.log(result);
+                if (result.status == 'success') {
+                    $('.profile-info form.update-type.02 input[name=old_password]').val('');
+                    $('.profile-info form.update-type.02 input[name=new_password]').val('');
+                    $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').addClass('success');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'failed') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('failed');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'error') {
+                    window.alert(result.message);
+                    //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    //     $('.action-msg-notification').removeClass('success');
+                    //     $('.action-msg-notification').removeClass('warning');
+                    //     $('.action-msg-notification').removeClass('failed');
+                    //     $('.action-msg-notification').addClass('error');
+                    //     $('.action-msg-notification').removeClass('hide');
+                    //     $('.action-msg-notification').fadeOut({
+                    //         duration: 3000,
+                    //         complete: () => {
+                    //             $('.action-msg-notification').addClass('hide');
+                    //             $('.action-msg-notification').removeAttr('style');
+                    //         }
+                    //     });
+                } else if (result.status == 'warning') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('warning');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                }
+            });
     });
 
-    $('#checkAll').click(function () {
+    $('#checkAll').click(function() {
         var ma = new MultipleAction(baseURL() + '/remove_item');
         if ($(this).is(':checked') && $('.item td .checkbox').not('.item.hide td .checkbox').length !== 0) {
             var mailIds = $('.multiple-action').data('mail-ids'),
@@ -375,7 +375,7 @@ $(document).ready(function () {
             }
         }
 
-        $('.checkmark.all').click(function () {
+        $('.checkmark.all').click(function() {
             if (!$('#checkAll').is(':disabled')) {
                 checkedItemCount = 0;
                 $('.multiple-action').data('mail-ids', '');
@@ -392,14 +392,14 @@ $(document).ready(function () {
         });
     });
 
-    $('.settings-checkbox input[type=checkbox]').click(function () {
+    $('.settings-checkbox input[type=checkbox]').click(function() {
         //console.log($(this).is(':checked'));
         if ($(this).is(':checked') == true) {
             $('.settings-checkbox .settings-checkmark').css('display', 'block');
         }
     });
 
-    $('.settings-checkbox .settings-checkmark').click(function () {
+    $('.settings-checkbox .settings-checkmark').click(function() {
         if ($('.settings-checkbox input[type=checkbox]').is(':checked') == true) {
             $('.settings-checkbox .settings-checkmark').css('display', 'none');
             $('.settings-checkbox input[type=checkbox]').prop('checked', false);
@@ -407,7 +407,7 @@ $(document).ready(function () {
         }
     });
 
-    $('#settingsForm .save-settings-btn').click(function () {
+    $('#settingsForm .save-settings-btn').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         var
             settingsData = {
@@ -431,14 +431,14 @@ $(document).ready(function () {
         }
         $.ajax({
             type: "POST",
-            url: baseURL() + '/user/settings',
+            url: baseURL() + '/settings',
             data: settingsData,
             dataType: "json",
-        }).done(function () {
+        }).done(function() {
 
-        }).fail(function () {
+        }).fail(function() {
 
-        }).always(function (result) {
+        }).always(function(result) {
             currObj.html('<i class="fa fa-save"></i> Simpan');
             if (result.status == 'success') {
                 $('.action-msg-notification').html('<p>' + result.message + '</p>');
@@ -484,7 +484,7 @@ $(document).ready(function () {
     });
 
     if (window.location.href == baseURL() + '/surat-keluar') {
-        $('.table-container#outgoingMail .item-list').ready(function () {
+        $('.table-container#outgoingMail .item-list').ready(function() {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/outgoing_mail/load',
@@ -492,11 +492,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger(),
                         itemData;
@@ -539,12 +539,12 @@ $(document).ready(function () {
             });
         });
 
-        $('.button.trash-can-btn').click(function () {
+        $('.button.trash-can-btn').click(function() {
             window.location.replace(baseURL() + '/tong-sampah');
         });
     } else if (window.location.href == baseURL() + '/surat-masuk') {
         console.log('Surat Masuk');
-        $('.table-container#incomingMail .item-list').ready(function () {
+        $('.table-container#incomingMail .item-list').ready(function() {
             console.log($.cookie('t'));
             $.ajax({
                 type: "POST",
@@ -553,11 +553,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger(),
                         itemData;
@@ -600,11 +600,11 @@ $(document).ready(function () {
             });
         });
 
-        $('.button.trash-can-btn').click(function () {
+        $('.button.trash-can-btn').click(function() {
             window.location.replace(baseURL() + '/tong-sampah');
         });
     } else if (window.location.href == baseURL() + '/tong-sampah') {
-        $('.table-container#trashCan .item-list').ready(function () {
+        $('.table-container#trashCan .item-list').ready(function() {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/trash_can/load',
@@ -612,11 +612,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger(),
                         itemData;
@@ -659,7 +659,7 @@ $(document).ready(function () {
         });
     }
     $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').unbind('click');
-    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function () {
+    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function() {
         $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
         $('.casual-theme.mail-views').addClass('hide');
         $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();

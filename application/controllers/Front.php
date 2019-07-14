@@ -1247,6 +1247,8 @@ class Front extends CI_Controller
                     unset($input_data['passconfirm']);
                     $input_data['id'] = $row_count;
                     $input_data['password'] = $this->asmp_security->get_hashed_password($input_data['password']);
+                    // $input_data['recovery_id'] = explode('-', $input_data['recovery_id']);
+                    // $input_data['recovery_id'] = implode('', $input_data['recovery_id']);
                     $input_data['recovery_id'] = $this->asmp_security->get_hashed_password($input_data['recovery_id']);
                     $input_data['position'] = $input_data['field_section'];
                     $input_data['role'] = 'user';
@@ -1627,7 +1629,7 @@ class Front extends CI_Controller
 
                         $to = $email;
 
-                        $link = base_url() . '/lupa-kata-sandi/email?sk=' . $resend_data['secret_key'];
+                        $link = base_url('lupa-kata-sandi/email?sk=' . $array['secret_key']);
 
                         $body = '
                     <!DOCTYPE html>
@@ -1729,7 +1731,7 @@ class Front extends CI_Controller
                                 );
 
                                 $to = $email;
-                                $link = base_url() . '/lupa-kata-sandi/email?sk=' . $array['secret_key'];
+                                $link = base_url('lupa-kata-sandi/email?sk=' . $array['secret_key']);
 
                                 $body = '
                                 <!DOCTYPE html>
@@ -1843,9 +1845,10 @@ class Front extends CI_Controller
                          * Digunakan untuk menyimpan recovery id pada lupa kata sandi
                          * @var string
                          */
-                        $recovery_id = explode('-', $this->input->post('recovery_id', TRUE));
-                        $recovery_id = implode('', $recovery_id);
-
+                        $recovery_id = $this->input->post('recovery_id', TRUE);
+                        // $recovery_id = explode('-', $this->input->post('recovery_id', TRUE));
+                        // $recovery_id = implode('', $recovery_id);
+                        
                         /**
                          * Digunakan untuk verifikasi data yang terdaftar
                          * @var boolean

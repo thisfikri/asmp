@@ -9,45 +9,45 @@
         <div class="casual-theme di-box-container">
             <div class="di-box incoming-mail">
                 <div class="title">
-                    <h2><i class="fa fa-inbox"></i> Incoming Mail</h2>
+                    <h2><i class="fa fa-inbox"></i> Surat Masuk</h2>
                 </div>
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-envelope fa-lg"></i> New: <?php echo $new_im['count'];?></li>
-                        <li><i class="fa fa-envelope-open fa-lg"></i> Old: <?php echo $old_im;?></li>
-                        <li><i class="fa fa-reply-all fa-lg"></i> Reply Incoming Mail: 0</li>
+                        <li><i class="fa fa-envelope fa-lg"></i> Baru: <?php echo $new_im['count'];?></li>
+                        <li><i class="fa fa-envelope-open fa-lg"></i> Lawas: <?php echo $old_im;?></li>
+                        <li><i class="fa fa-reply-all fa-lg"></i> Surat Masuk Yang Dibalas: 0</li>
                         <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $new_im['count'] + $old_im;?></li>
                     </ul>
                 </div>
             </div>
             <div class="di-box trash-can">
                 <div class="title">
-                    <h2><i class="fa fa-trash-alt"></i> Trash Can</h2>
+                    <h2><i class="fa fa-trash-alt"></i> Tong Sampah</h2>
                 </div>
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-envelope fa-lg"></i> Incoming Mail: <?php echo $imtr_count;?></li>
-                        <li><i class="fa fa-reply-all fa-lg"></i> Reply Incoming Mail: 0</li>
+                        <li><i class="fa fa-envelope fa-lg"></i> Surat Masuk: <?php echo $imtr_count;?></li>
+                        <li><i class="fa fa-reply-all fa-lg"></i> Surat Masuk Yang Dibalas: 0</li>
                         <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $imtr_count;?></li>
                     </ul>
                 </div>
             </div>
             <div class="di-box user-count">
                 <div class="title">
-                    <h2><i class="fa fa-users"></i> User Count</h2>
+                    <h2><i class="fa fa-users"></i> Jumlah Pengguna (User)</h2>
                 </div>
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-user fa-lg"></i> User: <?php echo $user_count;?></li>
+                        <li><i class="fa fa-user fa-lg"></i> Pengguna: <?php echo $user_count;?></li>
                     </ul>
                 </div>
             </div>
             <div class="di-box activiy-logs">
                 <div class="title">
-                    <h2><i class="fa fa-history"></i> User Activity Logs</h2>
+                    <h2><i class="fa fa-history"></i> Histori Aktivitas Pengguna</h2>
                     <div class="logs">
                         
                         <ul>

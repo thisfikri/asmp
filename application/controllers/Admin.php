@@ -2587,7 +2587,7 @@ class Admin extends CI_Controller
                             $this->db->where('role', 'user')->delete('users');
                             if ($this->db->affected_rows())
                                 {
-                                $this->db->where_not_in('id', '1')->delete('settings');
+                                $this->db->where_not_in('id', '1')->delete('user_settings');
                                 if ($this->db->affected_rows())
                                     {
                                     $query = $this->db->get('register_limit');
@@ -2624,7 +2624,7 @@ class Admin extends CI_Controller
                                 $this->db->where('true_name', $data['item_data']['names'][$i])->delete('users');
                                 if ($this->db->affected_rows())
                                     {
-                                    $this->db->where('username', $result[0]->username)->delete('settings');
+                                    $this->db->where('username', $result[0]->username)->delete('user_settings');
                                     if ($this->db->affected_rows())
                                         {
                                         $query = $this->db->get('register_limit');
@@ -2663,7 +2663,7 @@ class Admin extends CI_Controller
                                     if (!in_array($target_id, $data['id']))
                                         {
                                         $this->db->where('id', $target_id)->update('users', array('id' => $min_id));
-                                        $this->db->where('id', $target_id)->update('settings', array('id' => $min_id));
+                                        $this->db->where('id', $target_id)->update('user_settings', array('id' => $min_id));
                                         ++$min_id;
                                         ++$target_id;
                                     }
@@ -2688,7 +2688,7 @@ class Admin extends CI_Controller
                                     if (!in_array($target_id, $data['id']))
                                         {
                                         $this->db->where('id', $target_id)->update('users', array('id' => $min_id));
-                                        $this->db->where('id', $target_id)->update('settings', array('id' => $min_id));
+                                        $this->db->where('id', $target_id)->update('user_settings', array('id' => $min_id));
                                         ++$min_id;
                                         ++$target_id;
                                     }
@@ -2710,7 +2710,7 @@ class Admin extends CI_Controller
                             $this->db->where('true_name', $data['item_data']['name'])->delete('users');
                             if ($this->db->affected_rows())
                                 {
-                                $this->db->where('username', $result[0]->username)->delete('settings');
+                                $this->db->where('username', $result[0]->username)->delete('user_settings');
                                 if ($this->db->affected_rows())
                                     {
                                     $query = $this->db->get('register_limit');
@@ -2730,7 +2730,7 @@ class Admin extends CI_Controller
                                     for (; $i < $row_count; $i++)
                                         {
                                         $this->db->where('id', $first_id)->update('users', array('id' => $target_id));
-                                        $this->db->where('id', $first_id)->update('settings', array('id' => $target_id));
+                                        $this->db->where('id', $first_id)->update('user_settings', array('id' => $target_id));
                                         ++$first_id;
                                         ++$target_id;
                                     }

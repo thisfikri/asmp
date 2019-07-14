@@ -9,13 +9,13 @@
         <div class="casual-theme di-box-container">
             <div class="di-box incoming-mail">
                 <div class="title">
-                    <h2><i class="fa fa-inbox"></i> Incoming Mail</h2>
+                    <h2><i class="fa fa-inbox"></i> Surat Masuk</h2>
                 </div>
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-envelope fa-lg"></i> New: <?php echo $new_im['count'];?></li>
-                        <li><i class="fa fa-envelope-open fa-lg"></i> Old: <?php echo $old_im;?></li>
+                        <li><i class="fa fa-envelope fa-lg"></i> Baru: <?php echo $new_im['count'];?></li>
+                        <li><i class="fa fa-envelope-open fa-lg"></i> Lawas: <?php echo $old_im;?></li>
                         <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $im_count;?></li>
                     </ul>
                 </div>
@@ -23,13 +23,13 @@
             <?php if ($om_auth) :?>
             <div class="di-box outgoing-mail">
                 <div class="title">
-                    <h2><i class="fa fa-paper-plane"></i> Outgoing Mail</h2>
+                    <h2><i class="fa fa-paper-plane"></i> Surat Keluar</h2>
                 </div>
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-paper-plane fa-lg"></i> Mail Sent: <?php echo $om_count;?></li>
-                        <li><i class="fa fa-exclamation-circle"></i> Mail Not Sent: 0</li>
+                        <li><i class="fa fa-paper-plane fa-lg"></i> Surat Terkirim: <?php echo $om_count;?></li>
+                        <li><i class="fa fa-exclamation-circle"></i> Surat Tidak Terkirim: 0</li>
                         <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $om_count;?></li>
                     </ul>
                 </div>
@@ -37,20 +37,20 @@
             <?php endif;?>
             <div class="di-box trash-can">
                 <div class="title">
-                    <h2><i class="fa fa-trash-alt"></i> Trash Can</h2>
+                    <h2><i class="fa fa-trash-alt"></i> Tong Sampah</h2>
                 </div>
 
                 <div class="info-text">
                     <ul>
-                        <li><i class="fa fa-envelope fa-lg"></i> Incoming Mail: <?php echo $imtr_count;?></li>
-                        <li><i class="fa fa-paper-plane fa-lg"></i> Outgoing Mail: <?php echo $omtr_count;?></li>
+                        <li><i class="fa fa-envelope fa-lg"></i> Surat Masuk: <?php echo $imtr_count;?></li>
+                        <li><i class="fa fa-paper-plane fa-lg"></i> Surat Keluar: <?php echo $omtr_count;?></li>
                         <li><i class="fa fa-equals fa-lg"></i> Total: <?php echo $imtr_count + $omtr_count;?></li>
                     </ul>
                 </div>
             </div>
             <div class="di-box activiy-logs">
                 <div class="title">
-                    <h2><i class="fa fa-history"></i> User Activity Logs</h2>
+                    <h2><i class="fa fa-history"></i> Histori Aktivitas Pengguna</h2>
                     <div class="logs">
                         
                         <ul>
