@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
     'use strict';
 
     // -- Get Base URL --
@@ -62,19 +62,19 @@ $(document).ready(function () {
     }
 
     // Photos Box Open Btn
-    $('.button.choose-btn').click(function () {
+    $('.button.choose-btn').click(function() {
         $('.photos-box-container').css('display', 'block');
     });
 
     //Photos Box Close Btn
-    $('.photos-box-close-btn').click(function () {
+    $('.photos-box-close-btn').click(function() {
         $('.photos-box-container').css('display', 'none');
         $('.uploaded-images .image-container').css('display', 'none');
         $('.image-list .image-container').css('display', 'none');
     });
 
     //Photos Box Tabs
-    $('.option-tab#upload').click(function () {
+    $('.option-tab#upload').click(function() {
         $('.option-tab#gallery').removeClass('current');
         $(this).addClass('current');
         $('.upload-container').removeClass('hide');
@@ -90,10 +90,10 @@ $(document).ready(function () {
         }
     });
 
-    $('.option-tab#gallery').click(function () {
+    $('.option-tab#gallery').click(function() {
         var
-        usefulapi = new ASMPUsefulAPI(),
-        fullUrl = usefulapi.getFullURL();
+            usefulapi = new ASMPUsefulAPI(),
+            fullUrl = usefulapi.getFullURL();
         $('.option-tab#upload').removeClass('current');
         $(this).addClass('current');
         $('.upload-container').addClass('hide');
@@ -111,16 +111,16 @@ $(document).ready(function () {
                 type: 'GET',
                 dataType: 'json',
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
             })
-            .always(function (result) {
+            .always(function(result) {
                 console.log("complete");
                 if (result !== null) {
-                    $.each(result.files, function (index, image) {
+                    $.each(result.files, function(index, image) {
                         image.name = image.name.split('_');
                         image.name = image.name[1];
                         $('<div/>').attr({
@@ -139,7 +139,7 @@ $(document).ready(function () {
     });
 
     //Upload Button
-    $('#fileUpload').change(function (e) {
+    $('#fileUpload').change(function(e) {
         console.log(e.target.files);
         var
             file = [],
@@ -164,7 +164,7 @@ $(document).ready(function () {
         hasDelUrlUpldImg = '',
         hasDelUrlGlryImg = '';
 
-    $('.delete-image-btn').click(function () {
+    $('.delete-image-btn').click(function() {
         var
             usefulapi = new ASMPUsefulAPI(),
             fullUrl = usefulapi.getFullURL(),
@@ -182,9 +182,9 @@ $(document).ready(function () {
                             dataType: 'json',
 
                         })
-                        .done(function () {})
-                        .fail(function (result) {})
-                        .always(function (result) {
+                        .done(function() {})
+                        .fail(function(result) {})
+                        .always(function(result) {
                             if (result.status == 'warning') {
                                 alert(result.message);
                             } else if (result[hasDelUrlUpldImg[i]]) {
@@ -210,9 +210,9 @@ $(document).ready(function () {
                             dataType: 'json',
 
                         })
-                        .done(function () {})
-                        .fail(function (result) {})
-                        .always(function (result) {
+                        .done(function() {})
+                        .fail(function(result) {})
+                        .always(function(result) {
                             if (result.status == 'warning') {
                                 alert(result.message);
                             } else if (result[hasDelUrlGlryImg[i]]) {
@@ -229,7 +229,7 @@ $(document).ready(function () {
 
     //Uploaded Photos Action Checklist
     function upldActionChecklist(index, deleteUrl) {
-        $('.uploaded-images .image-container#upld' + index).click(function () {
+        $('.uploaded-images .image-container#upld' + index).click(function() {
             if ($(this).attr('class').search('unchecked') !== -1) {
                 $(this).append('<div class="checklist"><i class="fa fa-check-circle"></i></div>');
                 $(this).removeClass('unchecked');
@@ -251,6 +251,31 @@ $(document).ready(function () {
                 $('.uploaded-images .image-container#upld' + index + ' .checklist').remove();
                 $(this).addClass('unchecked');
                 $(this).removeClass('checked');
+
+                if (hasChackedUpldImg.search(',') !== -1 && hasDelUrlUpldImg.search(',') !== -1) {
+                    hasChackedUpldImg = hasChackedUpldImg.split(',');
+                    hasDelUrlUpldImg = hasDelUrlUpldImg.split(',');
+                    hasChackedUpldImg.pop();
+                    hasDelUrlUpldImg.pop();
+                    // console.log(hasChackedGlryImg.indexOf(index.toString()), hasChackedGlryImg, index, Number.toString(index));
+                    hasChackedUpldImg[hasChackedUpldImg.indexOf(index.toString())] = '';
+                    hasDelUrlUpldImg[hasDelUrlUpldImg.indexOf(deleteUrl)] = '';
+                    // console.log(hasChackedGlryImg);
+                    hasChackedUpldImg = hasChackedUpldImg.filter(Boolean);
+                    hasDelUrlUpldImg = hasDelUrlUpldImg.filter(Boolean);
+                    if (hasChackedUpldImg.length > 1 && hasDelUrlUpldImg.length > 1) {
+                        hasChackedUpldImg = hasChackedUpldImg.join(',');
+                        hasDelUrlUpldImg = hasDelUrlUpldImg.join(',');
+                        hasChackedUpldImg += ',';
+                        hasDelUrlUpldImg += ',';
+                    } else if (hasChackedUpldImg.length == 1 && hasDelUrlUpldImg.length == 1) {
+                        hasChackedUpldImg = hasChackedUpldImg[0] + ',';
+                        hasDelUrlUpldImg = hasDelUrlUpldImg[0] + ',';
+                    }
+                } else {
+                    hasChackedUpldImg = '';
+                    hasDelUrlUpldImg = '';
+                }
                 var
                     checkedImg = $('.choose-image-btn').data('checkedimg');
                 $('.choose-image-btn').data('checkedimg', checkedImg - 1);
@@ -267,7 +292,7 @@ $(document).ready(function () {
 
     //Gallery Photos Action Checklist
     function glryActionChecklist(index, deleteUrl) {
-        $('.image-list .image-container#glry' + index).click(function () {
+        $('.image-list .image-container#glry' + index).click(function() {
             if ($(this).attr('class').search('unchecked') !== -1) {
                 $(this).append('<div class="checklist"><i class="fa fa-check-circle"></i></div>');
                 $(this).removeClass('unchecked');
@@ -289,6 +314,31 @@ $(document).ready(function () {
                 $('.image-list .image-container#glry' + index + ' .checklist').remove();
                 $(this).addClass('unchecked');
                 $(this).removeClass('checked');
+                // console.log(hasChackedGlryImg, hasDelUrlGlryImg);
+                if (hasChackedGlryImg.search(',') !== -1 && hasDelUrlGlryImg.search(',') !== -1) {
+                    hasChackedGlryImg = hasChackedGlryImg.split(',');
+                    hasDelUrlGlryImg = hasDelUrlGlryImg.split(',');
+                    hasChackedGlryImg.pop();
+                    hasDelUrlGlryImg.pop();
+                    // console.log(hasChackedGlryImg.indexOf(index.toString()), hasChackedGlryImg, index, Number.toString(index));
+                    hasChackedGlryImg[hasChackedGlryImg.indexOf(index.toString())] = '';
+                    hasDelUrlGlryImg[hasDelUrlGlryImg.indexOf(deleteUrl)] = '';
+                    // console.log(hasChackedGlryImg);
+                    hasChackedGlryImg = hasChackedGlryImg.filter(Boolean);
+                    hasDelUrlGlryImg = hasDelUrlGlryImg.filter(Boolean);
+                    if (hasChackedGlryImg.length > 1 && hasDelUrlGlryImg.length > 1) {
+                        hasChackedGlryImg = hasChackedGlryImg.join(',');
+                        hasDelUrlGlryImg = hasDelUrlGlryImg.join(',');
+                        hasChackedGlryImg += ',';
+                        hasDelUrlGlryImg += ',';
+                    } else if (hasChackedGlryImg.length == 1 && hasDelUrlGlryImg.length == 1) {
+                        hasChackedGlryImg = hasChackedGlryImg[0] + ',';
+                        hasDelUrlGlryImg = hasDelUrlGlryImg[0] + ',';
+                    }
+                } else {
+                    hasChackedGlryImg = '';
+                    hasDelUrlGlryImg = '';
+                }
                 var
                     checkedImg = $('.choose-image-btn').data('checkedimg');
                 $('.choose-image-btn').data('checkedimg', checkedImg - 1);
@@ -299,10 +349,11 @@ $(document).ready(function () {
                     $('.choose-image-btn').attr('disabled', 'true');
                 }
             }
+            // console.log(hasChackedGlryImg, hasDelUrlGlryImg);
         });
     }
 
-    $('.choose-image-btn').click(function () {
+    $('.choose-image-btn').click(function() {
         var
             usefulapi = new ASMPUsefulAPI(),
             fullUrl = usefulapi.getFullURL(),
@@ -328,11 +379,11 @@ $(document).ready(function () {
                         },
                         t: $.cookie('t')
                     }
-                }).done(function () {
+                }).done(function() {
 
-                }).fail(function () {
+                }).fail(function() {
 
-                }).always(function (result) {
+                }).always(function(result) {
                     console.log(result);
                 });
             }
@@ -353,11 +404,11 @@ $(document).ready(function () {
                         },
                         t: $.cookie('t')
                     }
-                }).done(function () {
+                }).done(function() {
 
-                }).fail(function () {
+                }).fail(function() {
 
-                }).always(function (result) {
+                }).always(function(result) {
                     console.log(result);
                 });
             }
@@ -367,7 +418,7 @@ $(document).ready(function () {
         hasChackedGlryImg = '';
     });
 
-    $('.select-all-btn').click(function () {
+    $('.select-all-btn').click(function() {
         var
             imageCount = 0,
             deleteUrl,
@@ -460,16 +511,16 @@ $(document).ready(function () {
             url: url,
             dataType: 'json',
             singleFileUploads: false,
-            add: function (e, data) {
+            add: function(e, data) {
                 if ($('.upload-buttons .upload-btn').length === 1) {
                     $('.upload-buttons .upload-btn').eq(0).remove();
                 }
                 data.context = $('<button class="upload-btn"><i class="fa fa-upload"></i> Upload</button>').appendTo('.upload-buttons')
-                    .click(function () {
+                    .click(function() {
                         console.log(data.files.length);
                         if (data.files.length > 1) {
                             eID = $('.uploaded-images .image-container').length;
-                            $.each(data.files, function (index, file) {
+                            $.each(data.files, function(index, file) {
                                 index = eID + index;
                                 if (file.name.search('_') !== -1) {
                                     file.name = file.name.replace(/(_)/g, '-');
@@ -490,10 +541,10 @@ $(document).ready(function () {
                         } else if (data.files.length == 1) {
                             var file = data.files[0],
                                 fileName = file.name;
-                                if (file.name.search('_') !== -1) {
-                                    fileName = fileName.replace(/(_)/g, '-');
-                                }
-                                file.uploadName = Math.abs(window.crypto.getRandomValues(new Int32Array(1))) + '_' + fileName;
+                            if (file.name.search('_') !== -1) {
+                                fileName = fileName.replace(/(_)/g, '-');
+                            }
+                            file.uploadName = Math.abs(window.crypto.getRandomValues(new Int32Array(1))) + '_' + fileName;
                             if ($('.uploaded-images .image-container').length !== 0) {
                                 eID = $('.uploaded-images .image-container').length + 1;
                             }
@@ -516,11 +567,11 @@ $(document).ready(function () {
                         data.submit();
                     });
             },
-            done: function (e, data) {
+            done: function(e, data) {
                 var imageUrl = [];
                 console.log(data.result.files);
                 if (data.result.files.length > 1) {
-                    $.each(data.result.files, function (index, file) {
+                    $.each(data.result.files, function(index, file) {
                         index = eID + index;
                         file.name = file.name.split('_');
                         file.name = file.name[1];
@@ -533,8 +584,8 @@ $(document).ready(function () {
                 } else if (data.result.files.length == 1) {
                     let index = 0,
                         file = data.result.files[0];
-                        file.name = file.name.split('_');
-                        file.name = file.name[1];
+                    file.name = file.name.split('_');
+                    file.name = file.name[1];
                     $('.uploaded-images .image-container#upld' + eID + ' .image').attr('src', file.url);
                     $('.uploaded-images .image-container#upld' + eID + ' .upload-progress').remove();
                     $('<p/>').addClass('image-caption').text(file.name).appendTo('.uploaded-images .image-container#upld' + eID);
@@ -542,7 +593,7 @@ $(document).ready(function () {
                     imageUrl = file.url;
                 }
             },
-            progressall: function (e, data) {
+            progressall: function(e, data) {
                 var progress = parseInt(data.loaded / data.total * 100, 10);
 
                 $('.upload-progress .progress').css('width', progress + '%');

@@ -17,7 +17,7 @@
                 <button class="button trash-can-btn" title="Tong Sampah"><i class="fa fa-trash-alt fa-lg"></i> Tong Sampah</button>
             </div>
             
-            <div class="casual-theme add-om-modal" id="1" data-pdflayouts="default">
+            <div class="casual-theme add-om-modal" id="1" data-pdflayouts="<?php echo $pdf_layouts;?>">
                 <div class="modal2ndlayer">
                 <div class="modal-title"><h3>Buat Surat Keluar</h3></div>
                 <button class="close-btn"><i class="fa fa-times"></i></button>
@@ -29,7 +29,7 @@
                 </form>
                 </div>
             </div>
-            <div class="casual-theme edit-om-modal" id="1" data-pdflayouts="default">
+            <div class="casual-theme edit-om-modal" id="1" data-pdflayouts="<?php echo $pdf_layouts;?>">
                 <div class="modal2ndlayer">
                 <div class="modal-title"><h3>Edit Surat Keluar</h3></div>
                 <button class="close-btn"><i class="fa fa-times"></i></button>

@@ -77,7 +77,8 @@ class Admin extends CI_Controller
         // Memuat dbforge
         $this->load->dbforge();
 
-        date_default_timezone_set('Asia/Jakarta');
+        // set default time zone
+		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status
@@ -423,26 +424,16 @@ class Admin extends CI_Controller
             {
                 $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $result[0]->gallery_dir . '/';
                 $filename = $gallery_dir . $imageName;
-                $handle = fopen($filename, 'r');
-                if (is_readable($filename))
+                
+                if (file_exists($filename))
                 {
-                    $filewr = fread($handle, filesize($filename));
-                    fclose($handle);
-
-                    $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/profile-photo/' . $prev_pic;
-                    if (unlink($filename))
-                    {
-                        $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/profile-photo/' . $imageName;
-                        $handle = fopen($filename, 'w');
-                        if (is_writable($filename))
-                        {
-                            if (fwrite($handle, $filewr))
-                            {
-                                header('Content-Type: application/json');
-                                echo json_encode(array('status' => 'success', 'message' => 'Berhasil mengubah foto profil!'));
-                            }
-                        }
-                    }
+                    header('Content-Type: application/json');
+                    echo json_encode(array('status' => 'success', 'message' => 'Berhasil mengubah foto profil! > ' . $imageName));
+                }
+                else
+                {
+                    header('Content-Type: application/json');
+                    echo json_encode(array('status' => 'error', 'message' => $imageName . ' Tidak Ditemukan'));
                 }
             }
             else
@@ -830,7 +821,7 @@ class Admin extends CI_Controller
                 }
                 else if ($user_count === 0)
                 {
-                    $user_arr = '<i class="fa fa-exclamation-circle"></i> User Not Found.';
+                    $user_arr = '<i class="fa fa-exclamation-circle"></i> Pengguna Tidak Ditemukan.';
                 }
                 else
                 {
@@ -1612,6 +1603,16 @@ class Admin extends CI_Controller
                 $pdf_page_setup = $this->pdfcdmanp->create_page_setup($data['page_setup']);
                 $query = $this->db->get('pdf_layouts');
                 $layouts_count = $query->num_rows();
+                $query = $this->db->where('layout_name', $data['layout_name'])->get('pdf_editor');
+                if ($query->result())
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                        'status' => 'warning',
+                        'message' => 'Nama Layout Tidak Boleh Sama Dengan Yang Lain.',
+                    )));
+                }
+                else
+                {
                 $this->db->insert('pdf_editor', array(
                     'id' => $layouts_count + 1,
                     'layout_name' => $data['layout_name'],
@@ -1651,6 +1652,7 @@ class Admin extends CI_Controller
                         'message' => 'Pembuatan Layout Gagal',
                     )));
                 }
+            }
             }
         }
     }
@@ -2141,10 +2143,10 @@ class Admin extends CI_Controller
                 {
                     if ($data['new_layname'] !== FALSE)
                     {
-                        $data_update['pdf_layout_name'] = $data['new_layname'];
+                        $data_update['layout_name'] = $data['new_layname'];
                     }
-                    $data_update['pdf_page_setup'] = json_encode($data['page_setup']);
-                    $this->db->where('pdf_layout_name', $data['layout_name'])->update('pdf_layouts', $data_update);
+                    $data_update['layout_page_setup'] = json_encode($data['page_setup']);
+                    $this->db->where('layout_name', $data['layout_name'])->update('pdf_layouts', $data_update);
                     if ($this->db->affected_rows())
                     {
                         $this->output->set_content_type('application/json')->set_output(json_encode(array(

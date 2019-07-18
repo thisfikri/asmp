@@ -1,9 +1,9 @@
-$(document).ready(function () {
+$(document).ready(function() {
     var pagination = false;
     // welcome msg
 
     //Navbar Menu Icon
-    $('.navbar-icon').click(function () {
+    $('.navbar-icon').click(function() {
         let
             iconType = $(this).attr('class');
         if (iconType.search('arrow') !== -1) {
@@ -22,7 +22,7 @@ $(document).ready(function () {
     });
 
     // Options Button
-    $('.button.options').click(function () {
+    $('.button.options').click(function() {
         let
             dropdownS = $('.casual-theme.activity-page.options-dropdown').css('height');
         //console.log(dropdownS);
@@ -36,7 +36,7 @@ $(document).ready(function () {
     });
 
     // Notification Button
-    $('.button.notification').click(function () {
+    $('.button.notification').click(function() {
         let
             displayStat = $('.casual-theme.activity-page.notification-box.outerdiv').css('display');
         if (displayStat == 'none') {
@@ -53,7 +53,7 @@ $(document).ready(function () {
     });
 
     // Profile Edit Button
-    $('.side-profile button.edit-profile').click(function () {
+    $('.side-profile button.edit-profile').click(function() {
         let
             buttonHTML = $(this).html();
         //console.log(buttonHTML);
@@ -78,7 +78,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.logout-btn').click(function () {
+    $('.logout-btn').click(function() {
         $.ajax({
                 url: baseURL() + '/logout',
                 type: 'POST',
@@ -87,13 +87,13 @@ $(document).ready(function () {
                     token: $(this).data('token')
                 },
             })
-            .done(function () {
+            .done(function() {
                 //console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 //console.log("error");
             })
-            .always(function (result) {
+            .always(function(result) {
                 //console.log("complete");
                 switch (result.status) {
                     case 'success':
@@ -113,205 +113,205 @@ $(document).ready(function () {
     });
 
     // update profile
-    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function(){
+    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function() {
         let
-        form = $('.profile-info form.update-type.01'),
-        fData = {},
-        i = 0;
+            form = $('.profile-info form.update-type.01'),
+            fData = {},
+            i = 0;
         for (; i < form[0].length; i++) {
             fData[form[0][i].name] = form[0][i].value;
         }
 
         console.log(fData);
         $.ajax({
-            url: baseURL() + '/update_profile',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                requested_data: JSON.stringify({
-                    token: $.cookie('t'),
-                    change_type: 'name',
-                    fdata: fData
-                })
-            },
-        })
-        .done(function () {
-            //console.log("success");
-        })
-        .fail(function () {
-            //console.log("error");
-        })
-        .always(function (result) {
-            console.log(result);
-            if (result.status == 'success') {
-                $('.profile-info form.update-type.01 input[name=password]').val('');
-                if (result.data['change_count'] == 1) {
-                    console.log($('.profile-info ul li').eq(0));
-                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
-                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
-                } else if (result.data['change_count'] == 2) {
-                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
-                    $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
-                    $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
+                url: baseURL() + '/update_profile',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    requested_data: JSON.stringify({
+                        token: $.cookie('t'),
+                        change_type: 'name',
+                        fdata: fData
+                    })
+                },
+            })
+            .done(function() {
+                //console.log("success");
+            })
+            .fail(function() {
+                //console.log("error");
+            })
+            .always(function(result) {
+                console.log(result);
+                if (result.status == 'success') {
+                    $('.profile-info form.update-type.01 input[name=password]').val('');
+                    if (result.data['change_count'] == 1) {
+                        console.log($('.profile-info ul li').eq(0));
+                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
+                        $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
+                    } else if (result.data['change_count'] == 2) {
+                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
+                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
+                        $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
+                    }
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').addClass('success');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'failed') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('failed');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'error') {
+                    window.alert(result.message);
+                    //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    //     $('.action-msg-notification').removeClass('success');
+                    //     $('.action-msg-notification').removeClass('warning');
+                    //     $('.action-msg-notification').removeClass('failed');
+                    //     $('.action-msg-notification').addClass('error');
+                    //     $('.action-msg-notification').removeClass('hide');
+                    //     $('.action-msg-notification').fadeOut({
+                    //         duration: 3000,
+                    //         complete: () => {
+                    //             $('.action-msg-notification').addClass('hide');
+                    //             $('.action-msg-notification').removeAttr('style');
+                    //         }
+                    //     });
+                } else if (result.status == 'warning') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('warning');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
                 }
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').addClass('success');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'failed') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('failed');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'error') {
-                window.alert(result.message);
-            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
-            //     $('.action-msg-notification').removeClass('success');
-            //     $('.action-msg-notification').removeClass('warning');
-            //     $('.action-msg-notification').removeClass('failed');
-            //     $('.action-msg-notification').addClass('error');
-            //     $('.action-msg-notification').removeClass('hide');
-            //     $('.action-msg-notification').fadeOut({
-            //         duration: 3000,
-            //         complete: () => {
-            //             $('.action-msg-notification').addClass('hide');
-            //             $('.action-msg-notification').removeAttr('style');
-            //         }
-            //     });
-            } else if (result.status == 'warning') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('warning');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            }
-        });
+            });
     });
 
-    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function(){
+    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function() {
         let
-        form = $('.profile-info form.update-type.02'),
-        fData = {},
-        i = 0;
+            form = $('.profile-info form.update-type.02'),
+            fData = {},
+            i = 0;
         for (; i < form[0].length; i++) {
             fData[form[0][i].name] = form[0][i].value;
         }
 
         console.log(fData);
         $.ajax({
-            url: baseURL() + '/update_profile',
-            type: 'POST',
-            dataType: 'json',
-            data: {
-                requested_data: JSON.stringify({
-                    token: $.cookie('t'),
-                    change_type: 'password',
-                    fdata: fData
-                })
-            },
-        })
-        .done(function () {
-            //console.log("success");
-        })
-        .fail(function () {
-            //console.log("error");
-        })
-        .always(function (result) {
-            console.log(result);
-            if (result.status == 'success') {
-                $('.profile-info form.update-type.02 input[name=old_password]').val('');
-                $('.profile-info form.update-type.02 input[name=new_password]').val('');
-                $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').addClass('success');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'failed') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('warning');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('failed');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            } else if (result.status == 'error') {
-                window.alert(result.message);
-            //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
-            //     $('.action-msg-notification').removeClass('success');
-            //     $('.action-msg-notification').removeClass('warning');
-            //     $('.action-msg-notification').removeClass('failed');
-            //     $('.action-msg-notification').addClass('error');
-            //     $('.action-msg-notification').removeClass('hide');
-            //     $('.action-msg-notification').fadeOut({
-            //         duration: 3000,
-            //         complete: () => {
-            //             $('.action-msg-notification').addClass('hide');
-            //             $('.action-msg-notification').removeAttr('style');
-            //         }
-            //     });
-            } else if (result.status == 'warning') {
-                window.alert(result.message);
-                // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                // $('.action-msg-notification').removeClass('success');
-                // $('.action-msg-notification').removeClass('failed');
-                // $('.action-msg-notification').removeClass('error');
-                // $('.action-msg-notification').addClass('warning');
-                // $('.action-msg-notification').removeClass('hide');
-                // $('.action-msg-notification').fadeOut({
-                //     duration: 3000,
-                //     complete: () => {
-                //         $('.action-msg-notification').addClass('hide');
-                //         $('.action-msg-notification').removeAttr('style');
-                //     }
-                // });
-            }
-        });
+                url: baseURL() + '/update_profile',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    requested_data: JSON.stringify({
+                        token: $.cookie('t'),
+                        change_type: 'password',
+                        fdata: fData
+                    })
+                },
+            })
+            .done(function() {
+                //console.log("success");
+            })
+            .fail(function() {
+                //console.log("error");
+            })
+            .always(function(result) {
+                console.log(result);
+                if (result.status == 'success') {
+                    $('.profile-info form.update-type.02 input[name=old_password]').val('');
+                    $('.profile-info form.update-type.02 input[name=new_password]').val('');
+                    $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').addClass('success');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'failed') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('warning');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('failed');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                } else if (result.status == 'error') {
+                    window.alert(result.message);
+                    //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    //     $('.action-msg-notification').removeClass('success');
+                    //     $('.action-msg-notification').removeClass('warning');
+                    //     $('.action-msg-notification').removeClass('failed');
+                    //     $('.action-msg-notification').addClass('error');
+                    //     $('.action-msg-notification').removeClass('hide');
+                    //     $('.action-msg-notification').fadeOut({
+                    //         duration: 3000,
+                    //         complete: () => {
+                    //             $('.action-msg-notification').addClass('hide');
+                    //             $('.action-msg-notification').removeAttr('style');
+                    //         }
+                    //     });
+                } else if (result.status == 'warning') {
+                    window.alert(result.message);
+                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                    // $('.action-msg-notification').removeClass('success');
+                    // $('.action-msg-notification').removeClass('failed');
+                    // $('.action-msg-notification').removeClass('error');
+                    // $('.action-msg-notification').addClass('warning');
+                    // $('.action-msg-notification').removeClass('hide');
+                    // $('.action-msg-notification').fadeOut({
+                    //     duration: 3000,
+                    //     complete: () => {
+                    //         $('.action-msg-notification').addClass('hide');
+                    //         $('.action-msg-notification').removeAttr('style');
+                    //     }
+                    // });
+                }
+            });
     });
     // move this checkboxAction function to asmp-actionlib, and make defineAction method for this function
     // function checkboxAction(index) {
@@ -503,7 +503,7 @@ $(document).ready(function () {
     //     }
     // }
 
-    $('#checkAll').click(function () {
+    $('#checkAll').click(function() {
         var ma = new MultipleAction(baseURL() + '/remove_item');
         if ($(this).is(':checked') && $('.item td .checkbox').not('.item.hide td .checkbox').length !== 0) {
             var mailIds = $('.multiple-action').data('mail-ids'),
@@ -546,7 +546,7 @@ $(document).ready(function () {
             }
         }
 
-        $('.checkmark.all').click(function () {
+        $('.checkmark.all').click(function() {
             if (!$('#checkAll').is(':disabled')) {
                 checkedItemCount = 0;
                 $('.multiple-action').data('mail-ids', '');
@@ -566,7 +566,7 @@ $(document).ready(function () {
     console.log(window.location.href, baseURL() + '/bidang-bagian');
     if (window.location.href == baseURL() + '/user-management') {
         // user management item loader
-        $('.table-container#userManagement .item-list').ready(function () {
+        $('.table-container#userManagement .item-list').ready(function() {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/user_management/load',
@@ -574,11 +574,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger();
                     //console.log(result.data.length);
@@ -602,7 +602,7 @@ $(document).ready(function () {
         });
     } else if (window.location.href == baseURL() + '/bidang-bagian') {
         // field/sections item loader
-        $('.table-container#fieldSections .item-list').ready(function () {
+        $('.table-container#fieldSections .item-list').ready(function() {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/field_sections/load',
@@ -610,11 +610,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger();
                     for (var i = 1; i < result.data.length + 1; i++) {
@@ -649,7 +649,7 @@ $(document).ready(function () {
         });
     } else if (window.location.href == baseURL() + '/surat-masuk') {
         console.log('SURAT MASUK');
-        $('.table-container#incomingMail .item-list').ready(function () {
+        $('.table-container#incomingMail .item-list').ready(function() {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/incoming_mail/load',
@@ -657,11 +657,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger(),
                         itemData;
@@ -704,11 +704,11 @@ $(document).ready(function () {
             });
         });
 
-        $('.button.trash-can-btn').click(function () {
+        $('.button.trash-can-btn').click(function() {
             window.location.replace(baseURL() + '/tong-sampah');
         });
     } else if (window.location.href == baseURL() + '/tong-sampah') {
-        $('.table-container#trashCan .item-list').ready(function () {
+        $('.table-container#trashCan .item-list').ready(function() {
             $.ajax({
                 type: "POST",
                 url: baseURL() + '/trash_can/load',
@@ -716,11 +716,11 @@ $(document).ready(function () {
                 data: {
                     t: $.cookie('t')
                 }
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if ($.isArray(result.data)) {
                     var atrgr = new ActionTrigger(),
                         itemData;
@@ -764,7 +764,7 @@ $(document).ready(function () {
     }
 
     $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').unbind('click');
-    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function () {
+    $('.casual-theme.mail-views .casual-theme.mail-view' + ' .close-btn').click(function() {
         $('.casual-theme.mail-views .casual-theme.mail-view').addClass('hide');
         $('.casual-theme.mail-views').addClass('hide');
         $('.casual-theme.mail-views .casual-theme.mail-view .modal2ndlayer button.mail-btn').remove();
@@ -774,21 +774,21 @@ $(document).ready(function () {
 
 
     // add field section
-    $('.button.add-item-btn').click(function () {
+    $('.button.add-item-btn').click(function() {
         $('.add-field-section-box').removeClass('hide');
         $(this).css('background-color', '#1da147');
         $(this).css('cursor', 'no-drop');
         $(this).attr('disabled', 'disabled');
     });
 
-    $('.add-field-section-box .title .close-btn').click(function () {
+    $('.add-field-section-box .title .close-btn').click(function() {
         $('.add-field-section-box').addClass('hide');
         $('.button.add-item-btn').css('background-color', '#26C959');
         $('.button.add-item-btn').css('cursor', 'pointer');
         $('.button.add-item-btn').removeAttr('disabled');
     });
 
-    $('.button[name=add_field_section]').click(function () {
+    $('.button[name=add_field_section]').click(function() {
         var
             fsName = $('.add-field-section-form #fieldSectionName').val(),
             fsTask = $('.add-field-section-form #fieldSectionTask').val(),
@@ -810,11 +810,11 @@ $(document).ready(function () {
                 fs_name: fsName,
                 fs_task: fsTask
             }
-        }).done(function () {
+        }).done(function() {
 
-        }).fail(function () {
+        }).fail(function() {
 
-        }).always(function (result) {
+        }).always(function(result) {
             //console.log(result);
             if (result.status == 'success') {
                 var pgnt = new Pagination(4, '.item', 'page-link', '.pagination');
@@ -876,14 +876,14 @@ $(document).ready(function () {
         });
     });
 
-    $('.settings-checkbox input[type=checkbox]').click(function () {
+    $('.settings-checkbox input[type=checkbox]').click(function() {
         //console.log($(this).is(':checked'));
         if ($(this).is(':checked') == true) {
             $('.settings-checkbox .settings-checkmark').css('display', 'block');
         }
     });
 
-    $('.settings-checkbox .settings-checkmark').click(function () {
+    $('.settings-checkbox .settings-checkmark').click(function() {
         if ($('.settings-checkbox input[type=checkbox]').is(':checked') == true) {
             $('.settings-checkbox .settings-checkmark').css('display', 'none');
             $('.settings-checkbox input[type=checkbox]').prop('checked', false);
@@ -891,7 +891,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.settings-container .save-all-settings-btn').click(function () {
+    $('.settings-container .save-all-settings-btn').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         var
             settingsData = {
@@ -922,11 +922,11 @@ $(document).ready(function () {
                 })
             },
             dataType: "json",
-        }).done(function () {
+        }).done(function() {
 
-        }).fail(function () {
+        }).fail(function() {
 
-        }).always(function (result) {
+        }).always(function(result) {
             currObj.html('<i class="fa fa-save"></i> Simpan');
             if (result.status == 'success') {
                 $('.action-msg-notification').html('<p>' + result.message + '</p>');
@@ -972,7 +972,7 @@ $(document).ready(function () {
     });
 
     // app settings
-    $('#settingsForm .save-settings-btn[name=app_settings]').click(function () {
+    $('#settingsForm .save-settings-btn[name=app_settings]').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         var
             settingsData = {
@@ -993,11 +993,11 @@ $(document).ready(function () {
                 })
             },
             dataType: "json",
-        }).done(function () {
+        }).done(function() {
 
-        }).fail(function () {
+        }).fail(function() {
 
-        }).always(function (result) {
+        }).always(function(result) {
             currObj.html('<i class="fa fa-save"></i> Simpan');
             if (result.status == 'success') {
                 $('.action-msg-notification').html('<p>' + result.message + '</p>');
@@ -1043,7 +1043,7 @@ $(document).ready(function () {
     });
 
     // page settings
-    $('#settingsForm .save-settings-btn[name=page_settings]').click(function () {
+    $('#settingsForm .save-settings-btn[name=page_settings]').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         var
             settingsData = {
@@ -1064,11 +1064,11 @@ $(document).ready(function () {
                 })
             },
             dataType: "json",
-        }).done(function () {
+        }).done(function() {
 
-        }).fail(function () {
+        }).fail(function() {
 
-        }).always(function (result) {
+        }).always(function(result) {
             currObj.html('<i class="fa fa-save"></i> Simpan');
             if (result.status == 'success') {
                 $('.action-msg-notification').html('<p>' + result.message + '</p>');
@@ -1229,7 +1229,7 @@ $(document).ready(function () {
         $(container + ' .' + formElementClass + ' .' + componentsClass).prop('checked', 'checked');
         $('<button></button>').addClass('button ' + formSubmitClass).html('Ok <i class="fa fa-check-circle"></i>').appendTo('.' + formElementClass);
         $(container).css('display', 'block'); // show the box
-        $(container + ' .close-btn').click(function () {
+        $(container + ' .close-btn').click(function() {
             $(container).css('display', 'none');
             $(container + ' .close-btn').unbind('click');
             $(container + ' .' + formSubmitClass).unbind('click');
@@ -1238,7 +1238,7 @@ $(document).ready(function () {
             $('.pdf-layout-create-btn').removeAttr('disabled');
         });
         $('.' + formSubmitClass).unbind('click');
-        $('.' + formSubmitClass).click(function () {
+        $('.' + formSubmitClass).click(function() {
             var
                 choicedCD = [], // choiced component data
                 pageSetup = {
@@ -1268,11 +1268,11 @@ $(document).ready(function () {
                     })
                 },
                 dataType: "json",
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if (result.status == 'success') {
                     $('.action-msg-notification').html('<p><i class="fa fa-check-circle"></i> ' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('error');
@@ -1303,8 +1303,12 @@ $(document).ready(function () {
                     $('<button></button>').addClass('button pdf-layout-action view').html('<i class="fa fa-eye fa-fw fa-lg"></i>').appendTo('#layout' + pdfLayoutBoxNextID + ' .pdf-layout-action-container');
                     $('<button></button>').addClass('button pdf-layout-action active-non-active').html('<i class="fa fa-toggle-off fa-fw fa-lg"></i>').appendTo('#layout' + pdfLayoutBoxNextID + ' .pdf-layout-action-container');
                     $('<button></button>').addClass('button pdf-layout-action remove').html('<i class="fa fa-trash-alt fa-fw fa-lg"></i>').appendTo('#layout' + pdfLayoutBoxNextID + ' .pdf-layout-action-container');
+                    pdfLayoutActionEdit(pdfLayoutBoxNextID);
+                    pdfLayoutActionView(pdfLayoutBoxNextID);
+                    pdfLayoutActionToggleActive(pdfLayoutBoxNextID);
+                    pdfLayoutActionRemove(pdfLayoutBoxNextID);
                 } else if (result.status === 'error') {
-                    $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></p> ' + result.message + '</p>');
+                    $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('failed');
                     $('.action-msg-notification').addClass('error');
@@ -1323,10 +1327,30 @@ $(document).ready(function () {
                     $(container + ' form').remove();
                     $('.pdf-layout-create-btn').removeAttr('disabled');
                 } else if (result.status === 'failed') {
-                    $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></p> ' + result.message + '</p>');
+                    $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
                     $('.action-msg-notification').removeClass('success');
                     $('.action-msg-notification').removeClass('error');
                     $('.action-msg-notification').addClass('failed');
+                    $('.action-msg-notification').removeClass('hide');
+                    $('.action-msg-notification').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.action-msg-notification').addClass('hide');
+                            $('.action-msg-notification').removeAttr('style');
+                        }
+                    });
+                    $(container).css('display', 'none');
+                    $(container + ' .close-btn').unbind('click');
+                    $(container + ' .' + formSubmitClass).unbind('click');
+                    $(container + ' .close-btn').remove();
+                    $(container + ' form').remove();
+                    $('.pdf-layout-create-btn').removeAttr('disabled');
+                } else if (result.status === 'warning') {
+                    $('.action-msg-notification').html('<p><i class="fa fa-exclamation-triangle"></i> ' + result.message + '</p>');
+                    $('.action-msg-notification').removeClass('success');
+                    $('.action-msg-notification').removeClass('error');
+                    $('.action-msg-notification').removeClass('failed');
+                    $('.action-msg-notification').addClass('warning');
                     $('.action-msg-notification').removeClass('hide');
                     $('.action-msg-notification').fadeOut({
                         duration: 3000,
@@ -1347,7 +1371,7 @@ $(document).ready(function () {
     }
 
     $('.pdf-layout-create-btn').unbind('click');
-    $('.pdf-layout-create-btn').click(function () {
+    $('.pdf-layout-create-btn').click(function() {
         generatePDFComponentSB('.pdf-components-sb');
         $(this).prop('disabled', 'disabled');
     });
@@ -1355,7 +1379,7 @@ $(document).ready(function () {
     function pdfLayoutActionEdit(id) {
         //console.log('Edit' + id);
 
-        $('#layout' + id + ' .pdf-layout-action.edit').click(function () {
+        $('#layout' + id + ' .pdf-layout-action.edit').click(function() {
             //console.log('Editing....');
             var
                 layoutName = $('#layout' + id + ' .pdf-layout-name').text(),
@@ -1366,7 +1390,7 @@ $(document).ready(function () {
 
     function pdfLayoutActionView(id) {
         $('#layout' + id + ' .pdf-layout-action.view').unbind('click');
-        $('#layout' + id + ' .pdf-layout-action.view').click(function () {
+        $('#layout' + id + ' .pdf-layout-action.view').click(function() {
             var
                 layoutName = $('#layout' + id + ' .pdf-layout-name').text(),
                 t = $.cookie('t');
@@ -1376,7 +1400,7 @@ $(document).ready(function () {
 
     function pdfLayoutActionToggleActive(id) {
         $('#layout' + id + ' .pdf-layout-action.active-non-active').unbind('click');
-        $('#layout' + id + ' .pdf-layout-action.active-non-active').click(function () {
+        $('#layout' + id + ' .pdf-layout-action.active-non-active').click(function() {
             var
                 layoutName = $('#layout' + id + ' .pdf-layout-name').text(),
                 toggleStat = 'nonactive',
@@ -1387,7 +1411,7 @@ $(document).ready(function () {
                 //$('#layout' + id + ' .pdf-layout-action.active-non-active i').toggleClass('fa-toggle-on');
             } else if ($(this).html() == "<i class=\"fa fa-toggle-on fa-fw fa-lg\"></i>") {
                 toggleStat = 'nonactive'
-                //$('#layout' + id + ' .pdf-layout-action.active-non-active i').toggleClass('fa-toggle-off');
+                    //$('#layout' + id + ' .pdf-layout-action.active-non-active i').toggleClass('fa-toggle-off');
             }
             $.ajax({
                 type: "POST",
@@ -1400,11 +1424,11 @@ $(document).ready(function () {
                     })
                 },
                 dataType: "json",
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if (result.status == 'success') {
                     //console.log('Status Changed');
                     if (toggleStat == 'active') {
@@ -1422,7 +1446,7 @@ $(document).ready(function () {
     function pdfLayoutActionRemove(id) {
         //console.log('Remove' + id);
         $('#layout' + id + ' .pdf-layout-action.remove').unbind('click');
-        $('#layout' + id + ' .pdf-layout-action.remove').click(function () {
+        $('#layout' + id + ' .pdf-layout-action.remove').click(function() {
             var layoutName = $('#layout' + id + ' .pdf-layout-name').text();
 
             $.ajax({
@@ -1435,11 +1459,11 @@ $(document).ready(function () {
                     })
                 },
                 dataType: "json",
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if (result.status == 'success') {
                     $('#layout' + id).unbind('click');
                     $('#layout' + id).remove();
@@ -1568,11 +1592,11 @@ $(document).ready(function () {
                 })
             },
             dataType: "json",
-        }).done(function () {
+        }).done(function() {
 
-        }).fail(function () {
+        }).fail(function() {
 
-        }).always(function (result) {
+        }).always(function(result) {
             if (result.status == 'success') {
                 editorData = result.data;
                 pdfPageSetup = result.page_setup;
@@ -1608,7 +1632,7 @@ $(document).ready(function () {
                     $('<select></select>').attr({
                         name: 'layout_orientation',
                         id: 'orientation'
-                    }).change(function () {
+                    }).change(function() {
                         pdfPageSetup['orientation'] = $(configsClass + ' form #orientation').val();
                         $.ajax({
                             type: "POST",
@@ -1617,17 +1641,17 @@ $(document).ready(function () {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
                                     layout_name: urlParams[2],
-                                    data_name: 'pdf_page_setup',
+                                    data_name: 'layout_page_setup',
                                     new_data: pdfPageSetup,
                                     save_data: false
                                 })
                             },
                             dataType: "json",
-                        }).done(function () {
+                        }).done(function() {
 
-                        }).fail(function () {
+                        }).fail(function() {
 
-                        }).always(function (result) {
+                        }).always(function(result) {
                             //console.log(result);
                             $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                         });
@@ -1649,7 +1673,7 @@ $(document).ready(function () {
                         name: 'layout_unit',
                         id: 'unit',
                         value: pdfPageSetup.unit
-                    }).change(function () {
+                    }).change(function() {
                         pdfPageSetup['unit'] = $(configsClass + ' form #unit').val();
                         $.ajax({
                             type: "POST",
@@ -1658,17 +1682,17 @@ $(document).ready(function () {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
                                     layout_name: urlParams[2],
-                                    data_name: 'pdf_page_setup',
+                                    data_name: 'layout_page_setup',
                                     new_data: pdfPageSetup,
                                     save_data: false
                                 })
                             },
                             dataType: "json",
-                        }).done(function () {
+                        }).done(function() {
 
-                        }).fail(function () {
+                        }).fail(function() {
 
-                        }).always(function (result) {
+                        }).always(function(result) {
                             $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                         });
                     }).appendTo(configsClass + ' form');
@@ -1690,7 +1714,7 @@ $(document).ready(function () {
                         name: 'layout_format',
                         id: 'format',
                         value: pdfPageSetup.format
-                    }).change(function () {
+                    }).change(function() {
                         pdfPageSetup['format'] = $(configsClass + ' form #format').val();
                         $.ajax({
                             type: "POST",
@@ -1699,17 +1723,17 @@ $(document).ready(function () {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
                                     layout_name: urlParams[2],
-                                    data_name: 'pdf_page_setup',
+                                    data_name: 'layout_page_setup',
                                     new_data: pdfPageSetup,
                                     save_data: false
                                 })
                             },
                             dataType: "json",
-                        }).done(function () {
+                        }).done(function() {
 
-                        }).fail(function () {
+                        }).fail(function() {
 
-                        }).always(function (result) {
+                        }).always(function(result) {
                             $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                         });
                     }).appendTo(configsClass + ' form');
@@ -1738,7 +1762,7 @@ $(document).ready(function () {
                                     class: 'configs-input',
                                     placeholder: subComponents[j],
                                     value: editorData[componentNames[i]][subComponents[j]],
-                                }).change(function () {
+                                }).change(function() {
                                     editorData[$(this).parent().attr('id')][$(this).attr('name')] = $(this).val();
                                     $.ajax({
                                         type: "POST",
@@ -1753,11 +1777,11 @@ $(document).ready(function () {
                                             })
                                         },
                                         dataType: "json",
-                                    }).done(function () {
+                                    }).done(function() {
 
-                                    }).fail(function () {
+                                    }).fail(function() {
 
-                                    }).always(function (result) {
+                                    }).always(function(result) {
                                         $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                                     });
                                 }).appendTo(configsClass + ' form #' + componentNames[i]);
@@ -1768,7 +1792,7 @@ $(document).ready(function () {
                                     class: 'configs-input',
                                     placeholder: subComponents[j],
                                     value: editorData[componentNames[i]][subComponents[j]],
-                                }).change(function () {
+                                }).change(function() {
                                     editorData[$(this).parent().attr('id')][$(this).attr('name')] = $(this).val();
                                     //console.log(editorData[$(this).parent().attr('id')][$(this).attr('name')]);
                                     $.ajax({
@@ -1784,11 +1808,11 @@ $(document).ready(function () {
                                             })
                                         },
                                         dataType: "json",
-                                    }).done(function () {
+                                    }).done(function() {
 
-                                    }).fail(function () {
+                                    }).fail(function() {
 
-                                    }).always(function (result) {
+                                    }).always(function(result) {
                                         $('.pdf-editor-viewer').attr('src', baseURL() + '/pdf-editor/view/' + urlParams[2] + '/' + $.cookie('t'));
                                     });
                                 }).appendTo(configsClass + ' form #' + componentNames[i]);
@@ -1801,7 +1825,7 @@ $(document).ready(function () {
                         name: 'configs_save'
                     }).html('<i class="fa fa-save"></i> Simpan').appendTo(configsClass + ' form');
 
-                    $('.configs-save-btn').click(function () {
+                    $('.configs-save-btn').click(function() {
                         var newLayoutName = $(configsClass + ' form #layoutName').val();
                         if (newLayoutName === urlParams[2]) {
                             newLayoutName = false;
@@ -1813,7 +1837,7 @@ $(document).ready(function () {
                                 data: JSON.stringify({
                                     t: $.cookie('t'),
                                     layout_name: urlParams[2],
-                                    data_name: 'pdf_layout_data',
+                                    data_name: 'layout_data',
                                     new_data: editorData,
                                     page_setup: pdfPageSetup,
                                     new_layname: newLayoutName,
@@ -1821,11 +1845,11 @@ $(document).ready(function () {
                                 })
                             },
                             dataType: "json",
-                        }).done(function () {
+                        }).done(function() {
 
-                        }).fail(function () {
+                        }).fail(function() {
 
-                        }).always(function (result) {
+                        }).always(function(result) {
                             if (result.status == 'success') {
                                 $('.action-msg-notification').html('<p><i class="fa fa-check-circle"></i> ' + result.message + '</p>');
                                 $('.action-msg-notification').removeClass('error');

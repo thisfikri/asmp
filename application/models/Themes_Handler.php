@@ -135,15 +135,21 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			$page_title = ucwords(implode(' ', $page_title));
 			if ($page_name == 'pdf-layout')
 				{
-					$uri_seglen = count(explode('/', uri_string()));
+					// $uri_seglen = count(explode('/', uri_string()));
 					$page_title = explode('-', $this->_user_page[$page_name][$lang]);
 					$page_title[1] = strtoupper($page_title[1]);
 					$page_title = implode(' ', $page_title);
 
-					if ($uri_seglen > 2)
-					{
-						$page_title = $page_title . ' - ' . ucwords($this->uri->segment($uri_seglen));
-					}
+					// if ($uri_seglen > 2)
+					// {
+					// 	$page_title = $page_title . ' - ' . ucwords($this->uri->segment($uri_seglen));
+					// }
+				}
+				else if ($page_name == 'pdf-editor')
+				{
+					$page_title = explode('-', $this->_user_page[$page_name][$lang]);
+					$page_title[0] = strtoupper($page_title[0]);
+					$page_title = implode(' ', $page_title);
 				}
 			return ucwords($page_title);
 		}
@@ -171,18 +177,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 			
 			if ($this->checker->is_admin())
 			{
-				if ($page == 'pdf-layout')
-				{
-					$uri_seglen = count(explode('/', uri_string()));
-					$page_title = explode('-', $this->_user_page[$page][$lang]);
-					$page_title[1] = strtoupper($page_title[1]);
-					$page_title = implode(' ', $page_title);
-
-					if ($uri_seglen > 2)
-					{
-						$page_title = $page_title . ' - ' . ucwords($this->uri->segment($uri_seglen));
-					}
-				}
+				$page_title = $this->get_page_title($page);
 
 				$data = array(
 					'page_title' => $page_title

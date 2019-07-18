@@ -1,5 +1,5 @@
 $(".msg-box.hide").css("display", "none");
-$(document).ready(function () {
+$(document).ready(function() {
     /*
      * Front Page
      */
@@ -43,11 +43,11 @@ $(document).ready(function () {
             });
         }
 
-        this.showFormProperties = function () {
+        this.showFormProperties = function() {
             return Object.getOwnPropertyNames(this.cFInpProp);
         }
 
-        this.getFormInputBy = function (dataType) {
+        this.getFormInputBy = function(dataType) {
             var
                 propertyNames = this.showFormProperties(),
                 finalResult = null;
@@ -79,7 +79,7 @@ $(document).ready(function () {
     }
 
     // Top Action Help Button
-    $('.top-action button.help').click(function () {
+    $('.top-action button.help').click(function() {
         let
             helpBoxStatus = $('.help-box').attr('class');
         if (helpBoxStatus.search('hide-element') !== -1) {
@@ -88,8 +88,12 @@ $(document).ready(function () {
         }
     });
 
+    $('.top-action button.lang').click(function() {
+        window.alert('Fitur Ini Belum Tersedia');
+    });
+
     //Help Box Close Button
-    $('.button.help-box-close-btn').click(function () {
+    $('.button.help-box-close-btn').click(function() {
         let
             helpBoxStatus = $('.help-box').attr('class');
         console.log(helpBoxStatus);
@@ -100,7 +104,7 @@ $(document).ready(function () {
     });
 
     // Pre-Register Submit Button
-    $('.pre-register-btn').click(function () {
+    $('.pre-register-btn').click(function() {
         var
             uName = $('.pre-register-form input[name=username]').val(),
             trName = $('.pre-register-form input[name=true_name]').val(),
@@ -128,14 +132,14 @@ $(document).ready(function () {
                     vt: cvt
                 },
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
                 $('.pre-register-btn').html('Buat <i class="fa fa-user-plus"></i>');
             })
-            .always(function (result) {
+            .always(function(result) {
                 switch (result.status) {
                     case 'success':
                         window.location.replace(baseURL() + '/registrasi-awal');
@@ -199,13 +203,13 @@ $(document).ready(function () {
             });
     });
 
-    $('.msg-box.hide, .msg-box.php').click(function () {
+    $('.msg-box.hide, .msg-box.php').click(function() {
         $(this).css('display', 'none');
         $('.msg-box.hide .msg-txt').remove();
     });
 
     // Login Submit Button
-    $('.login-btn').click(function () {
+    $('.login-btn').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         $(this).css('background-color', '#409da3');
 
@@ -223,14 +227,14 @@ $(document).ready(function () {
                     vt: $.cookie('vt')
                 },
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
                 $('.login-btn').html('Masuk <i class="fa fa-sign-in-alt"></i>');
             })
-            .always(function (result) {
+            .always(function(result) {
                 console.log("complete");
                 switch (result.status) {
                     case 'success':
@@ -297,7 +301,7 @@ $(document).ready(function () {
     });
 
     // Show/Hide Button
-    $('.show-hide-btn').click(function () {
+    $('.show-hide-btn').click(function() {
         let
             inpType = '';
         inpType = $('#recoveryID').attr('type');
@@ -311,7 +315,7 @@ $(document).ready(function () {
         }
     });
 
-    $('.fpw-btn[name=fpwm-rid]').click(function () {
+    $('.fpw-btn[name=fpwm-rid]').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
 
         var
@@ -330,14 +334,14 @@ $(document).ready(function () {
                     vt: $.cookie('vt')
                 }
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
                 $('.fpw-btn[name=fpwm-rid]').html('Proses <i class="fa fa-sync"></i>');
             })
-            .always(function (result) {
+            .always(function(result) {
                 console.log("complete");
                 switch (result.status) {
                     case 'success':
@@ -386,7 +390,7 @@ $(document).ready(function () {
 
     });
 
-    $('.fpw-btn[name=respass-rid]').click(function () {
+    $('.fpw-btn[name=respass-rid]').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
 
         var
@@ -404,14 +408,14 @@ $(document).ready(function () {
                     t: $.cookie('t')
                 }
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
                 $('.fpw-btn[name=respass-rid]').html('Proses <i class="fa fa-sync"></i>');
             })
-            .always(function (result) {
+            .always(function(result) {
                 console.log("complete");
                 switch (result.status) {
                     case 'success':
@@ -460,7 +464,7 @@ $(document).ready(function () {
 
     });
 
-    $('.fpw-btn[name=fpwm-email]').click(function () {
+    $('.fpw-btn[name=fpwm-email]').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
 
         var
@@ -479,14 +483,14 @@ $(document).ready(function () {
                     vt: $.cookie('vt')
                 }
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
                 $('.fpw-btn[name=fpwm-email]').html('Kirim <i class="fa fa-paper-plane"></i>');
             })
-            .always(function (result) {
+            .always(function(result) {
                 console.log("complete");
                 switch (result.status) {
                     case 'success':
@@ -536,7 +540,7 @@ $(document).ready(function () {
     });
 
     // Create New Account Submit Button
-    $('.cna-btn').click(function () {
+    $('.cna-btn').click(function() {
         $(this).html('<i class="fa fa-sync fa-spin"></i>');
         $(this).css('background-color', '#409da3');
         var
@@ -558,14 +562,14 @@ $(document).ready(function () {
                 }
 
             })
-            .done(function () {
+            .done(function() {
                 console.log("success");
             })
-            .fail(function () {
+            .fail(function() {
                 console.log("error");
                 $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
             })
-            .always(function (result) {
+            .always(function(result) {
                 console.log("complete");
                 switch (result.status) {
                     case 'success':

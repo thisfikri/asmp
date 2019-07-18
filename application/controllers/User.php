@@ -71,7 +71,8 @@ class User extends CI_Controller
         // Memuat dbforge
         $this->load->dbforge();
 
-        date_default_timezone_set('Asia/Jakarta');
+        // set default time zone
+		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status
@@ -445,26 +446,16 @@ class User extends CI_Controller
             {
                 $gallery_dir = dirname($this->input->server('SCRIPT_FILENAME')) . '/gallery/' . $result[0]->gallery_dir . '/';
                 $filename = $gallery_dir . $imageName;
-                $handle = fopen($filename, 'r');
-                if (is_readable($filename))
+                
+                if (file_exists($filename))
                 {
-                    $filewr = fread($handle, filesize($filename));
-                    fclose($handle);
-
-                    $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/profile-photo/' . $prev_pic;
-                    if (unlink($filename))
-                    {
-                        $filename = dirname($this->input->server('SCRIPT_FILENAME')) . '/assets/images/profile-photo/' . $imageName;
-                        $handle = fopen($filename, 'w');
-                        if (is_writable($filename))
-                        {
-                            if (fwrite($handle, $filewr))
-                            {
-                                header('Content-Type: application/json');
-                                echo json_encode(array('status' => 'success', 'message' => 'Berhasil mengubah foto profil!'));
-                            }
-                        }
-                    }
+                    header('Content-Type: application/json');
+                    echo json_encode(array('status' => 'success', 'message' => 'Berhasil mengubah foto profil! > ' . $imageName));
+                }
+                else
+                {
+                    header('Content-Type: application/json');
+                    echo json_encode(array('status' => 'error', 'message' => $imageName . ' Tidak Ditemukan'));
                 }
             }
             else
@@ -1057,12 +1048,27 @@ class User extends CI_Controller
                 $query = $this->db->where('username', $this->_username)->get('outgoing_mail');
                 $om_result = $query->result();
 
+                $query = $this->db->where('layout_status', 'active')->get('pdf_layouts');
+                $result = $query->result();
+                $pdf_layouts = '';
+
+
+                $i = 0;
+                for(; $i < $query->num_rows(); $i++)
+                {
+                    $pdf_layouts .= $result[$i]->layout_name . ',';
+                    log_message('error', $pdf_layouts);
+                }
+
+                $pdf_layouts = substr($pdf_layouts, 0, -1);
+
                 $data = array(
                     'uprof_data' => $user_profile_data[0],
                     'new_im' => $new_im,
                     'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
                     'app_settings' => $this->app_settings->get_app_settings()[0],
                     'om_auth' => $this->_om_auth,
+                    'pdf_layouts' => $pdf_layouts
                 );
 
                 $this->load->view('user/outgoing-mail', $data, FALSE);

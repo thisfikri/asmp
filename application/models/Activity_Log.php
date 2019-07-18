@@ -250,11 +250,8 @@ class Activity_Log extends CI_Model {
 		 */
 		$name = $result[0]->true_name;
 
-		// set default time zone
-		date_default_timezone_set('Asia/Jakarta');
-
 		// mengeset teks log
-		$this->_log_text = $this->_action_type . ' ' . $name . ': ' . $msg . $this->_detail_text . ' ~ ' . date('Y-m-d h:i:s A') . ' ~';
+		$this->_log_text = $this->_action_type . ' ' . $name . ': ' . $msg . $this->_detail_text . ' ~ ' . date('Y-m-d H:i:s') . ' ~';
 
 		/**
 		 * Query untuk mengambil data dari table user_activity_logs

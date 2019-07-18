@@ -197,25 +197,18 @@ class Outgoing_Mail_Handler extends CI_Model
             $receiver_data = null;
             if ($pos_task == 'normal_accept_sending')
             {
+
                 $query = $this->db->where('task', 'accept_lvl1_dpss')->get('field_sections');
                 $result = $query->result();
-                $receiver_pos = $result[0]->field_section_name;
+                if ($result)
+                {
+                    $receiver_pos = $result[0]->field_section_name;
 
-                $query = $this->db->where('position', $receiver_pos)->get('users');
-                $receiver_data = $query->result();
-                $receiver_data = $receiver_data[0];
-            }
-            else
-            {
-                $this->output->set_content_type('application/json')->set_output(json_encode(
-                    array('status' => 'error',
-                        'message' => 'this function only for `user` authority and task normal',
-                    )
-                ));
-                exit(0);
-            }
+                    $query = $this->db->where('position', $receiver_pos)->get('users');
+                    $receiver_data = $query->result();
+                    $receiver_data = $receiver_data[0];
 
-            $query = $this->db->where('username', $username)->get('outgoing_mail');
+                    $query = $this->db->where('username', $username)->get('outgoing_mail');
             $om_count = $query->num_rows();
 
             $data_to_send = array(
@@ -261,11 +254,32 @@ class Outgoing_Mail_Handler extends CI_Model
                 else if ($output == 'json')
                 {
                     $this->output->set_content_type('application/json')->set_output(json_encode(
-                        array('status' => 'failed',
+                        array(
+                            'status' => 'failed',
                             'message' => 'surat keluar gagal disimpan',
                         )
                     ));
                 }
+            }
+                }
+                else
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(
+                        array(
+                            'status' => 'error',
+                            'message' => 'penerima tidak terdaftar'
+                        )
+                    ));
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(
+                    array(
+                        'status' => 'error',
+                        'message' => 'this function only for `user` authority and task normal',
+                    )
+                ));
             }
         }
         else
@@ -277,7 +291,8 @@ class Outgoing_Mail_Handler extends CI_Model
             else if ($output == 'json')
             {
                 $this->output->set_content_type('application/json')->set_output(json_encode(
-                    array('status' => 'error',
+                    array(
+                        'status' => 'error',
                         'message' => 'this function only for `user` authority',
                     )
                 ));

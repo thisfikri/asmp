@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
 
     // -- Get Base URL --
     function baseURL() {
@@ -84,7 +84,7 @@ $(document).ready(function () {
                     type: 'submit',
                     name: 'save_om',
                     class: 'button add-om-submit save'
-                }).html('<i class="fa fa-save"></i> Simpan').click(function () {
+                }).html('<i class="fa fa-save"></i> Simpan').click(function() {
                     let
                         form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
                         fdata = {},
@@ -108,11 +108,11 @@ $(document).ready(function () {
                             })
                         },
                         dataType: "json",
-                    }).done(function () {
+                    }).done(function() {
 
-                    }).fail(function () {
+                    }).fail(function() {
 
-                    }).always(function (result) {
+                    }).always(function(result) {
                         if (result.status == 'success') {
                             var pgnt = new Pagination(result.data.user_setting['row_limit'], '.item', 'page-link', '.pagination');
                             var hideElement = '';
@@ -155,7 +155,7 @@ $(document).ready(function () {
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
 
-                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').html('<p><i class="fa fa-check-circle"></i> ' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('error');
                             $('.action-msg-notification').removeClass('failed');
                             $('.action-msg-notification').removeClass('warning');
@@ -176,7 +176,7 @@ $(document).ready(function () {
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
 
-                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').removeClass('error');
@@ -197,7 +197,7 @@ $(document).ready(function () {
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
 
-                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('warning');
                             $('.action-msg-notification').removeClass('failed');
@@ -218,7 +218,7 @@ $(document).ready(function () {
                             $('.casual-theme.add-om-modal .modal2ndlayer .form-input label').remove();
                             $('.casual-theme.add-om-modal .modal2ndlayer .mail-modal-form  button').remove();
 
-                            $('.action-msg-notification').html('<p>' + result.message + '</p>');
+                            $('.action-msg-notification').html('<p><i class="fa fa-exclamation-triangle"></i> ' + result.message + '</p>');
                             $('.action-msg-notification').removeClass('success');
                             $('.action-msg-notification').removeClass('failed');
                             $('.action-msg-notification').removeClass('error');
@@ -241,7 +241,7 @@ $(document).ready(function () {
                     type: 'submit',
                     name: 'send_om',
                     class: 'button add-om-submit send'
-                }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
+                }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function() {
                     let
                         form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
                         fdata = {},
@@ -264,11 +264,11 @@ $(document).ready(function () {
                             })
                         },
                         dataType: "json",
-                    }).done(function () {
+                    }).done(function() {
 
-                    }).fail(function () {
+                    }).fail(function() {
 
-                    }).always(function (result) {
+                    }).always(function(result) {
                         if (result.status == 'success') {
                             var pgnt = new Pagination(result.data.user_setting['row_limit'], '.item', 'page-link', '.pagination');
                             var hideElement = '';
@@ -391,16 +391,16 @@ $(document).ready(function () {
                     });
                 })
                 .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
-        } 
+        }
         $(containerSelector).css('display', 'block');
     }
 
-    $('#addOm').click(function () {
+    $('#addOm').click(function() {
         omModalGerator('add', '.add-om-modal');
         $(this).attr('disabled', 'true');
     });
 
-    $('.casual-theme.add-om-modal .modal2ndlayer .close-btn').click(function () {
+    $('.casual-theme.add-om-modal .modal2ndlayer .close-btn').click(function() {
         $('.add-om-modal').css('display', 'none');
         $('#addOm').removeAttr('disabled');
         $('.casual-theme.add-om-modal .modal2ndlayer .form-input input').remove();

@@ -66,7 +66,8 @@ class Front extends CI_Controller
         // Memuat dbforge
         $this->load->dbforge();
 
-        date_default_timezone_set('Asia/Jakarta');
+        // set default time zone
+		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status
@@ -769,7 +770,7 @@ class Front extends CI_Controller
                                     {
                                         if (fwrite($handle, $filewr))
                                         {
-                                            log_message('info', 'default-profile.png has move to gallery');
+                                            log_message('info', 'profile photo has moved to gallery');
                                         }
                                         else
                                         {
@@ -813,7 +814,7 @@ class Front extends CI_Controller
                             {
                                 if (fwrite($handle, $filename))
                                 {
-                                    log_message('info', 'default-profile.png has move to gallery');
+                                    log_message('info', 'default-profile.png has moved to gallery');
                                 }
                                 else
                                 {
@@ -1247,8 +1248,8 @@ class Front extends CI_Controller
                     unset($input_data['passconfirm']);
                     $input_data['id'] = $row_count;
                     $input_data['password'] = $this->asmp_security->get_hashed_password($input_data['password']);
-                    // $input_data['recovery_id'] = explode('-', $input_data['recovery_id']);
-                    // $input_data['recovery_id'] = implode('', $input_data['recovery_id']);
+                    $input_data['recovery_id'] = explode('-', $input_data['recovery_id']);
+                    $input_data['recovery_id'] = implode('', $input_data['recovery_id']);
                     $input_data['recovery_id'] = $this->asmp_security->get_hashed_password($input_data['recovery_id']);
                     $input_data['position'] = $input_data['field_section'];
                     $input_data['role'] = 'user';
@@ -1271,7 +1272,7 @@ class Front extends CI_Controller
                                 {
                                     if (fwrite($handle, $filewr))
                                     {
-                                        log_message('info', 'default-profile.png has move to gallery');
+                                        log_message('info', 'profile photo has moved to gallery');
                                     }
                                     else
                                     {
@@ -1309,7 +1310,7 @@ class Front extends CI_Controller
                             {
                                 if (fwrite($handle, $filename))
                                 {
-                                    log_message('info', 'default-profile.png has move to gallery');
+                                    log_message('info', 'default-profile.png has moved to gallery');
                                 }
                                 else
                                 {
@@ -1846,8 +1847,8 @@ class Front extends CI_Controller
                          * @var string
                          */
                         $recovery_id = $this->input->post('recovery_id', TRUE);
-                        // $recovery_id = explode('-', $this->input->post('recovery_id', TRUE));
-                        // $recovery_id = implode('', $recovery_id);
+                        $recovery_id = explode('-', $this->input->post('recovery_id', TRUE));
+                        $recovery_id = implode('', $recovery_id);
                         
                         /**
                          * Digunakan untuk verifikasi data yang terdaftar

@@ -65,7 +65,8 @@ class Auth extends CI_Controller
         // Memuat dbforge
         $this->load->dbforge();
 
-        date_default_timezone_set('Asia/Jakarta');
+        // set default time zone
+		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status
