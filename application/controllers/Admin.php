@@ -388,7 +388,6 @@ class Admin extends CI_Controller
                 }
                 else
                 {
-                    $this->activity_log->create_activity_log('upload_glry_image', 'Telah mengupload foto ke gallery', null, $this->_username);
                     $this->load->library('UploadHandler', $options);
                 }
             }
@@ -401,6 +400,34 @@ class Admin extends CI_Controller
         else
         {
             redirect(site_url('admin'), 'refresh');
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function set_upld_log_activity()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            if ($this->input->post('status', TRUE) == TRUE)
+            {
+                $this->activity_log->create_activity_log('upload_glry_image', 'Telah mengupload foto ke gallery', null, $this->_username);
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'success',
+                    'message' => 'Upload Berhasil'
+                    )
+                ));
+            }
+            else if ($this->input->post('status', TRUE) == FALSE)
+            {
+                $this->activity_log->create_activity_log('upload_glry_image', 'Gagal mengupload foto ke gallery', null, $this->_username);
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'success',
+                    'message' => 'Upload Gagal'
+                    )
+                ));
+                
+            }
         }
     }
 
@@ -427,6 +454,7 @@ class Admin extends CI_Controller
                 
                 if (file_exists($filename))
                 {
+                    $this->activity_log->create_activity_log('update_pp', 'Berhasil Mengubah foto profil', null, $this->_username);
                     header('Content-Type: application/json');
                     echo json_encode(array('status' => 'success', 'message' => 'Berhasil mengubah foto profil! > ' . $imageName));
                 }
@@ -438,6 +466,7 @@ class Admin extends CI_Controller
             }
             else
             {
+                $this->activity_log->create_activity_log('update_pp', 'Berhasil Mengubah foto profil', null, $this->_username);
                 header('Content-Type: application/json');
                 echo json_encode(array('status' => 'error', 'message' => 'Gagal mengubah foto profil!'));
             }
@@ -462,7 +491,7 @@ class Admin extends CI_Controller
                     $query = $this->db->where('username', $this->_username)->get('users');
                     $user_data = $query->result()[0];
     
-                    if (!empty($data['fdata']['password']))
+                    if (!empty($data['fdata']['username']) && !empty($data['fdata']['true_name']) && !empty($data['fdata']['password']) )
                     {
                         if ($this->asmp_security->verify_hashed_password($data['fdata']['password'], $user_data->password))
                         {
@@ -488,9 +517,10 @@ class Admin extends CI_Controller
                                     
                                     if ($this->db->affected_rows())
                                     {
+                                        $this->activity_log->create_activity_log('profile_update', 'Nama pengguna dan nama asli berhasil diubah', null, $this->_username);
                                         $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                             'status' => 'success',
-                                            'message' => 'nama pengguna dan nama asli berhasil diubah',
+                                            'message' => 'Nama pengguna dan nama asli berhasil diubah',
                                             'data' => array(
                                                 'change_count' => 2,
                                                 'change_name1' => 'username',
@@ -502,9 +532,10 @@ class Admin extends CI_Controller
                                     }
                                     else
                                     {
+                                        $this->activity_log->create_activity_log('profile_update', 'Nama pengguna berhasil diubah tapi nama asli gagal diubah', null, $this->_username);
                                         $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                             'status' => 'success',
-                                            'message' => 'nama pengguna berhasil diubah tapi nama asli gagal diubah',
+                                            'message' => 'Nama pengguna berhasil diubah tapi nama asli gagal diubah',
                                             'data' => array(
                                                 'change_count' => 1,
                                                 'change_name' => 'username',
@@ -515,9 +546,10 @@ class Admin extends CI_Controller
                                 }
                                 else
                                 {
+                                    $this->activity_log->create_activity_log('profile_update', 'Nama pengguna dan nama asli gagal diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'error',
-                                        'message' => 'nama pengguna dan nama asli gagal diubah'
+                                        'message' => 'Nama pengguna dan nama asli gagal diubah'
                                     )));
                                 }
                             }
@@ -537,9 +569,10 @@ class Admin extends CI_Controller
 
                                     $this->session->set_userdata($new_sess);
 
+                                    $this->activity_log->create_activity_log('profile_update', 'Nama pengguna berhasil diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'success',
-                                        'message' => 'nama pengguna berhasil diubah',
+                                        'message' => 'Nama pengguna berhasil diubah',
                                         'data' => array(
                                             'change_count' => 1,
                                             'change_name' => 'username',
@@ -549,9 +582,10 @@ class Admin extends CI_Controller
                                 }
                                 else
                                 {
+                                    $this->activity_log->create_activity_log('profile_update', 'Nama pengguna gagal diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'error',
-                                        'message' => 'nama pengguna gagal diubah'
+                                        'message' => 'Nama pengguna gagal diubah'
                                     )));
                                 }
                             }
@@ -563,9 +597,10 @@ class Admin extends CI_Controller
                                 
                                 if ($this->db->affected_rows())
                                 {
+                                    $this->activity_log->create_activity_log('profile_update', 'Nama asli berhasil diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'success',
-                                        'message' => 'nama asli berhasil diubah',
+                                        'message' => 'Nama asli berhasil diubah',
                                         'data' => array(
                                             'change_count' => 1,
                                             'change_name' => 'true_name',
@@ -575,9 +610,10 @@ class Admin extends CI_Controller
                                 }
                                 else
                                 {
+                                    $this->activity_log->create_activity_log('profile_update', 'Nama asli gagal diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'error',
-                                        'message' => 'nama asli gagal diubah'
+                                        'message' => 'Nama asli gagal diubah'
                                     )));
                                 }
                             }
@@ -586,7 +622,7 @@ class Admin extends CI_Controller
                         {
                             $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                 'status' => 'error',
-                                'message' => 'password tidak valid'
+                                'message' => 'kata sandi tidak valid'
                             )));
                         }
                     }
@@ -594,7 +630,7 @@ class Admin extends CI_Controller
                     {
                         $this->output->set_content_type('application/json')->set_output(json_encode(array(
                             'status' => 'warning',
-                            'message' => 'password tidak boleh kosong'
+                            'message' => 'nama pengguna, nama asli pengguna, dan kata sandi tidak boleh kosong'
                         )));
                     }
                 }
@@ -603,7 +639,7 @@ class Admin extends CI_Controller
                     $query = $this->db->where('username', $this->_username)->get('users');
                     $user_data = $query->result()[0];
     
-                    if (!empty($data['fdata']['old_password']))
+                    if (!empty($data['fdata']['old_password']) && !empty($data['fdata']['new_password']) && !empty($data['fdata']['new_password_confirm']))
                     {
                         if ($this->asmp_security->verify_hashed_password($data['fdata']['old_password'], $user_data->password))
                         {
@@ -615,16 +651,18 @@ class Admin extends CI_Controller
                                 
                                 if ($this->db->affected_rows())
                                 {
+                                    $this->activity_log->create_activity_log('profile_update', 'Kata sandi berhasil diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'success',
-                                        'message' => 'password berhasil diubah'
+                                        'message' => 'Kata sandi berhasil diubah'
                                     )));
                                 }
                                 else
                                 {
+                                    $this->activity_log->create_activity_log('profile_update', 'Kata sandi gagal diubah', null, $this->_username);
                                     $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                         'status' => 'error',
-                                        'message' => 'password gagal diubah'
+                                        'message' => 'Kata sandi gagal diubah'
                                     )));
                                 }
                             }
@@ -632,7 +670,7 @@ class Admin extends CI_Controller
                             {
                                 $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                     'status' => 'error',
-                                    'message' => 'password baru dan konfirmasi password baru harus sama'
+                                    'message' => 'kata sandi baru dan konfirmasi kata sandi baru harus sama'
                                 )));
                             }
                         }
@@ -640,7 +678,7 @@ class Admin extends CI_Controller
                         {
                             $this->output->set_content_type('application/json')->set_output(json_encode(array(
                                 'status' => 'error',
-                                'message' => 'password tidak valid'
+                                'message' => 'kata sandi tidak valid'
                             )));
                         }
                     }
@@ -648,9 +686,58 @@ class Admin extends CI_Controller
                     {
                         $this->output->set_content_type('application/json')->set_output(json_encode(array(
                             'status' => 'warning',
-                            'message' => 'password lama tidak boleh kosong'
+                            'message' => 'kata sandi lama tidak boleh kosong'
                         )));
                     }   
+                }
+                else if ($data['change_type'] == 'email')
+                {
+                    $query = $this->db->where('username', $this->_username)->get('users');
+                    $user_data = $query->result()[0];
+    
+                    if (!empty($data['fdata']['password']) && !empty($data['fdata']['email']))
+                    {
+                        if ($this->asmp_security->verify_hashed_password($data['fdata']['password'], $user_data->password))
+                        {
+                            if ($data['fdata']['email'] !== $user_data->email)
+                            {
+                                $this->db->where('username', $this->_username)->update('users', array(
+                                    'email' => $data['fdata']['email']
+                                ));
+                                
+                                if ($this->db->affected_rows())
+                                {
+                                    $this->activity_log->create_activity_log('profile_update', 'E-Mail berhasil diubah', null, $this->_username);
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'E-Mail berhasil diubah'
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->activity_log->create_activity_log('profile_update', 'E-Mail gagal diubah', null, $this->_username);
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'E-Mail gagal diubah'
+                                    )));
+                                }
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'warning',
+                                'message' => 'kata sandi tidak valid'
+                            )));
+                        }
+                    }
+                    else
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'warning',
+                            'message' => 'kata sandi tidak boleh kosong'
+                        )));
+                    } 
                 }
             }
             else

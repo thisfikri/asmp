@@ -59,22 +59,24 @@ $(document).ready(function() {
         //console.log(buttonHTML);
         if (buttonHTML == '<i class="fa fa-user-edit"></i> Edit') {
             $(this).html('<i class="fa fa-arrow-left"></i> Back');
-            $('.side-profile').addClass('edit');
-            $('.side-profile.edit .profile-img').addClass('edit');
-            $('.side-profile.edit .button.choose-btn').removeClass('hide');
+            $('.side-profile .profile-editor-box-container').removeClass('hide');
+            // $('.side-profile').addClass('edit');
+            // $('.side-profile.edit .profile-img').addClass('edit');
+            // $('.side-profile.edit .button.choose-btn').removeClass('hide');
             $('.side-profile.edit .photos-box').removeClass('hide');
-            $('.side-profile.edit .profile-info').addClass('edit');
-            $('.side-profile.edit .profile-info ul').addClass('hide');
-            $('.side-profile.edit .profile-info.edit .update-type').removeClass('hide');
+            // $('.side-profile.edit .profile-info').addClass('edit');
+            // $('.side-profile.edit .profile-info ul').addClass('hide');
+            // $('.side-profile.edit .profile-info.edit .update-type').removeClass('hide');
         } else if (buttonHTML == '<i class="fa fa-arrow-left"></i> Back') {
             $(this).html('<i class="fa fa-user-edit"></i> Edit');
-            $('.side-profile').removeClass('edit');
-            $('.side-profile .profile-img').removeClass('edit');
-            $('.side-profile .button.choose-btn').addClass('hide');
+            $('.side-profile .profile-editor-box-container').addClass('hide');
+            // $('.side-profile').removeClass('edit');
+            // $('.side-profile .profile-img').removeClass('edit');
+            // $('.side-profile .button.choose-btn').addClass('hide');
             $('.side-profile .photos-box').addClass('hide');
-            $('.side-profile .profile-info').removeClass('edit');
-            $('.side-profile .profile-info ul').removeClass('hide');
-            $('.side-profile .profile-info .update-type').addClass('hide');
+            // $('.side-profile .profile-info').removeClass('edit');
+            // $('.side-profile .profile-info ul').removeClass('hide');
+            // $('.side-profile .profile-info .update-type').addClass('hide');
         }
     });
 
@@ -113,9 +115,9 @@ $(document).ready(function() {
     });
 
     // update profile
-    $('.profile-info form.update-type.01 button[name=update-type-01-submit]').click(function() {
+    $('.profile-editor-box form.update-type.01 button[name=update-type-01-submit]').click(function() {
         let
-            form = $('.profile-info form.update-type.01'),
+            form = $('.profile-editor-box form.update-type.01'),
             fData = {},
             i = 0;
         for (; i < form[0].length; i++) {
@@ -144,82 +146,82 @@ $(document).ready(function() {
             .always(function(result) {
                 console.log(result);
                 if (result.status == 'success') {
-                    $('.profile-info form.update-type.01 input[name=password]').val('');
+                    $('.profile-editor-box form.update-type.01 input[name=password]').val('');
                     if (result.data['change_count'] == 1) {
-                        console.log($('.profile-info ul li').eq(0));
-                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
+                        // console.log($('.profile-info ul li').eq(0));
+                        $('.profile-editor-box form.update-type.01 input[name=' + result.data['change_name'] + ']').val(result.data['change_value']);
                         $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value']);
                     } else if (result.data['change_count'] == 2) {
-                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
-                        $('.profile-info form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
+                        $('.profile-editor-box form.update-type.01 input[name=' + result.data['change_name1'] + ']').val(result.data['change_value1']);
+                        $('.profile-editor-box form.update-type.01 input[name=' + result.data['change_name2'] + ']').val(result.data['change_value2']);
                         $('.profile-info ul li').eq(0).text('Nama: ' + result.data['change_value1']);
                     }
-                    window.alert(result.message);
-                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    // $('.action-msg-notification').removeClass('error');
-                    // $('.action-msg-notification').removeClass('failed');
-                    // $('.action-msg-notification').removeClass('warning');
-                    // $('.action-msg-notification').addClass('success');
-                    // $('.action-msg-notification').removeClass('hide');
-                    // $('.action-msg-notification').fadeOut({
-                    //     duration: 3000,
-                    //     complete: () => {
-                    //         $('.action-msg-notification').addClass('hide');
-                    //         $('.action-msg-notification').removeAttr('style');
-                    //     }
-                    // });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-check-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').addClass('success');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 } else if (result.status == 'failed') {
-                    window.alert(result.message);
-                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    // $('.action-msg-notification').removeClass('success');
-                    // $('.action-msg-notification').removeClass('warning');
-                    // $('.action-msg-notification').removeClass('error');
-                    // $('.action-msg-notification').addClass('failed');
-                    // $('.action-msg-notification').removeClass('hide');
-                    // $('.action-msg-notification').fadeOut({
-                    //     duration: 3000,
-                    //     complete: () => {
-                    //         $('.action-msg-notification').addClass('hide');
-                    //         $('.action-msg-notification').removeAttr('style');
-                    //     }
-                    // });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').addClass('failed');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 } else if (result.status == 'error') {
-                    window.alert(result.message);
-                    //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    //     $('.action-msg-notification').removeClass('success');
-                    //     $('.action-msg-notification').removeClass('warning');
-                    //     $('.action-msg-notification').removeClass('failed');
-                    //     $('.action-msg-notification').addClass('error');
-                    //     $('.action-msg-notification').removeClass('hide');
-                    //     $('.action-msg-notification').fadeOut({
-                    //         duration: 3000,
-                    //         complete: () => {
-                    //             $('.action-msg-notification').addClass('hide');
-                    //             $('.action-msg-notification').removeAttr('style');
-                    //         }
-                    //     });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').addClass('error');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 } else if (result.status == 'warning') {
-                    window.alert(result.message);
-                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    // $('.action-msg-notification').removeClass('success');
-                    // $('.action-msg-notification').removeClass('failed');
-                    // $('.action-msg-notification').removeClass('error');
-                    // $('.action-msg-notification').addClass('warning');
-                    // $('.action-msg-notification').removeClass('hide');
-                    // $('.action-msg-notification').fadeOut({
-                    //     duration: 3000,
-                    //     complete: () => {
-                    //         $('.action-msg-notification').addClass('hide');
-                    //         $('.action-msg-notification').removeAttr('style');
-                    //     }
-                    // });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-triangle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').addClass('warning');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 }
             });
     });
 
-    $('.profile-info form.update-type.02 button[name=update-type-02-submit]').click(function() {
+    $('.profile-editor-box form.update-type.02 button[name=update-type-02-submit]').click(function() {
         let
-            form = $('.profile-info form.update-type.02'),
+            form = $('.profile-editor-box form.update-type.02'),
             fData = {},
             i = 0;
         for (; i < form[0].length; i++) {
@@ -248,68 +250,163 @@ $(document).ready(function() {
             .always(function(result) {
                 console.log(result);
                 if (result.status == 'success') {
-                    $('.profile-info form.update-type.02 input[name=old_password]').val('');
-                    $('.profile-info form.update-type.02 input[name=new_password]').val('');
-                    $('.profile-info form.update-type.02 input[name=new_password_confirm]').val('');
-                    window.alert(result.message);
-                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    // $('.action-msg-notification').removeClass('error');
-                    // $('.action-msg-notification').removeClass('failed');
-                    // $('.action-msg-notification').removeClass('warning');
-                    // $('.action-msg-notification').addClass('success');
-                    // $('.action-msg-notification').removeClass('hide');
-                    // $('.action-msg-notification').fadeOut({
-                    //     duration: 3000,
-                    //     complete: () => {
-                    //         $('.action-msg-notification').addClass('hide');
-                    //         $('.action-msg-notification').removeAttr('style');
-                    //     }
-                    // });
+                    $('.profile-editor-box form.update-type.02 input[name=old_password]').val('');
+                    $('.profile-editor-box form.update-type.02 input[name=new_password]').val('');
+                    $('.profile-editor-box form.update-type.02 input[name=new_password_confirm]').val('');
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-check-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').addClass('success');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 } else if (result.status == 'failed') {
-                    window.alert(result.message);
-                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    // $('.action-msg-notification').removeClass('success');
-                    // $('.action-msg-notification').removeClass('warning');
-                    // $('.action-msg-notification').removeClass('error');
-                    // $('.action-msg-notification').addClass('failed');
-                    // $('.action-msg-notification').removeClass('hide');
-                    // $('.action-msg-notification').fadeOut({
-                    //     duration: 3000,
-                    //     complete: () => {
-                    //         $('.action-msg-notification').addClass('hide');
-                    //         $('.action-msg-notification').removeAttr('style');
-                    //     }
-                    // });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').addClass('failed');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 } else if (result.status == 'error') {
-                    window.alert(result.message);
-                    //     $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    //     $('.action-msg-notification').removeClass('success');
-                    //     $('.action-msg-notification').removeClass('warning');
-                    //     $('.action-msg-notification').removeClass('failed');
-                    //     $('.action-msg-notification').addClass('error');
-                    //     $('.action-msg-notification').removeClass('hide');
-                    //     $('.action-msg-notification').fadeOut({
-                    //         duration: 3000,
-                    //         complete: () => {
-                    //             $('.action-msg-notification').addClass('hide');
-                    //             $('.action-msg-notification').removeAttr('style');
-                    //         }
-                    //     });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').addClass('error');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 } else if (result.status == 'warning') {
-                    window.alert(result.message);
-                    // $('.action-msg-notification').html('<p>' + result.message + '</p>');
-                    // $('.action-msg-notification').removeClass('success');
-                    // $('.action-msg-notification').removeClass('failed');
-                    // $('.action-msg-notification').removeClass('error');
-                    // $('.action-msg-notification').addClass('warning');
-                    // $('.action-msg-notification').removeClass('hide');
-                    // $('.action-msg-notification').fadeOut({
-                    //     duration: 3000,
-                    //     complete: () => {
-                    //         $('.action-msg-notification').addClass('hide');
-                    //         $('.action-msg-notification').removeAttr('style');
-                    //     }
-                    // });
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-tirangle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').addClass('warning');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
+                }
+            });
+    });
+
+    $('.profile-editor-box form.update-type.03 button[name=update-type-03-submit]').click(function() {
+        let
+            form = $('.profile-editor-box form.update-type.03'),
+            fData = {},
+            i = 0;
+        for (; i < form[0].length; i++) {
+            fData[form[0][i].name] = form[0][i].value;
+        }
+
+        // console.log(fData);
+        $.ajax({
+                url: baseURL() + '/update_profile',
+                type: 'POST',
+                dataType: 'json',
+                data: {
+                    requested_data: JSON.stringify({
+                        token: $.cookie('t'),
+                        change_type: 'email',
+                        fdata: fData
+                    })
+                },
+            })
+            .done(function() {
+                //console.log("success");
+            })
+            .fail(function() {
+                //console.log("error");
+            })
+            .always(function(result) {
+                console.log(result);
+                if (result.status == 'success') {
+                    $('.profile-editor-box form.update-type.03 input[name=password]').val('');
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-check-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').addClass('success');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
+                } else if (result.status == 'failed') {
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').addClass('failed');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
+                } else if (result.status == 'error') {
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-circle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('warning');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').addClass('error');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
+                } else if (result.status == 'warning') {
+                    // window.alert(result.message);
+                    $('.profile-action-message').html('<p><i class="fa fa-exclamation-triangle"></i> ' + result.message + '</p>');
+                    $('.profile-action-message').removeClass('success');
+                    $('.profile-action-message').removeClass('failed');
+                    $('.profile-action-message').removeClass('error');
+                    $('.profile-action-message').addClass('warning');
+                    $('.profile-action-message').removeClass('hide');
+                    $('.profile-action-message').fadeOut({
+                        duration: 3000,
+                        complete: () => {
+                            $('.profile-action-message').addClass('hide');
+                            $('.profile-action-message').removeAttr('style');
+                        }
+                    });
                 }
             });
     });

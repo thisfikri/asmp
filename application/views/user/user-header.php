@@ -37,6 +37,7 @@
             <!-- <button class="button notification"><i class="fa fa-bell fa-fw"></i></button> -->
         </div>
     </header>
+    <div class="casual-theme profile-action-message hide"></div>
     <!-- This Notification feature is avaible soon as possible -->
     <!-- <div class="casual-theme activity-page notification-box outerdiv">
         <div class="casual-theme activity-page notification-box innerdiv">
@@ -81,7 +82,55 @@
             <div class="profile-img">
                 <img src="<?php echo site_url('gallery/' . $uprof_data->gallery_dir . '/' . $uprof_data->profile_picture);?>" alt="profile-image" width="130" height="130" style="border-radius: 50%;">
             </div>
-            <button class="button choose-btn hide"><i class="fa fa-image"></i> Pilih Foto</button>
+            <div class="casual-theme profile-editor-box-container hide">
+                <div class="profile-editor-box">
+                    <div class="white-container">
+                        <h2 class="title">- <i class="fa fa-user-edit"></i> Profil -</h2>
+                        <div class="profile-photo">
+                            <img src="<?php echo site_url('gallery/' . $uprof_data->gallery_dir . '/' . $uprof_data->profile_picture); ?>" alt="profile-image" width="200" height="200" style="border-radius: 50%;">
+                            <button class="button choose-btn"><i class="fa fa-image"></i> Pilih Foto</button>
+                        </div>
+                        <form class="update-type 01 hide" action="javascript:void(0)" method="POST">
+                    <h4><i class="fa fa-user-circle"></i> Ubah Nama</h4>
+                    <label for="true_name">Nama Asli</label>
+                    <input type="text" name="true_name" value="<?php echo $uprof_data->true_name ?>"><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="username">Nama Pengguna/username</label>
+                    <input type="text" name="username" value="<?php echo $uprof_data->username ?>"><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" name="password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                </form>
+
+                <form class="update-type 02 hide" action="javascript:void(0)" method="POST">
+                    <h4><i class="fa fa-key"></i> Ubah Kata Sandi</h4>
+                    <label for="old_password">Kata Sandi Lama</label>
+                    <input type="password" name="old_password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="new_password">Kata Sandi Baru</label>
+                    <input type="password" name="new_password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="new_password_confirm">Konfirmasi Kata Sandi Baru</label>
+                    <input type="password" name="new_password_confirm" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <button type="submit" name="update-type-02-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                </form>
+
+                <form class="update-type 03 hide" action="javascript:void(0)" method="POST">
+                    <h4><i class="fa fa-envelope"></i> Ubah E-Mail</h4>
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" value="<?php echo $uprof_data->email; ?>"><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" name="password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <button type="submit" name="update-type-03-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                </form>
+                    </div>
+                </div>
+            </div>
             <div class="casual-theme photos-box-container">
                 <div class="photos-box">
                     <div class="white-container">
@@ -120,34 +169,6 @@
                     <li>Nama: <?php echo $uprof_data->true_name?></li>
                     <li>Posisi: <?php echo $uprof_data->position;?></li>
                 </ul>
-
-                <form class="update-type 01 hide" action="javascript:void(0)" method="POST">
-                    <h3><i class="fa fa-user-circle"></i> Ubah Nama</h3>
-                    <label for="true_name">Nama Asli</label>
-                    <input type="text" name="true_name" value="<?php echo $uprof_data->true_name?>"><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="username">Nama Pengguna/username</label>
-                    <input type="text" name="username" value="<?php echo $uprof_data->username?>"><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="password">Kata Sandi</label>
-                    <input type="password" name="password" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
-                </form>
-
-                <form class="update-type 02 hide" action="javascript:void(0)" method="POST">
-                        <h3><i class="fa fa-key"></i> Ubah Kata Sandi</h3>
-                    <label for="old_password">Kata Sandi Lama</label>
-                    <input type="password" name="old_password" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="new_password">Kata Sandi Baru</label>
-                    <input type="password" name="new_password" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="new_password_confirm">Konfirmasi Kata Sandi Baru</label>
-                    <input type="password" name="new_password_confirm" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
-                    </form>
             </div>
         </div>
         <ul>

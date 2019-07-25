@@ -5,17 +5,17 @@
     <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>ASMP - <?php echo ucwords($page_title); ?></title>
-    <link rel="icon" href="<?php echo base_url('assets/images/logo/asmp-browser-icon.png');?>" type="image/png">
-    <link rel="stylesheet" href="<?php echo base_url('assets/css/main-style.css');?>">
-    <link rel="stylesheet" href="<?php echo base_url('assets/framework/font-awesome/css/fontawesome-all.min.css');?>">
+    <link rel="icon" href="<?php echo base_url('assets/images/logo/asmp-browser-icon.png'); ?>" type="image/png">
+    <link rel="stylesheet" href="<?php echo base_url('assets/css/main-style.css'); ?>">
+    <link rel="stylesheet" href="<?php echo base_url('assets/framework/font-awesome/css/fontawesome-all.min.css'); ?>">
     <style type="text/css" media="all">
-		@import "<?php echo site_url().'assets/widgEditor_1.0.1/css/widgEditor.css';?>";
+		@import "<?php echo site_url() . 'assets/widgEditor_1.0.1/css/widgEditor.css'; ?>";
 	</style>
 </head>
 
 <body class="casual-theme" id="adminDashboard">
-<iframe src="<?php echo site_url('assets/audio/2-seconds-of-silence.mp3');?>" allow="autoplay" style="display:none"></iframe>
-<audio src="<?php echo site_url('assets/audio/system-fault.mp3');?>" type="audio/mp3"></audio>
+<iframe src="<?php echo site_url('assets/audio/2-seconds-of-silence.mp3'); ?>" allow="autoplay" style="display:none"></iframe>
+<audio src="<?php echo site_url('assets/audio/system-fault.mp3'); ?>" type="audio/mp3"></audio>
     <!-- Main Header -->
     <header class="casual-theme activity-page header">
         <!-- <button class="navbar-icon arrow">
@@ -25,16 +25,17 @@
         </button> -->
 
         <div class="app-title"><!--<h1>_SIMAK_</h1><span class="version-text">v1.0</span>-->
-            <img src="<?php echo site_url('assets/images/logo/icon-asmp-v2-white.png')?>" width="100" height="40">
+            <img src="<?php echo site_url('assets/images/logo/icon-asmp-v2-white.png') ?>" width="100" height="40">
         </div>
 
         <button class="button options"><i class="fa fa-ellipsis-v"></i></button>
         <div class="notification-area">
-        <span class="fa-stack mail-count-num" style="<?php echo ($new_im['display']) ? 'display: inline-block' : 'display: none';?>">
+        <span class="fa-stack mail-count-num" style="<?php echo ($new_im['display']) ? 'display: inline-block' : 'display: none'; ?>">
                 <i class="fa fa-circle fa-stack-2x"></i><b class="fa-stack-1x" style="color: #48c8d1"><?php echo $new_im['count']; ?></b></span>
             <!-- <button class="button notification"><i class="fa fa-bell fa-fw"></i></button> -->
         </div>
     </header>
+    <div class="casual-theme profile-action-message hide"></div>
     <!-- <div class="casual-theme activity-page notification-box outerdiv">
         <div class="casual-theme activity-page notification-box innerdiv">
             <div class="notification-item incoming-mail">
@@ -65,20 +66,68 @@
 
     <div class="casual-theme activity-page options-dropdown">
         <ul>
-            <li><a href="<?php echo site_url('admin/settings');?>" class="preference-btn"><i class="fa fa-wrench"></i> Pengaturan</a></li>
-            <li><a href="javascript:void(0)" class="logout-btn" data-token="<?php echo $this->session->userdata('CSRF');?>"><i class="fa fa-sign-out-alt"></i> Keluar</a></li>
+            <li><a href="<?php echo site_url('admin/settings'); ?>" class="preference-btn"><i class="fa fa-wrench"></i> Pengaturan</a></li>
+            <li><a href="javascript:void(0)" class="logout-btn" data-token="<?php echo $this->session->userdata('CSRF'); ?>"><i class="fa fa-sign-out-alt"></i> Keluar</a></li>
         </ul>
     </div>
-    
+
     <!-- Main Navigation -->
     <nav class="casual-theme activity-page nav sidebar">
         <div class="side-profile">
-            <p class="button user-role"><i class="fa fa-user"></i> <?php echo ucfirst($uprof_data->role)?></p>
+            <p class="button user-role"><i class="fa fa-user"></i> <?php echo ucfirst($uprof_data->role) ?></p>
             <button class="button edit-profile"><i class="fa fa-user-edit"></i> Edit</button>
             <div class="profile-img">
-                <img src="<?php echo site_url('gallery/' . $uprof_data->gallery_dir . '/' . $uprof_data->profile_picture);?>" alt="profile-image" width="130" height="130" style="border-radius: 50%;">
+                <img src="<?php echo site_url('gallery/' . $uprof_data->gallery_dir . '/' . $uprof_data->profile_picture); ?>" alt="profile-image" width="130" height="130" style="border-radius: 50%;">
             </div>
-            <button class="button choose-btn hide"><i class="fa fa-image"></i> Pilih Foto</button>
+            <div class="casual-theme profile-editor-box-container hide">
+                <div class="profile-editor-box">
+                    <div class="white-container">
+                        <h2 class="title">- <i class="fa fa-user-edit"></i> Profil -</h2>
+                        <div class="profile-photo">
+                            <img src="<?php echo site_url('gallery/' . $uprof_data->gallery_dir . '/' . $uprof_data->profile_picture); ?>" alt="profile-image" width="200" height="200" style="border-radius: 50%;">
+                            <button class="button choose-btn"><i class="fa fa-image"></i> Pilih Foto</button>
+                        </div>
+                        <form class="update-type 01 hide" action="javascript:void(0)" method="POST">
+                    <h4><i class="fa fa-user-circle"></i> Ubah Nama</h4>
+                    <label for="true_name">Nama Asli</label>
+                    <input type="text" name="true_name" value="<?php echo $uprof_data->true_name ?>"><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="username">Nama Pengguna/username</label>
+                    <input type="text" name="username" value="<?php echo $uprof_data->username ?>"><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" name="password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                </form>
+
+                <form class="update-type 02 hide" action="javascript:void(0)" method="POST">
+                    <h4><i class="fa fa-key"></i> Ubah Kata Sandi</h4>
+                    <label for="old_password">Kata Sandi Lama</label>
+                    <input type="password" name="old_password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="new_password">Kata Sandi Baru</label>
+                    <input type="password" name="new_password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="new_password_confirm">Konfirmasi Kata Sandi Baru</label>
+                    <input type="password" name="new_password_confirm" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <button type="submit" name="update-type-02-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                </form>
+
+                <form class="update-type 03 hide" action="javascript:void(0)" method="POST">
+                    <h4><i class="fa fa-envelope"></i> Ubah E-Mail</h4>
+                    <label for="email">E-Mail</label>
+                    <input type="email" name="email" value="<?php echo $uprof_data->email; ?>"><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <label for="password">Kata Sandi</label>
+                    <input type="password" name="password" value=""><span class="hint"></span>
+                    <div class="clearfix"></div>
+                    <button type="submit" name="update-type-03-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
+                </form>
+                    </div>
+                </div>
+            </div>
             <div class="casual-theme photos-box-container">
                 <div class="photos-box">
                     <div class="white-container">
@@ -94,7 +143,7 @@
                             <div class="upload-buttons">
                                 <button class="upload-btn"><i class="fa fa-upload"></i> Upload</button>
                             </div>
-                                
+
                             <div class="uploaded-images">
                                 <!-- <div class="image-container unchecked" id="upld0">
                                     <img src="../assets/images/profile/default.png" alt="profile-photo" class="image">
@@ -114,45 +163,17 @@
             </div>
             <div class="profile-info">
                 <ul>
-                    <li>Nama: <?php echo $uprof_data->true_name?></li>
-                    <li>Posisi: <?php echo $uprof_data->position;?></li>
+                    <li>Nama: <?php echo $uprof_data->true_name ?></li>
+                    <li>Posisi: <?php echo $uprof_data->position; ?></li>
                 </ul>
-
-                <form class="update-type 01 hide" action="javascript:void(0)" method="POST">
-                    <h3><i class="fa fa-user-circle"></i> Ubah Nama</h3>
-                    <label for="true_name">Nama Asli</label>
-                    <input type="text" name="true_name" value="<?php echo $uprof_data->true_name?>"><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="username">Nama Pengguna/username</label>
-                    <input type="text" name="username" value="<?php echo $uprof_data->username?>"><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="password">Kata Sandi</label>
-                    <input type="password" name="password" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <button type="submit" name="update-type-01-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
-                </form>
-
-                <form class="update-type 02 hide" action="javascript:void(0)" method="POST">
-                    <h3><i class="fa fa-key"></i> Ubah Kata Sandi</h3>
-                    <label for="old_password">Kata Sandi Lama</label>
-                    <input type="password" name="old_password" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="new_password">Kata Sandi Baru</label>
-                    <input type="password" name="new_password" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <label for="new_password_confirm">Konfirmasi Kata Sandi Baru</label>
-                    <input type="password" name="new_password_confirm" value=""><span class="hint"></span>
-                    <div class="clearfix"></div>
-                    <button type="submit" name="update-type-02-submit" class="button"><i class="fa fa-save"></i> Simpan</button>
-                    </form>
             </div>
         </div>
         <ul>
-            <li><a href="<?php echo site_url('admin/dashboard');?>"><i class="fa fa-tachometer-alt"></i> <?php echo $this->theme->get_page_title('dashboard'); ?></a></li>
-            <li><a href="<?php echo site_url('admin/user-management');?>"><i class="fa fa-users"></i> <?php echo $this->theme->get_page_title('user-management'); ?></a></li>
-            <li><a href="<?php echo site_url('admin/surat-masuk');?>"><i class="fa fa-inbox"></i> <?php echo $this->theme->get_page_title('incoming-mail'); ?></a></li>
-            <li><a href="<?php echo site_url('admin/pdf-layouts');?>"><i class="fa fa-file-pdf"></i> <?php echo $this->theme->get_page_title('pdf-layout'); ?></a></li>
-            <li><a href="<?php echo site_url('admin/bidang-bagian');?>"><i class="fa fa-list"></i> <?php echo $this->theme->get_page_title('field-sections'); ?></a></li>
-            <li><a href="<?php echo site_url('admin/tentang-aplikasi');?>"><i class="fa fa-info-circle"></i> <?php echo $this->theme->get_page_title('about-app'); ?></a></li>
+            <li><a href="<?php echo site_url('admin/dashboard'); ?>"><i class="fa fa-tachometer-alt"></i> <?php echo $this->theme->get_page_title('dashboard'); ?></a></li>
+            <li><a href="<?php echo site_url('admin/user-management'); ?>"><i class="fa fa-users"></i> <?php echo $this->theme->get_page_title('user-management'); ?></a></li>
+            <li><a href="<?php echo site_url('admin/surat-masuk'); ?>"><i class="fa fa-inbox"></i> <?php echo $this->theme->get_page_title('incoming-mail'); ?></a></li>
+            <li><a href="<?php echo site_url('admin/pdf-layouts'); ?>"><i class="fa fa-file-pdf"></i> <?php echo $this->theme->get_page_title('pdf-layout'); ?></a></li>
+            <li><a href="<?php echo site_url('admin/bidang-bagian'); ?>"><i class="fa fa-list"></i> <?php echo $this->theme->get_page_title('field-sections'); ?></a></li>
+            <li><a href="<?php echo site_url('admin/tentang-aplikasi'); ?>"><i class="fa fa-info-circle"></i> <?php echo $this->theme->get_page_title('about-app'); ?></a></li>
         </ul>
     </nav>

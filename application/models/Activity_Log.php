@@ -76,6 +76,9 @@ class Activity_Log extends CI_Model {
 			case 'delete_glry_image':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-image fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				break;
+			case 'update_pp':
+				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-image fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
+				break;
 			case 'add_om':
 				$this->_action_type = '<span class="fa-stack"><i class="fa fa-square fa-stack-2x"></i><i class="fa fa-paper-plane fa-stack-1x" style="color: rgb(3, 70, 129)"></i></span>';
 				// set detail text

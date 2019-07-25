@@ -27,6 +27,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
   */
  class Checker extends CI_Model
  {
+     /**
+      * Undocumented function
+      *
+      * @param boolean $front_page
+      * @return void
+      */
     public function preregister_status($front_page = FALSE)
     {
         $query = $this->db->get('preregister_status');
@@ -43,7 +49,14 @@ defined('BASEPATH') OR exit('No direct script access allowed');
             }
         }
     }
+    
+    // ------------------------------------------------------------------------
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function login_status()
     {
         if ($this->session->userdata('user_login') && $this->session->userdata('CSRF'))
@@ -56,6 +69,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         }
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
     public function is_admin()
     {
         if ($this->session->userdata('admin_login') && $this->session->userdata('CSRF'))
@@ -68,6 +88,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         }
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
     public function is_user()
     {
         if ($this->session->userdata('user_login') && $this->session->userdata('CSRF'))
@@ -78,5 +105,17 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         {
             return false;
         }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return boolean
+     */
+    public function is_online()
+    {
+
     }
 }
