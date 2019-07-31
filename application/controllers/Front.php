@@ -47,6 +47,9 @@ class Front extends CI_Controller
 
         //$this->output->enable_profiler(TRUE);
 
+        // set default time zone
+        date_default_timezone_set('Asia/Jakarta');
+        
         if (get_cookie('language') === NULL)
         {
             // set cookie dan session untuk bahasa
@@ -65,9 +68,6 @@ class Front extends CI_Controller
 
         // Memuat dbforge
         $this->load->dbforge();
-
-        // set default time zone
-		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status
@@ -316,6 +316,11 @@ class Front extends CI_Controller
                 'unique' => TRUE,
             ),
             'logged' => array(
+                'type' => 'INT',
+                'constraint' => 1,
+                'default' => 0
+            ),
+            'logged_link_stat' => array(
                 'type' => 'INT',
                 'constraint' => 1,
                 'default' => 0

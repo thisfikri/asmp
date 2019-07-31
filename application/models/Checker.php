@@ -116,6 +116,15 @@ defined('BASEPATH') OR exit('No direct script access allowed');
      */
     public function is_online()
     {
-
+        $response = null;
+        system('ping -c 1 google.com', $response);
+        if ($response == 0)
+        {
+            return TRUE;
+        }
+        else
+        {
+            return FALSE;
+        }
     }
 }

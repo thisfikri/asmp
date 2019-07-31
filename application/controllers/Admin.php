@@ -58,6 +58,9 @@ class Admin extends CI_Controller
 
         //$this->output->enable_profiler(TRUE);
 
+        // set default time zone
+        date_default_timezone_set('Asia/Jakarta');
+        
         if (get_cookie('language') === NULL)
         {
             // set cookie dan session untuk bahasa
@@ -76,9 +79,6 @@ class Admin extends CI_Controller
 
         // Memuat dbforge
         $this->load->dbforge();
-
-        // set default time zone
-		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status

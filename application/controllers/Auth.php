@@ -46,6 +46,9 @@ class Auth extends CI_Controller
 
         //$this->output->enable_profiler(TRUE);
 
+        // set default time zone
+		date_default_timezone_set('Asia/Jakarta');
+
         if (get_cookie('language') === NULL)
         {
             // set cookie dan session untuk bahasa
@@ -64,9 +67,6 @@ class Auth extends CI_Controller
 
         // Memuat dbforge
         $this->load->dbforge();
-
-        // set default time zone
-		date_default_timezone_set('Asia/Jakarta');
 
         /**
          * Field untuk dimasukan kedalam table preregister_status
@@ -226,11 +226,11 @@ class Auth extends CI_Controller
                             // Ubah tipe content ke JSON
                             header('Content-Type: application/json');
                             // Mengirim output data ke client
-                            echo json_encode(array('status' => 'warning', 'message' => 'Akun Sendang Login!'));
+                            echo json_encode(array('status' => 'warning', 'message' => 'Akun Sendang Login!', 'logged' => 1));
                         }
                         else if ($result[0]->logged == 0)
                         {
-                            $this->db->where('username', $data['username'])->update('users', array('logged' => 1));
+                            // $this->db->where('username', $data['username'])->update('users', array('logged' => 1));
                             if (password_needs_rehash($result[0]->password, PASSWORD_BCRYPT))
                             {
                                 $this->db->where('username', $data['username'])->update('users', array('password' => $this->asmp_security->get_hashed_password($data['password'])));
