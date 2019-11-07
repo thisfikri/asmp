@@ -1,9 +1,10 @@
 ## ASMP
-<img src="https://github.com/thisfikri/asmp/blob/master/assets/images/logo/asmp-browser-icon.png" width="600">
+<img src="https://github.com/thisfikri/asmp/blob/master/assets/images/logo/icon-asmp-v2-black.png?raw=true" width="200">
 Aplikasi Sistem Management Perkantoran
 
 ## Fungsi
-Aplikasi ini dibuat untuk mempermudah mengelola administrasi kantor, berbasis web. 
+Aplikasi ini dibuat untuk mempermudah mengelola administrasi kantor, berbasis web.
+Aplikasi ini dibuat menggunakan CodeIgniter.
 
 ## Fitur
 * Surat Masuk dan Keluar
