@@ -20,7 +20,7 @@ Aplikasi ini dibuat untuk mempermudah mengelola administrasi kantor, berbasis we
 
 ## Penting
 Aplikasi ini masih dalam tahap pengembangan, jadi aplikasi ini masih ada bug.
-(07/11/2019) aplikasi ini sudah tidak dikembangkan lagi dan rencana nya pengembang akan membuat aplikasi baru yang mirip, jika ada waktu
+aplikasi ini sudah tidak dikembangkan lagi sejak (07/11/2019) dan rencana nya pengembang akan membuat aplikasi baru yang mirip, jika ada waktu.
 
 ## Persiapan
 * Install XAMPP (https://www.apachefriends.org/download.html)
