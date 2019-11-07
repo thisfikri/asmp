@@ -1,4 +1,5 @@
 ## ASMP
+<img src="https://github.com/thisfikri/asmp/blob/master/assets/images/logo/asmp-browser-icon.png" width="600">
 Aplikasi Sistem Management Perkantoran
 
 ## Fungsi
