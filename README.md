@@ -1,5 +1,4 @@
-## ASMP
-<img src="https://github.com/thisfikri/asmp/blob/master/assets/images/logo/icon-asmp-v2-black.png?raw=true" width="200">
+## <img src="https://github.com/thisfikri/asmp/blob/master/assets/images/logo/icon-asmp-v2-black.png?raw=true" width="200">
 Aplikasi Sistem Management Perkantoran
 
 ## Fungsi
