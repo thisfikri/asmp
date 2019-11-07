@@ -85,14 +85,6 @@
                 </select>
             </div>
             <div class="clearfix"></div>
-            <!-- Recovery ID -->
-            <div class="field-div">
-                <label for="recovery_id">
-                    <i class="fa fa-barcode"></i>
-                </label>
-                <input type="password" name="recovery_id" id="recoveryID" value="<?php echo random_string('alnum', 7) . '-' . random_string('alnum', 7) . '-' . random_string('alnum', 7); ?>" disabled><button class="button show-hide-btn"><i class="fa fa-eye"></i></button>
-            </div>
-            <div class="clearfix"></div>
             <button type="submit" class="button cna-btn" name="login">Buat <i class="fa fa-user-plus"></i></button>
         </form>
     </section>

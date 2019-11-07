@@ -90,13 +90,13 @@ $(document).ready(function() {
                 },
             })
             .done(function() {
-                //console.log("success");
+                console.log("success");
             })
             .fail(function() {
-                //console.log("error");
+                console.log("error");
             })
             .always(function(result) {
-                //console.log("complete");
+                console.log("complete");
                 switch (result.status) {
                     case 'success':
                         window.location.replace(result.message);

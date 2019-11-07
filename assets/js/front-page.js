@@ -37,7 +37,7 @@ $(document).ready(function() {
             configurable: true
         });
 
-        for (; i < this.currForm.length - 2; i++) {
+        for (; i < this.currForm.length - 1; i++) {
             Object.defineProperty(this.cFInpProp, this.currForm[i].name, {
                 value: this.currForm[i].value
             });
@@ -53,7 +53,7 @@ $(document).ready(function() {
                 finalResult = null;
             if (dataType == 'string') {
                 finalResult = '';
-                for (let i = 0; i < propertyNames.length - 2; i++) {
+                for (let i = 0; i < propertyNames.length - 1; i++) {
                     finalResult += propertyNames[i] + ': ' + this.cFInpProp[propertyNames[i]] + ', ';
                 }
 
@@ -279,7 +279,111 @@ $(document).ready(function() {
                                 // console.log(i);
                             }
                         } else {
-                            $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
+                            if (result.logged == 1) {
+                                let aSecurity = new ASMPSecurity(),
+                                    sll = aSecurity.setLoggedLink(1, uName, uPass),
+                                    gll;
+
+                                $(".msg-box.hide").append('<p class="msg-txt">' + result.message + ' akun akan dilogout secara otomastis, silahkan tunggu 30 detik' + '</p>');
+                                if (sll.status == 'success') {
+                                    function fl_timeout() {
+                                        gll = aSecurity.getLoggedLink(uName, uPass, true);
+                                        switch (gll.status) {
+                                            case 1:
+                                                $(".msg-box.hide").append('<p class="msg-txt">' + gll.message + '</p>');
+                                                break;
+                                            case 2:
+                                                let flm2 = '<button class="flm2-btn" id="flm2">Metode 2</button>';
+                                                $(".msg-box.hide").append('<p class="msg-txt">' + gll.message + ' ' + flm2 + '</p>');
+                                                $('#flm2').click(function() {
+                                                    $('<div></div>').attr({
+                                                        class: 'flm2-box'
+                                                    }).appendTo('.login-box');
+
+                                                    $('<form></form>').attr({
+                                                        class: 'flm2-form',
+                                                        method: 'POST',
+                                                        action: 'javascript:void(0)'
+                                                    }).appendTo('.login-box .flm2-box');
+
+                                                    $('<label></label>').attr({
+                                                            for: 'email'
+                                                        })
+                                                        .text('E-Mail')
+                                                        .appendTo('.login-box .flm2-box .flm2-form');
+
+                                                    $('<input required>').attr({
+                                                        type: 'email',
+                                                        name: 'email',
+                                                        class: 'flm2-email',
+                                                        placeholder: 'masukkan email anda'
+                                                    }).appendTo('.login-box .flm2-box .flm2-form');
+
+                                                    $('<button></button>').attr({
+                                                        type: 'submit',
+                                                        name: 'flm2_submit',
+                                                        id: 'flm2Submit'
+                                                    }).click(function() {
+                                                        let email = $('.flm2-email').val(),
+                                                            sll;
+                                                        sll = aSecurity.setLoggedLink(3, uName, uPass, email);
+                                                        if (sll.status == 'success') {
+                                                            // create verification form
+                                                            $('<div></div>').attr({
+                                                                class: 'email-verf-container'
+                                                            }).appendTo('.login-box .flm2-box');
+
+                                                            $('<form></form>').attr({
+                                                                class: 'email-verf-form',
+                                                                method: 'POST',
+                                                                action: 'javascript:void(0)'
+                                                            }).appendTo('.login-box .flm2-box .email-verf-container');
+
+                                                            $('<input required>').attr({
+                                                                type: 'text',
+                                                                name: 'verification_code',
+                                                                class: 'email-verfcode',
+                                                                placeholder: 'masukkan verifikasi kode'
+                                                            }).appendTo('.login-box .flm2-box .email-verf-container .email-verf-form');
+
+                                                            $('<button></button>').attr({
+                                                                type: 'submit',
+                                                                name: 'email-verf-submit',
+                                                                id: 'emailVerfSubmit'
+                                                            }).click(function() {
+                                                                let verfcode = $('email-verfcode').val(),
+                                                                    sll;
+                                                                sll = aSecurity.verifiyEVC(verfcode);
+                                                                if (sll.status == 'success') {
+                                                                    $(".msg-box.hide").append('<p class="msg-txt">' + sll.message + '</p>');
+                                                                    $('.flm2-box').remove();
+                                                                } else if (sll.status == 'failed' || sll.status == 'error') {
+                                                                    $(".msg-box.hide").append('<p class="msg-txt">' + sll.message + '</p>');
+                                                                }
+                                                            }).appendTo('.login-box .flm2-box .email-verf-container .email-verf-form');
+
+                                                        } else if (sll.status == 'failed' || sll.status == 'error') {
+                                                            // create failed/error message
+                                                            $(".msg-box.hide").append('<p class="msg-txt">' + sll.message + '</p>');
+                                                        }
+                                                    }).appendTo('.login-box .flm2-box .flm2-form');
+                                                });
+                                                break;
+                                            case 4:
+                                                $(".msg-box.hide").append('<p class="msg-txt">' + gll.message + '</p>');
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                    }
+                                    ASMPSecurity.setTimer(30, 1);
+                                    setTimeout(fl_timeout, 30000);
+                                }
+                            } else if (result.logged == 2) {
+                                $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
+                            } else if (result.logged == 0) {
+                                $(".msg-box.hide").append('<p class="msg-txt">' + result.message + '</p>');
+                            }
                         }
                         break;
                     default:
@@ -616,4 +720,22 @@ $(document).ready(function() {
                 }
             });
     });
+
+    // $.ajax({
+    //         url: baseURL() + '/cos',
+    //         type: 'POST',
+    //         dataType: 'json'
+    //     })
+    //     .done(function() {
+    //         console.log("success");
+    //     })
+    //     .fail(function() {
+    //         console.log("error");
+    //         $('.cna-btn').html('Buat <i class="fa fa-user-plus"></i>');
+    //     })
+    //     .always(function(result) {
+    //         let status = result.responseText.match(/([a-zA-Z]+)/g);
+    //         status = status.join('-').match(/(online|offline)/g);
+    //         console.log(status[0]);
+    //     });
 });

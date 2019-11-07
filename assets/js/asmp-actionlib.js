@@ -5,15 +5,15 @@
 var checkedItemCount = 0;
 
 function getAccess() {
-	var url = window.location.href,
-	finalResult = '';
-	url = url.split('/');
-	finalResult = url[4];
-	if (finalResult == 'user' || finalResult == 'admin') {
-		return finalResult;
-	} else {
-		console.log('unknown access');
-	}
+    var url = window.location.href,
+        finalResult = '';
+    url = url.split('/');
+    finalResult = url[4];
+    if (finalResult == 'user' || finalResult == 'admin') {
+        return finalResult;
+    } else {
+        console.log('unknown access');
+    }
 }
 
 
@@ -31,17 +31,17 @@ function ASMPUsefulAPI() {
      * @param dataType A data type to check
      * @param value A value for data type checking
      */
-    this.dataTypeOf = function (dataType, value) {
+    this.dataTypeOf = function(dataType, value) {
         switch (dataType) {
             case 'string':
-                if (typeof (value) == 'string') {
+                if (typeof(value) == 'string') {
                     return true;
                 } else {
                     return false;
                 }
                 break;
             case 'number':
-                if (typeof (value) == 'number') {
+                if (typeof(value) == 'number') {
                     return true;
                 } else {
                     return false;
@@ -51,7 +51,7 @@ function ASMPUsefulAPI() {
                 return Number.isInteger(value);
                 break;
             case 'float':
-                if (typeof (value) == 'number') {
+                if (typeof(value) == 'number') {
                     if (Number.isSafeInteger(value) === false) {
                         return true
                     } else {
@@ -69,7 +69,7 @@ function ASMPUsefulAPI() {
                 }
                 break;
             case 'object':
-                if (typeof (value) == 'object') {
+                if (typeof(value) == 'object') {
                     return true;
                 } else {
                     return false;
@@ -80,11 +80,29 @@ function ASMPUsefulAPI() {
         }
     }
 
-    this.getFullURL = function () {
+    this.getFullURL = function() {
         var
             url = window.location.pathname,
             urlParams = url.split('/');
         return urlParams.slice(2, urlParams.length);
+    }
+
+    this.setTimer = function(timeout, timerSpeed = 1, resultContainer = '') {
+        let i = i,
+            interval;
+
+        interval = setInterval(() => {
+            if (i == timeout) {
+                clearInterval(interval);
+            } else {
+                if (resultContainer == '') {
+                    console.log(i);
+                } else if (resultContainer != '') {
+                    $(resultContainer).html('<p>' + i + '</p>');
+                }
+                i++;
+            }
+        }, timerSpeed * 1000);
     }
 }
 
@@ -95,74 +113,74 @@ function ASMPActionExecutor() {
     ASMPUsefulAPI.call(this);
     Object.defineProperties(this, {
         actionName: {
-            set: function (val) {
+            set: function(val) {
                 if (this.dataTypeOf('string', val)) {
                     this.actionNameVal = val;
                 } else {
                     //console.log('action name must be a string!');
                 }
             },
-            get: function () {
+            get: function() {
                 return this.actionNameVal;
             }
         },
         actionUrl: {
-            set: function (val) {
+            set: function(val) {
                 if (this.dataTypeOf('string', val)) {
                     this.actionUrlVal = val;
                 } else {
                     //console.log('action name must be a string!');
                 }
             },
-            get: function () {
+            get: function() {
                 return this.actionUrlVal;
             }
         },
         actionData: {
-            set: function (val) {
+            set: function(val) {
                 if (this.dataTypeOf('object', val)) {
                     this.actionDataVal = val;
                 } else {
                     //console.log('action name must be a object!');
                 }
             },
-            get: function () {
+            get: function() {
                 return this.actionDataVal;
             }
         },
         resultContainer: {
-            set: function (val) {
+            set: function(val) {
                 if (this.dataTypeOf('string', val)) {
                     this.resContainer = val;
                 } else {
                     //console.log('action name must be a string!');
                 }
             },
-            get: function () {
+            get: function() {
                 return this.resContainer;
             }
         },
         itemTarget: {
-            set: function (val) {
+            set: function(val) {
                 if (this.dataTypeOf('string', val)) {
                     this.itarget = val;
                 } else {
                     //console.log('action name must be a string!');
                 }
             },
-            get: function () {
+            get: function() {
                 return this.itarget;
             }
         }
     });
 
-    this.getActionInfo = function () {
+    this.getActionInfo = function() {
         //console.log('Action Name:' + this.actionName, ', Action Url:' + this.actionUrl, ', Action Data:' + JSON.stringify(this.actionData),
         //     ', Action Item Target:' + this.itemTarget
         // );
     }
 
-    this.exec = function (settings = {
+    this.exec = function(settings = {
         multipleAction: false,
         haveID: false,
         removeTarget: false,
@@ -183,11 +201,11 @@ function ASMPActionExecutor() {
                 url: this.actionUrl,
                 data: this.actionData,
                 dataType: "json",
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if (result.status !== 'error' && result.status !== 'failed') {
                     var
                         i = 0,
@@ -283,11 +301,11 @@ function ASMPActionExecutor() {
                 url: this.actionUrl,
                 data: this.actionData,
                 dataType: "json",
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if (result.status !== 'error' && result.status !== 'failed') {
                     $(iTarget + '.id' + ID).remove();
                     //console.log(ID);
@@ -389,11 +407,11 @@ function ASMPActionExecutor() {
                     token: $.cookie('t')
                 },
                 dataType: "json",
-            }).done(function () {
+            }).done(function() {
 
-            }).fail(function () {
+            }).fail(function() {
 
-            }).always(function (result) {
+            }).always(function(result) {
                 if (result.status == 'success') {
                     let newMailCount = Number.parseInt($('.mail-count-num b').text());
                     if (newMailCount !== 0) {
@@ -449,7 +467,7 @@ function ASMPActionExecutor() {
                         id: itemID
                     })
                     .html('<i class="fa fa-print"></i>')
-                    .click(function () {
+                    .click(function() {
                         atrgr.defineTrigger('printMail' + itemID, 'print_mail');
                         atrgr['printMail' + itemID](itemID, sortMailType, mailData.mail_number, mailData.pdf_layout);
                     })
@@ -549,7 +567,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
         //pageUrl = window.location.href,
         pageAElement = '';
 
-    this.paginate = function () {
+    this.paginate = function() {
         // if (pageUrl.search('#page') !== -1 && pageUrl.search('#page1') === -1) {
         //     pageUrl = pageUrl.split('#');
         //     pageNum = pageUrl[pageUrl.length - 1];
@@ -643,7 +661,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
         }
 
         function pageNext(index, pnc) {
-            $('.' + pnc + '.pg' + index).click(function (e) {
+            $('.' + pnc + '.pg' + index).click(function(_e) {
                 //e.preventDefault();
                 //console.log(index);
                 pageNum = index;
@@ -671,7 +689,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
         // }
     }
 
-    this.sortItemID = function (idType = 'class') {
+    this.sortItemID = function(idType = 'class') {
         if (idType == 'class') {
             var itemCount = $(this.itemToPaginate).length,
                 itemID, // item id to sort
@@ -741,7 +759,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
      * @param  noHiddenItem No hidden item in list
      * @param selection slide up element with selection
      */
-    this.itemSlideToUp = function (prevItemID = null, elementMembers, noHiddenItem = true, selection = false) {
+    this.itemSlideToUp = function(prevItemID = null, elementMembers, noHiddenItem = true, selection = false) {
         var
             itemCount = $(this.itemToPaginate).length,
             pageCount = Math.round(itemCount / this.itemLimit),
@@ -816,7 +834,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
         }
     }
 
-    this.updatePgNav = function (refresh = false) {
+    this.updatePgNav = function(refresh = false) {
         itemLength = $(this.itemToPaginate).length;
         pageCount = itemLength / this.itemLimit;
 
@@ -869,7 +887,7 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
         }
 
         function pageNext(index, pnc) {
-            $('.' + pnc + '.pg' + index).click(function (e) {
+            $('.' + pnc + '.pg' + index).click(function(_e) {
                 //e.preventDefault();
                 pageUrl = window.location.href;
                 if (pageUrl.search('#page') !== -1) {
@@ -907,15 +925,15 @@ function Pagination(limit = 5, itemToPaginate = '.item', pgNavClass = 'page-link
         }
     }
 
-    this.getPaginateNav = function () {
+    this.getPaginateNav = function() {
         return pageAElement;
     }
 }
 
 function MultipleAction(url) {
     ASMPUsefulAPI.call(this);
-    this.defineAction = function (actionName) {
-        var functToInsert = function (action, targetName, allItem = false, seltdItem = false) {
+    this.defineAction = function(actionName) {
+        var functToInsert = function(action, targetName, allItem = false, seltdItem = false) {
             var actionExecutor = new ASMPActionExecutor();
             if (action === 'remove') {
                 if (targetName === 'user_management') {
@@ -925,7 +943,7 @@ function MultipleAction(url) {
                     $('.confirm-box#userManagement').append('<button class="button yes-btn">Ya</button>');
                     $('.confirm-box#userManagement').append('<button class="button no-btn">Tidak</button>');
                     $('.table-container#userManagement .table-header .multiple-action .multiple-action-btn.trash').unbind('click');
-                    $('.table-container#userManagement .table-header .multiple-action .multiple-action-btn.trash').click(function () {
+                    $('.table-container#userManagement .table-header .multiple-action .multiple-action-btn.trash').click(function() {
                         //console.log(Object.getOwnPropertyNames(new MultipleAction));
                         var
                             itemIds = $('.multiple-action').data('mail-ids'),
@@ -944,7 +962,7 @@ function MultipleAction(url) {
                         $('.checkmark.all').attr('disabled', 'disabled');
                         $('.checkbox.item').attr('disabled', 'disabled');
                         $('.confirm-box#userManagement').removeClass('hide');
-                        $('.confirm-box#userManagement .yes-btn').click(function () {
+                        $('.confirm-box#userManagement .yes-btn').click(function() {
                             $('.confirm-box#userManagement').addClass('hide');
                             $('#checkAll').removeAttr('disabled');
                             $('.checkmark.all').removeAttr('disabled');
@@ -959,7 +977,7 @@ function MultipleAction(url) {
                             $('.prompt-box').removeClass('hide');
                             $('.dim-light').removeClass('hide-elemet');
                             $('.prompt-box form input#uPass').focus();
-                            $('.prompt-box form .prompt-submit#rmAll').click(function () {
+                            $('.prompt-box form .prompt-submit#rmAll').click(function() {
                                 promptInp = true;
                                 uPass = $('.prompt-box form input#uPass').val();
                                 //console.log(uPass);
@@ -1000,13 +1018,13 @@ function MultipleAction(url) {
                                     promptInp = false;
                                 }
                             });
-                            $('.prompt-box .close-btn').click(function () {
+                            $('.prompt-box .close-btn').click(function() {
                                 //console.log('prompt-box::before');
                                 $('.prompt-box').addClass('hide');
                                 $('.dim-light').addClass('hide-elemet');
                             });
                         });
-                        $('.confirm-box#userManagement .no-btn').click(function () {
+                        $('.confirm-box#userManagement .no-btn').click(function() {
                             $('.confirm-box#userManagement').addClass('hide');
                             $('#checkAll').removeAttr('disabled');
                             $('.checkmark.all').removeAttr('disabled');
@@ -1020,7 +1038,7 @@ function MultipleAction(url) {
                     $('.confirm-box#fieldSections').append('<button class="button yes-btn">Ya</button>');
                     $('.confirm-box#fieldSections').append('<button class="button no-btn">Tidak</button>');
                     $('.table-container#fieldSections .table-header .multiple-action .multiple-action-btn.trash').unbind('click');
-                    $('.table-container#fieldSections .table-header .multiple-action .multiple-action-btn.trash').click(function () {
+                    $('.table-container#fieldSections .table-header .multiple-action .multiple-action-btn.trash').click(function() {
                         //console.log(Object.getOwnPropertyNames(new MultipleAction));
                         var
                             itemIds = $('.multiple-action').data('mail-ids'),
@@ -1039,7 +1057,7 @@ function MultipleAction(url) {
                         $('.checkmark.all').attr('disabled', 'disabled');
                         $('.checkbox.item').attr('disabled', 'disabled');
                         $('.confirm-box#fieldSections').removeClass('hide');
-                        $('.confirm-box#fieldSections .yes-btn').click(function () {
+                        $('.confirm-box#fieldSections .yes-btn').click(function() {
                             $('.confirm-box#fieldSections').addClass('hide');
                             $('#checkAll').removeAttr('disabled');
                             $('.checkmark.all').removeAttr('disabled');
@@ -1054,7 +1072,7 @@ function MultipleAction(url) {
                             $('.prompt-box').removeClass('hide');
                             $('.dim-light').removeClass('hide-elemet');
                             $('.prompt-box form input#uPass').focus();
-                            $('.prompt-box form .prompt-submit#rmAll').click(function () {
+                            $('.prompt-box form .prompt-submit#rmAll').click(function() {
                                 promptInp = true;
                                 uPass = $('.prompt-box form input#uPass').val();
                                 //console.log(uPass);
@@ -1095,13 +1113,13 @@ function MultipleAction(url) {
                                     promptInp = false;
                                 }
                             });
-                            $('.prompt-box .close-btn').click(function () {
+                            $('.prompt-box .close-btn').click(function() {
                                 //console.log('prompt-box::before');
                                 $('.prompt-box').addClass('hide');
                                 $('.dim-light').addClass('hide-elemet');
                             });
                         });
-                        $('.confirm-box#fieldSections .no-btn').click(function () {
+                        $('.confirm-box#fieldSections .no-btn').click(function() {
                             $('.confirm-box#fieldSections').addClass('hide');
                             $('#checkAll').removeAttr('disabled');
                             $('.checkmark.all').removeAttr('disabled');
@@ -1116,7 +1134,7 @@ function MultipleAction(url) {
                     $('.confirm-box#trashCan').append('<button class="button yes-btn">Ya</button>');
                     $('.confirm-box#trashCan').append('<button class="button no-btn">Tidak</button>');
                     $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.remove').unbind('click');
-                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.remove').click(function () {
+                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.remove').click(function() {
                         //console.log(Object.getOwnPropertyNames(new MultipleAction));
                         var
                             itemIds = $('.multiple-action').data('mail-ids'),
@@ -1135,7 +1153,7 @@ function MultipleAction(url) {
                         $('.checkmark.all').attr('disabled', 'disabled');
                         $('.checkbox.item').attr('disabled', 'disabled');
                         $('.confirm-box#trashCan').removeClass('hide');
-                        $('.confirm-box#trashCan .yes-btn').click(function () {
+                        $('.confirm-box#trashCan .yes-btn').click(function() {
                             $('.confirm-box#trashCan').addClass('hide');
                             $('#checkAll').removeAttr('disabled');
                             $('.checkmark.all').removeAttr('disabled');
@@ -1150,7 +1168,7 @@ function MultipleAction(url) {
                             $('.prompt-box').removeClass('hide');
                             $('.dim-light').removeClass('hide-elemet');
                             $('.prompt-box form input#uPass').focus();
-                            $('.prompt-box form .prompt-submit#rmAll').click(function () {
+                            $('.prompt-box form .prompt-submit#rmAll').click(function() {
                                 promptInp = true;
                                 uPass = $('.prompt-box form input#uPass').val();
                                 //console.log(uPass);
@@ -1191,13 +1209,13 @@ function MultipleAction(url) {
                                     promptInp = false;
                                 }
                             });
-                            $('.prompt-box .close-btn').click(function () {
+                            $('.prompt-box .close-btn').click(function() {
                                 //console.log('prompt-box::before');
                                 $('.prompt-box').addClass('hide');
                                 $('.dim-light').addClass('hide-elemet');
                             });
                         });
-                        $('.confirm-box#trashCan .no-btn').click(function () {
+                        $('.confirm-box#trashCan .no-btn').click(function() {
                             $('.confirm-box#trashCan').addClass('hide');
                             $('#checkAll').removeAttr('disabled');
                             $('.checkmark.all').removeAttr('disabled');
@@ -1208,7 +1226,7 @@ function MultipleAction(url) {
             } else if (action === 'trash') {
                 if (targetName === 'incoming_mail') {
                     $('.table-container#incomingMail .table-header .multiple-action .multiple-action-btn.trash').unbind('click');
-                    $('.table-container#incomingMail .table-header .multiple-action .multiple-action-btn.trash').click(function () {
+                    $('.table-container#incomingMail .table-header .multiple-action .multiple-action-btn.trash').click(function() {
                         var itemIds = $('.multiple-action').data('mail-ids');
                         //console.log(itemIds);
                         itemIds = itemIds.slice(0, -1);
@@ -1238,7 +1256,7 @@ function MultipleAction(url) {
                     });
                 } else if (targetName === 'outgoing_mail') {
                     $('.table-container#outgoingMail .table-header .multiple-action .multiple-action-btn.trash').unbind('click');
-                    $('.table-container#outgoingMail .table-header .multiple-action .multiple-action-btn.trash').click(function () {
+                    $('.table-container#outgoingMail .table-header .multiple-action .multiple-action-btn.trash').click(function() {
                         var itemIds = $('.multiple-action').data('mail-ids'),
                             mailNumbers = [];
                         //console.log(itemIds);
@@ -1281,7 +1299,7 @@ function MultipleAction(url) {
             } else if (action === 'recovery') {
                 if (targetName === 'trash_can') {
                     $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.recovery').unbind('click');
-                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.recovery').click(function () {
+                    $('.table-container#trashCan .table-header .multiple-action .multiple-action-btn.recovery').click(function() {
                         var itemIds = $('.multiple-action').data('mail-ids'),
                             mailNumbers = [];
                         //console.log(itemIds);
@@ -1337,16 +1355,16 @@ function MultipleAction(url) {
         }
     }
 
-    this.deleteAction = function (actionName) {
+    this.deleteAction = function(actionName) {
         delete this[actionName];
     }
 }
 
 function ActionTrigger() {
-    this.defineTrigger = function (actionName, triggerName) {
+    this.defineTrigger = function(actionName, triggerName) {
         var
             usefullapi = new ASMPUsefulAPI(),
-            deleteUser = function (index, uTrueName) {
+            deleteUser = function(index, uTrueName) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.confirm-box#userManagement').remove();
                 $('.action-msg-notification').after('<div class="confirm-box hide" id="userManagement"></div>');
@@ -1355,7 +1373,7 @@ function ActionTrigger() {
                 $('.confirm-box#userManagement').append('<button class="button no-btn">Tidak</button>');
                 //console.log('NEW INDEX: ' + index);
                 $('.table-container#userManagement .action-btn.remove#item' + index).unbind('click');
-                $('.table-container#userManagement .action-btn.remove#item' + index).click(function () {
+                $('.table-container#userManagement .action-btn.remove#item' + index).click(function() {
                     //console.log(index);
                     var
                         promptInp = false,
@@ -1364,7 +1382,7 @@ function ActionTrigger() {
                     $('.checkmark.all').attr('disabled', 'disabled');
                     $('.checkbox.item').attr('disabled', 'disabled');
                     $('.confirm-box#userManagement').removeClass('hide');
-                    $('.confirm-box#userManagement .yes-btn').click(function () {
+                    $('.confirm-box#userManagement .yes-btn').click(function() {
                         $('.confirm-box#userManagement').addClass('hide');
                         $('#checkAll').removeAttr('disabled');
                         $('.checkmark.all').removeAttr('disabled');
@@ -1380,7 +1398,7 @@ function ActionTrigger() {
                         $('.prompt-box').removeClass('hide');
                         $('.dim-light').removeClass('hide-elemet');
                         $('.prompt-box form input#uPass').focus();
-                        $('.prompt-box form .prompt-submit#id' + index).click(function () {
+                        $('.prompt-box form .prompt-submit#id' + index).click(function() {
                             promptInp = true;
                             uPass = $('.prompt-box form input#uPass').val();
                             if (promptInp != false) {
@@ -1412,13 +1430,13 @@ function ActionTrigger() {
                                 promptInp = false;
                             }
                         });
-                        $('.prompt-box .close-btn').click(function () {
+                        $('.prompt-box .close-btn').click(function() {
                             //console.log('prompt-box::before');
                             $('.prompt-box').addClass('hide');
                             $('.dim-light').addClass('hide-elemet');
                         });
                     });
-                    $('.confirm-box#userManagement .no-btn').click(function () {
+                    $('.confirm-box#userManagement .no-btn').click(function() {
                         $('.confirm-box#userManagement').addClass('hide');
                         $('#checkAll').removeAttr('disabled');
                         $('.checkmark.all').removeAttr('disabled');
@@ -1426,10 +1444,10 @@ function ActionTrigger() {
                     });
                 });
             }, // add unbind to item
-            throwMailToTrash = function (index, mailType, mailData) {
+            throwMailToTrash = function(index, mailType, mailData) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.table-container #mailAction .action-btn.trash#item' + index).unbind('click');
-                $('.table-container #mailAction .action-btn.trash#item' + index).click(function () {
+                $('.table-container #mailAction .action-btn.trash#item' + index).click(function() {
                     console.log(index);
                     actionExecutor.actionName = 'Throw Mail to Trash';
                     actionExecutor.actionUrl = baseURL() + '/' + mailType + '_action_exec';
@@ -1450,7 +1468,7 @@ function ActionTrigger() {
                     });
                 });
             },
-            deleteFieldSection = function (index, fsName) {
+            deleteFieldSection = function(index, fsName) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.confirm-box#fieldSections').remove();
                 $('.action-msg-notification').after('<div class="confirm-box hide" id="fieldSections"></div>');
@@ -1459,7 +1477,7 @@ function ActionTrigger() {
                 $('.confirm-box#fieldSections').append('<button class="button no-btn">Tidak</button>');
                 //console.log('NEW INDEX: ' + index);
                 $('.table-container#fieldSections .item.id' + index + ' .action-btn.remove#item' + index).unbind('click');
-                $('.table-container#fieldSections .item.id' + index + ' .action-btn.remove#item' + index).click(function () {
+                $('.table-container#fieldSections .item.id' + index + ' .action-btn.remove#item' + index).click(function() {
                     //console.log(index);
                     var
                         promptInp = false,
@@ -1468,7 +1486,7 @@ function ActionTrigger() {
                     $('.checkmark.all').attr('disabled', 'disabled');
                     $('.checkbox.item').attr('disabled', 'disabled');
                     $('.confirm-box#fieldSections').removeClass('hide');
-                    $('.confirm-box#fieldSections .yes-btn').click(function () {
+                    $('.confirm-box#fieldSections .yes-btn').click(function() {
                         $('.confirm-box#fieldSections').addClass('hide');
                         $('#checkAll').removeAttr('disabled');
                         $('.checkmark.all').removeAttr('disabled');
@@ -1484,7 +1502,7 @@ function ActionTrigger() {
                         $('.prompt-box').removeClass('hide');
                         $('.dim-light').removeClass('hide-elemet');
                         $('.prompt-box form input#uPass').focus();
-                        $('.prompt-box form .prompt-submit#id' + index).click(function () {
+                        $('.prompt-box form .prompt-submit#id' + index).click(function() {
                             promptInp = true;
                             uPass = $('.prompt-box form input#uPass').val();
                             if (promptInp != false) {
@@ -1516,13 +1534,13 @@ function ActionTrigger() {
                                 promptInp = false;
                             }
                         });
-                        $('.prompt-box .close-btn').click(function () {
+                        $('.prompt-box .close-btn').click(function() {
                             //console.log('prompt-box::before');
                             $('.prompt-box').addClass('hide');
                             $('.dim-light').addClass('hide-elemet');
                         });
                     });
-                    $('.confirm-box#fieldSections .no-btn').click(function () {
+                    $('.confirm-box#fieldSections .no-btn').click(function() {
                         $('.confirm-box#fieldSections').addClass('hide');
                         $('#checkAll').removeAttr('disabled');
                         $('.checkmark.all').removeAttr('disabled');
@@ -1530,10 +1548,10 @@ function ActionTrigger() {
                     });
                 });
             },
-            checkboxAction = function (index) {
+            checkboxAction = function(index) {
                 var ma = new MultipleAction(baseURL() + '/remove_item');
                 $('.checkbox.item' + index).unbind('click');
-                $('.checkbox.item' + index).click(function () {
+                $('.checkbox.item' + index).click(function() {
                     var
                         mailIds = $('.multiple-action').data('mail-ids'),
                         totalcheckbox = $('.checkbox.item').length;
@@ -1576,7 +1594,7 @@ function ActionTrigger() {
                 });
 
                 $('.checkmark.item' + index).unbind('click');
-                $('.checkmark.item' + index).click(function () {
+                $('.checkmark.item' + index).click(function() {
                     var mailIds = $('.multiple-action').data('mail-ids');
                     checkedItemCount -= 1;
                     if (mailIds !== '1' && mailIds !== '') {
@@ -1604,7 +1622,7 @@ function ActionTrigger() {
                     //console.log($('.checkbox.item' + index).is(':checked'), index, 'Checked Count: ' + checkedItemCount);
                 });
             },
-            viewMail = function (index) {
+            viewMail = function(index) {
                 var
                     actionExecutor = new ASMPActionExecutor(),
                     actionUrl = baseURL() + '/view_activity',
@@ -1616,7 +1634,7 @@ function ActionTrigger() {
                     actionUrl = baseURL() + '/admin/view_activity';
                 }
                 $('.table-container #mailAction .action-btn.view#item' + index).unbind('click');
-                $('.table-container #mailAction .action-btn.view#item' + index).click(function () {
+                $('.table-container #mailAction .action-btn.view#item' + index).click(function() {
                     //console.log('View' + index);.table-container #mailAction .action-btn.view
                     $('.table-container #mailAction .action-btn.view').attr('disabled', 'disabled');
 
@@ -1639,15 +1657,15 @@ function ActionTrigger() {
                 });
 
                 $('.incoming-mails-container .incoming-mail.id' + index + ' .im-btn.back#mail' + index).unbind('click');
-                $('.incoming-mails-container .incoming-mail.id' + index + ' .im-btn.back#mail' + index).click(function () {
+                $('.incoming-mails-container .incoming-mail.id' + index + ' .im-btn.back#mail' + index).click(function() {
                     $('.incoming-mails-container').addClass('hide');
                     $('.incoming-mails-container .incoming-mail.id' + index).addClass('hide');
                     $('#incomingMail').removeClass('hide');
                 });
             },
-            editMail = function (index, containerSelector, mailData, currWindowToClose) {
+            editMail = function(index, containerSelector, mailData, currWindowToClose) {
                 $('.mail-views .mail-view .modal2ndlayer button.mail-btn.edit').unbind('click');
-                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.edit').click(function () {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.edit').click(function() {
                     var
                         itemID = index,
                         pdfLayouts = $(containerSelector).data('pdflayouts').split(',');
@@ -1705,7 +1723,7 @@ function ActionTrigger() {
                             type: 'submit',
                             name: 'update_om',
                             class: 'add-om-submit save'
-                        }).html('<i class="fa fa-save"></i> Simpan').click(function () {
+                        }).html('<i class="fa fa-save"></i> Simpan').click(function() {
                             let
                                 form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
                                 fdata = {},
@@ -1731,11 +1749,11 @@ function ActionTrigger() {
                                     })
                                 },
                                 dataType: "json",
-                            }).done(function () {
+                            }).done(function() {
 
-                            }).fail(function () {
+                            }).fail(function() {
 
-                            }).always(function (result) {
+                            }).always(function(result) {
                                 $('.edit-om-modal').css('display', 'none');
                                 $('#addOm').removeAttr('disabled');
                                 $('.casual-theme.edit-om-modal .modal2ndlayer .form-input input').remove();
@@ -1816,7 +1834,7 @@ function ActionTrigger() {
                             type: 'submit',
                             name: 'send_om',
                             class: 'add-om-submit send'
-                        }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
+                        }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function() {
                             let
                                 form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
                                 fdata = {},
@@ -1839,17 +1857,17 @@ function ActionTrigger() {
                                     })
                                 },
                                 dataType: "json",
-                            }).done(function () {
+                            }).done(function() {
 
-                            }).fail(function () {
+                            }).fail(function() {
 
-                            }).always(function (result) {
+                            }).always(function(_result) {
                                 // add code
                             });
                         })
                         .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
                     $('.casual-theme.edit-om-modal .modal2ndlayer .close-btn').unbind('click');
-                    $('.casual-theme.edit-om-modal .modal2ndlayer .close-btn').click(function () {
+                    $('.casual-theme.edit-om-modal .modal2ndlayer .close-btn').click(function() {
                         $('.edit-om-modal').css('display', 'none');
                         $('#addOm').removeAttr('disabled');
                         $('.casual-theme.edit-om-modal .modal2ndlayer .form-input input').remove();
@@ -1865,7 +1883,7 @@ function ActionTrigger() {
                     });
                 });
             },
-            printMail = function (index, mailType, mailNumber, pdfLayout) {
+            printMail = function(_index, mailType, mailNumber, pdfLayout) {
                 mailNumber = mailNumber.replace(/\//g, '&sol;');
                 if (mailType == 'sk') {
                     mailType = 'om';
@@ -1874,9 +1892,9 @@ function ActionTrigger() {
                 }
                 window.open(baseURL() + '/pdf-layout/view/' + pdfLayout + '/' + mailType + '/' + encodeURIComponent(mailNumber) + '/' + $.cookie('t'));
             },
-            dispositionMail = function (index, mailData) {
+            dispositionMail = function(index, mailData) {
                 $('.mail-views .mail-view .modal2ndlayer button.mail-btn.disposition').unbind('click');
-                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.disposition').click(function () {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.disposition').click(function() {
                     $.ajax({
                         type: "POST",
                         url: baseURL() + '/im_action_exec',
@@ -1888,11 +1906,11 @@ function ActionTrigger() {
                             })
                         },
                         dataType: "json",
-                    }).done(function () {
+                    }).done(function() {
 
-                    }).fail(function () {
+                    }).fail(function() {
 
-                    }).always(function (result) {
+                    }).always(function(result) {
                         if (result.status == 'success') {
                             $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
                             $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
@@ -1976,9 +1994,9 @@ function ActionTrigger() {
                     });
                 });
             },
-            sendMail = function (index, mailData) {
+            sendMail = function(index, mailData) {
                 $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').unbind('click');
-                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').click(function () {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.send').click(function() {
                     $.ajax({
                         type: "POST",
                         url: baseURL() + '/om_action_exec',
@@ -1990,11 +2008,11 @@ function ActionTrigger() {
                             })
                         },
                         dataType: "json",
-                    }).done(function () {
+                    }).done(function() {
 
-                    }).fail(function () {
+                    }).fail(function() {
 
-                    }).always(function (result) {
+                    }).always(function(result) {
                         if (result.status == 'success') {
                             $('.table-container .item-list tbody tr.item.id' + index).attr('data-itemdata', JSON.stringify(result.data));
                             $('.table-container .item-list tbody .item.id' + index + ' td').eq(4).text(result.data['status']);
@@ -2078,9 +2096,9 @@ function ActionTrigger() {
                     });
                 });
             },
-            replyMail = function (index, containerSelector, mailData, currWindowToClose) {
+            replyMail = function(index, containerSelector, mailData, currWindowToClose) {
                 $('.mail-views .mail-view .modal2ndlayer button.mail-btn.reply').unbind('click');
-                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.reply').click(function () {
+                $('.mail-views .mail-view .modal2ndlayer button.mail-btn.reply').click(function() {
                     var
                         itemID = index;
 
@@ -2118,7 +2136,7 @@ function ActionTrigger() {
                             type: 'submit',
                             name: 'reply_im',
                             class: 'button reply-submit send'
-                        }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function () {
+                        }).html('<i class="fa fa-paper-plane"></i> Kirim').click(function() {
                             let
                                 form = $(containerSelector + ' .modal2ndlayer .mail-modal-form'),
                                 fdata = {},
@@ -2146,11 +2164,11 @@ function ActionTrigger() {
                                     })
                                 },
                                 dataType: "json",
-                            }).done(function () {
+                            }).done(function() {
 
-                            }).fail(function () {
+                            }).fail(function() {
 
-                            }).always(function (result) {
+                            }).always(function(result) {
                                 $('.reply-im-modal').css('display', 'none');
                                 $('.casual-theme.reply-im-modal .modal2ndlayer .form-input input').remove();
                                 $('.casual-theme.reply-im-modal .modal2ndlayer .form-input label').remove();
@@ -2227,7 +2245,7 @@ function ActionTrigger() {
                         .appendTo(containerSelector + ' .modal2ndlayer .mail-modal-form');
                 });
                 $('.casual-theme.reply-im-modal .modal2ndlayer' + ' .close-btn').unbind('click');
-                $('.casual-theme.reply-im-modal .modal2ndlayer' + ' .close-btn').click(function () {
+                $('.casual-theme.reply-im-modal .modal2ndlayer' + ' .close-btn').click(function() {
                     $('.reply-im-modal').css('display', 'none');
                     $('.casual-theme.reply-im-modal .modal2ndlayer .form-input input').remove();
                     $('.casual-theme.reply-im-modal .modal2ndlayer .form-input label').remove();
@@ -2240,7 +2258,7 @@ function ActionTrigger() {
 
                 });
             },
-            removeTrash = function (index, mailNumber) {
+            removeTrash = function(index, mailNumber) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.confirm-box#trashCan').remove();
                 $('.action-msg-notification').after('<div class="confirm-box hide" id="trashCan"></div>');
@@ -2249,7 +2267,7 @@ function ActionTrigger() {
                 $('.confirm-box#trashCan').append('<button class="button no-btn">Tidak</button>');
                 //console.log('NEW INDEX: ' + index);
                 $('.table-container#trashCan .action-btn.remove#item' + index).unbind('click');
-                $('.table-container#trashCan .action-btn.remove#item' + index).click(function () {
+                $('.table-container#trashCan .action-btn.remove#item' + index).click(function() {
                     //console.log(index);
                     var
                         promptInp = false,
@@ -2258,7 +2276,7 @@ function ActionTrigger() {
                     $('.checkmark.all').attr('disabled', 'disabled');
                     $('.checkbox.item').attr('disabled', 'disabled');
                     $('.confirm-box#trashCan').removeClass('hide');
-                    $('.confirm-box#trashCan .yes-btn').click(function () {
+                    $('.confirm-box#trashCan .yes-btn').click(function() {
                         $('.confirm-box#trashCan').addClass('hide');
                         $('#checkAll').removeAttr('disabled');
                         $('.checkmark.all').removeAttr('disabled');
@@ -2274,7 +2292,7 @@ function ActionTrigger() {
                         $('.prompt-box').removeClass('hide');
                         $('.dim-light').removeClass('hide-elemet');
                         $('.prompt-box form input#uPass').focus();
-                        $('.prompt-box form .prompt-submit#id' + index).click(function () {
+                        $('.prompt-box form .prompt-submit#id' + index).click(function() {
                             promptInp = true;
                             uPass = $('.prompt-box form input#uPass').val();
                             if (promptInp != false) {
@@ -2306,13 +2324,13 @@ function ActionTrigger() {
                                 promptInp = false;
                             }
                         });
-                        $('.prompt-box .close-btn').click(function () {
+                        $('.prompt-box .close-btn').click(function() {
                             //console.log('prompt-box::before');
                             $('.prompt-box').addClass('hide');
                             $('.dim-light').addClass('hide-elemet');
                         });
                     });
-                    $('.confirm-box#trashCan .no-btn').click(function () {
+                    $('.confirm-box#trashCan .no-btn').click(function() {
                         $('.confirm-box#trashCan').addClass('hide');
                         $('#checkAll').removeAttr('disabled');
                         $('.checkmark.all').removeAttr('disabled');
@@ -2320,10 +2338,10 @@ function ActionTrigger() {
                     });
                 });
             },
-            recoverMail = function (index, mailData) {
+            recoverMail = function(index, mailData) {
                 var actionExecutor = new ASMPActionExecutor();
                 $('.table-container #mailAction .action-btn.recovery#item' + index).unbind('click');
-                $('.table-container #mailAction .action-btn.recovery#item' + index).click(function () {
+                $('.table-container #mailAction .action-btn.recovery#item' + index).click(function() {
                     console.log(index);
                     actionExecutor.actionName = 'recoverMail';
                     actionExecutor.actionUrl = baseURL() + '/recovery_mail';
@@ -2398,16 +2416,172 @@ function ActionTrigger() {
         }
     }
 
-    this.execTrigger = function (actionName, params) {
+    this.execTrigger = function(actionName, params) {
         this[actionName](params);
     }
 
-    this.deleteTrigger = function (actionName) {
+    this.deleteTrigger = function(actionName) {
         delete this[actionName];
         if (this.hasOwnProperty(actionName) == false) {
             console.log(actionName + ' has deleted!');
         }
     }
+}
+
+// ASMPSecurity
+
+function ASMPSecurity() {
+    ASMPUsefulAPI.call(this);
+    Object.defineProperties(this, {
+        setSecurityCode: {
+            value: (flpCode = 1, lrCode = 1) => {
+                $.ajax({
+                        url: baseURL() + '/set_security_code',
+                        type: 'POST',
+                        dataType: 'json',
+                        data: {
+                            token: $(this).data('token'),
+                            flp_code: flpCode,
+                            lr_code: lrCode
+                        },
+                    })
+                    .done(function() {
+                        //console.log("success");
+                    })
+                    .fail(function() {
+                        //console.log("error");
+                    })
+                    .always(function(result) {
+                        return result;
+                    });
+            },
+
+        },
+        setLoggedLink: {
+            value: (c, userName = '', passWord = '', eMail = '') => {
+                if (Number.isInteger(c)) {
+                    if (getAccess() == 'user' || getAccess() == 'admin') {
+                        $.ajax({
+                                url: baseURL() + '/set_logged_link',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: {
+                                    token: $.cookie('t'),
+                                    status_code: c,
+                                },
+                            })
+                            .done(function() {
+                                //console.log("success");
+                            })
+                            .fail(function() {
+                                //console.log("error");
+                            })
+                            .always(function(result) {});
+                    } else if (userName && passWord) {
+                        $.ajax({
+                                url: baseURL() + '/set_logged_link',
+                                type: 'POST',
+                                dataType: 'json',
+                                data: {
+                                    status_code: c,
+                                    username: userName,
+                                    password: passWord,
+                                    email: eMail
+                                },
+                            })
+                            .done(function() {
+                                //console.log("success");
+                            })
+                            .fail(function() {
+                                //console.log("error");
+                            })
+                            .always(function(result) {
+                                if (result.status == 'success' && c == 3) {
+                                    Object.defineProperty(ASMPSecurity, 'verifiyEVC', {
+                                        value: (verfCode) => {
+                                            $.ajax({
+                                                    url: baseURL() + '/set_logged_link',
+                                                    type: 'POST',
+                                                    dataType: 'json',
+                                                    data: {
+                                                        token: $.cookie('t'),
+                                                        status_code: c,
+                                                        username: userName,
+                                                        password: passWord,
+                                                        vercode: verfCode
+                                                    },
+                                                })
+                                                .done(function() {
+                                                    //console.log("success");
+                                                })
+                                                .fail(function() {
+                                                    //console.log("error");
+                                                })
+                                                .always(function(result) {
+                                                    delete ASMPSecurity.verifiyEVC;
+                                                    return result;
+                                                });
+                                        }
+                                    });
+                                } else {
+                                    return result;
+                                }
+                            });
+                    } else {
+                        return { status: 'error', message: 'nama pengguna dan kata sandi harus di isi.' }
+                    }
+                } else {
+                    return { status: 'error', message: '' }
+                }
+            }
+        },
+        getLoggedLink: {
+            value: (userName = '', passWord = '', timeOut = false) => {
+                if (getAccess() == 'user' || getAccess() == 'admin') {
+                    $.ajax({
+                            url: baseURL() + '/get_logged_link',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                token: $.cookie('t'),
+                                timeout: Number.parseInt(timeOut)
+                            },
+                        })
+                        .done(function() {
+                            //console.log("success");
+                        })
+                        .fail(function() {
+                            //console.log("error");
+                        })
+                        .always(function(result) {
+                            return result;
+                        });
+                } else if (userName && passWord) {
+                    $.ajax({
+                            url: baseURL() + '/get_logged_link',
+                            type: 'POST',
+                            dataType: 'json',
+                            data: {
+                                username: userName,
+                                password: passWord,
+                                timeout: Number.parseInt(timeOut)
+                            },
+                        })
+                        .done(function() {
+                            //console.log("success");
+                        })
+                        .fail(function() {
+                            //console.log("error");
+                        })
+                        .always(function(result) {
+                            return result;
+                        });
+                } else {
+                    return { status: 'error', message: 'nama pengguna dan kata sandi harus di isi.' }
+                }
+            }
+        }
+    });
 }
 
 // inherit ASMPUsefulAPI
@@ -2419,3 +2593,5 @@ MultipleAction.prototype = Object.create(ASMPUsefulAPI.prototype);
 MultipleAction.prototype.constructor = MultipleAction;
 ActionTrigger.prototype = Object.create(ASMPUsefulAPI.prototype);
 ActionTrigger.prototype.constructor = ActionTrigger;
+ASMPSecurity.prototype = Object.create(ASMPUsefulAPI.prototype);
+ASMPSecurity.prototype.constructor = ASMPSecurity;

@@ -40,6 +40,11 @@
                 <button type="submit" name="page_settings" class="button save-settings-btn"><i class="fa fa-save"></i> Simpan</button>
             </form>
         </div>
+        <div class="form-section page">
+            <h2>~ Pengguna > Keamanan ~</h2>
+            <p id="flpCode">Force Protection Code: <?php echo ($flp_code_status == TRUE) ? 'sudah di set': '<button id="generateFLPC">Klik Tombol Ini untuk Mengeset FLP Code</button>';?></p>
+            <p id="lrCode">Long Recovery Code: <?php echo ($lr_code_status == TRUE) ? 'sudah di set': '<button id="generateFLPC">Klik Tombol Ini untuk Mengeset Recovery Code</button>';?></p>
+        </div>
         <button type="submit" class="button save-all-settings-btn"><i class="fa fa-save"></i> Simpan Semua Perubahan</button>
     </div>
     <div class="casual-theme action-msg-notification hide"></div>

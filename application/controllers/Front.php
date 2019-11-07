@@ -302,9 +302,13 @@ class Front extends CI_Controller
                 'constraint' => '55',
                 'unique' => TRUE,
             ),
-            'recovery_id' => array(
+            'lr_code' => array(
                 'type' => 'VARCHAR',
                 'constraint' => 70,
+            ),
+            'flp_code' => array(
+                'type' => 'VARCHAR',
+                'constraint' => 10,
             ),
             'profile_picture' => array(
                 'type' => 'VARCHAR',
@@ -320,7 +324,7 @@ class Front extends CI_Controller
                 'constraint' => 1,
                 'default' => 0
             ),
-            'logged_link_stat' => array(
+            'logged_stat' => array(
                 'type' => 'INT',
                 'constraint' => 1,
                 'default' => 0
@@ -701,12 +705,7 @@ class Front extends CI_Controller
                         'field' => 'field_section_name',
                         'label' => 'Nama Bidang/Bagian Anda',
                         'rules' => 'trim|xss_clean|required|is_unique[users.position]',
-                    ),
-                    array(
-                        'field' => 'recovery_id',
-                        'label' => 'Recovery ID',
-                        'rules' => 'trim|xss_clean|required',
-                    ),
+                    )
                 );
 
                 // Mengeset rules/peraturan2 pada form field
@@ -722,8 +721,6 @@ class Front extends CI_Controller
                 }
                 else
                 {
-                    $recovery_id = explode('-', $this->input->post('recovery_id', TRUE));
-                    $recovery_id = implode('', $recovery_id);
                     $img_file_name = random_string('alnum', 8) . '_default-profile.png';
 
                     $query = $this->db->get('users');
@@ -742,7 +739,8 @@ class Front extends CI_Controller
                         'email' => $this->input->post('email', TRUE),
                         'role' => 'admin',
                         'position' => $this->input->post('field_section_name', TRUE),
-                        'recovery_id' => $this->asmp_security->get_hashed_password($recovery_id),
+                        'lr_code' => '-',
+                        'flp_code' => '-',
                         'profile_picture' => $img_file_name,
                         'gallery_dir' => random_string('alnum', 28),
                     );
@@ -1225,12 +1223,7 @@ class Front extends CI_Controller
                         'field' => 'field_section',
                         'label' => 'Bidang/Bagian',
                         'rules' => 'trim|xss_clean|required|is_unique[users.position]',
-                    ),
-                    array(
-                        'field' => 'recovery_id',
-                        'label' => 'Recovery ID',
-                        'rules' => 'trim|xss_clean|required',
-                    ),
+                    )
                 );
 
                 $this->form_validation->set_rules($form_rules);
@@ -1253,9 +1246,8 @@ class Front extends CI_Controller
                     unset($input_data['passconfirm']);
                     $input_data['id'] = $row_count;
                     $input_data['password'] = $this->asmp_security->get_hashed_password($input_data['password']);
-                    $input_data['recovery_id'] = explode('-', $input_data['recovery_id']);
-                    $input_data['recovery_id'] = implode('', $input_data['recovery_id']);
-                    $input_data['recovery_id'] = $this->asmp_security->get_hashed_password($input_data['recovery_id']);
+                    $input_data['lr_code'] = '-';
+                    $input_data['flp_code'] = '-';
                     $input_data['position'] = $input_data['field_section'];
                     $input_data['role'] = 'user';
                     $input_data['profile_picture'] = $img_file_name;
@@ -1439,7 +1431,7 @@ class Front extends CI_Controller
          * Metode yang diperbolehkan
          * @var array
          */
-        $available_methods = array('email', 'recovery_id');
+        $available_methods = array('email', 'recovery_code');
 
         /**
          * View data
@@ -1472,7 +1464,7 @@ class Front extends CI_Controller
                         $this->load->view('forgotpw-email', $data);
                     }
                 }
-                else if ($method == 'recovery_id')
+                else if ($method == 'recovery_code')
                 {
                     if ($this->session->userdata('result_msg') || $this->session->userdata('dialogue_title'))
                     {
@@ -1524,7 +1516,7 @@ class Front extends CI_Controller
                     $this->load->view('forgotpw-email', $data);
                 }
             }
-            else if ($this->asmp_security->verify_hashed_password('recovery_id', $this->session->userdata('method')))
+            else if ($this->asmp_security->verify_hashed_password('recovery_code', $this->session->userdata('method')))
             {
                 if ($sk === $this->session->userdata('secret_key'))
                 {
@@ -1575,7 +1567,7 @@ class Front extends CI_Controller
              * Metode yang diperbolehkan
              * @var array
              */
-            $available_methods = array('email', 'recovery_id');
+            $available_methods = array('email', 'recovery_code');
 
             if (in_array($method, $available_methods))
             {
@@ -1812,7 +1804,7 @@ class Front extends CI_Controller
                         echo json_encode(array('status' => 'error', 'message' => validation_errors('<i class="fa fa-exclamation-circle"></i> ', '~')));
                     }
                 }
-                else if ($method == 'recovery_id')
+                else if ($method == 'recovery_code')
                 {
                     /**
                      * Data untuk form_validation rules
@@ -1828,11 +1820,11 @@ class Front extends CI_Controller
                             ),
                         ),
                         array(
-                            'label' => 'Recovery ID',
-                            'field' => 'recovery_id',
+                            'label' => 'Recovery Code',
+                            'field' => 'recovery_code',
                             'rules' => 'trim|xss_clean|required',
                             'errors' => array(
-                                'required' => 'Recovery ID Harus Di Isi',
+                                'required' => 'Recovery Code Harus Di Isi',
                             ),
                         ),
                     );
@@ -1851,9 +1843,7 @@ class Front extends CI_Controller
                          * Digunakan untuk menyimpan recovery id pada lupa kata sandi
                          * @var string
                          */
-                        $recovery_id = $this->input->post('recovery_id', TRUE);
-                        $recovery_id = explode('-', $this->input->post('recovery_id', TRUE));
-                        $recovery_id = implode('', $recovery_id);
+                        $recovery_code = $this->input->post('recovery_code', TRUE);
                         
                         /**
                          * Digunakan untuk verifikasi data yang terdaftar
@@ -1876,28 +1866,37 @@ class Front extends CI_Controller
                         // jika hasilnya berjumlah 1
                         if ($query->num_rows() == 1)
                         {
-                            if ($this->asmp_security->verify_hashed_password($recovery_id, $result[0]->recovery_id))
-                            {
-                                $matches = TRUE;
-
-                                if (password_needs_rehash($result[0]->recovery_id, PASSWORD_BCRYPT))
-                                {
-                                    $this->db->where('username', $username)->update('users', array('password' => $this->asmp_security->get_hashed_password($recovery_id)));
-
-                                    if ($this->db->affected_rows())
-                                    {
-                                        log_message('info', 'Recovery ID is ReHashed!');
-                                    }
-                                }
-                            }
-                            else
+                            if ($result[0]->lr_code == '-')
                             {
                                 // Ubah tipe content ke JSON
                                 header('Content-Type: application/json');
                                 // Mengirim output data ke client
-                                echo json_encode(array('status' => 'error', 'message' => '<i class="fa fa-exclamation-circle"></i> ' . $this->lang->line('rid_not_match') . '~'));
+                                echo json_encode(array('status' => 'error', 'message' => '<i class="fa fa-exclamation-circle"></i> ' . 'Rocovery Code Harus di Set Terlebih dahulu di halaman pengaturan akun.' . '~'));
                             }
+                            else
+                            {
+                                if ($this->asmp_security->verify_hashed_password($recovery_code, $result[0]->lr_code))
+                                {
+                                    $matches = TRUE;
 
+                                    if (password_needs_rehash($result[0]->lr_code, PASSWORD_BCRYPT))
+                                    {
+                                        $this->db->where('username', $username)->update('users', array('lr_code' => $this->asmp_security->get_hashed_password($recovery_code)));
+
+                                        if ($this->db->affected_rows())
+                                        {
+                                            log_message('info', 'Recovery ID is ReHashed!');
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    // Ubah tipe content ke JSON
+                                    header('Content-Type: application/json');
+                                    // Mengirim output data ke client
+                                    echo json_encode(array('status' => 'error', 'message' => '<i class="fa fa-exclamation-circle"></i> ' . $this->lang->line('rid_not_match') . '~'));
+                                }
+                            }
                         }
                         else
                         {
@@ -1912,7 +1911,7 @@ class Front extends CI_Controller
                             $array = array(
                                 'username' => $username,
                                 'secret_key' => random_string('alnum', 30),
-                                'method' => $this->asmp_security->get_hashed_password('recovery_id'),
+                                'method' => $this->asmp_security->get_hashed_password('recovery_code'),
 
                             );
 
@@ -1921,7 +1920,7 @@ class Front extends CI_Controller
                             // Ubah tipe content ke JSON
                             header('Content-Type: application/json');
                             // Mengirim output data ke client
-                            echo json_encode(array('status' => 'success', 'message' => base_url() . 'lupa-kata-sandi/recovery_id?sk=' . $array['secret_key']));
+                            echo json_encode(array('status' => 'success', 'message' => base_url() . 'lupa-kata-sandi/recovery_code?sk=' . $array['secret_key']));
                         }
                     }
                     else
@@ -2046,7 +2045,7 @@ class Front extends CI_Controller
                     echo json_encode(array('status' => 'error', 'message' => validation_errors('<i class="fa fa-exclamation-circle"></i> ', '~')));
                 }
             }
-            else if ($this->asmp_security->verify_hashed_password('recovery_id', $this->session->userdata('method')))
+            else if ($this->asmp_security->verify_hashed_password('recovery_code', $this->session->userdata('method')))
             {
                 /**
                  * Data untuk form_validation rules
@@ -2110,7 +2109,7 @@ class Front extends CI_Controller
                         // Ubah tipe content ke JSON
                         header('Content-Type: application/json');
                         // Mengirim output data ke client
-                        echo json_encode(array('status' => 'success', 'message' => base_url() . 'lupa-kata-sandi/recovery_id'));
+                        echo json_encode(array('status' => 'success', 'message' => base_url() . 'lupa-kata-sandi/recovery_code'));
                     }
                     else
                     {
@@ -2130,7 +2129,7 @@ class Front extends CI_Controller
                         // Ubah tipe content ke JSON
                         header('Content-Type: application/json');
                         // Mengirim output data ke client
-                        echo json_encode(array('status' => 'failed', 'message' => base_url() . 'lupa-kata-sandi/recovery_id'));
+                        echo json_encode(array('status' => 'failed', 'message' => base_url() . 'lupa-kata-sandi/recovery_code'));
                     }
                 }
                 else
@@ -2152,6 +2151,219 @@ class Front extends CI_Controller
         else
         {
             redirect('lupa-kata-sandi', 'refresh');
+        }
+    }
+
+    public function set_logged_link()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = $this->input->post('request_data', TRUE);
+
+            if (!empty($data['username']) && !empty($data['password']) && ($data['token'] == $this->session->userdata('CSRF')))
+            {
+                $query = $this->db->where('username', $data['username'])->get('users');
+                $result = $query->result();
+                switch ($data['status_code']) {
+                    case 1:
+                        if ($this->asmp_securtiy->verify_hashed_password($data['password'], $result[0]->password))
+                        {
+                            $this->db->where(array(
+                                'username' => $data['username']
+                            ))->update('users', array('logged_stat' => 1));
+    
+                            if ($this->db->affected_rows())
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'success',
+                                    'message' => 'Request Berhasil Dikirim Silahkan Tunggu selama 30 detik'
+                                )));
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'failed',
+                                    'message' => 'Request Gagal Dikirim'
+                                )));
+                            }
+                        }
+                        break;
+                    case 3:
+                        if (!empty($data['email']))
+                        {
+                            $to = $data['email'];
+                            $verification_code = random_string('alnum', 10);
+                            $body = '
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                <meta charset="utf-8">
+                                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                <title>Kode Verifikasi Logout Paksa</title>
+                                </head>
+                                <body>
+                                <div class="contents-container">
+                                <header class="contens-header">
+                                    <h2 class="contents-title">Reset Password</h2>
+                                <header>
+                                <p class="contents-text">
+                                    Kepada: ' . $data['username'] . ',<br/>' . '
+                                    Salin Kode Verifikasi ini: ' . $verification_code . '
+                                </p>
+                                </div>
+                                </body>
+                                </html>
+                            ';
+                            if ($this->checker->is_online())
+                            {
+                                if ($this->emailhandler->send_email($to, 'Kode Verifikasi', $body, TRUE))
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'Kode Verifikasi Berhasil Dikirim Ke E-Mail Anda.'
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'Kode Verifikasi Gagal Dikirim.'
+                                    )));
+                                }
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'failed',
+                                    'message' => 'Anda harus memiliki koneksi internet untuk menggunakan fitur ini.'
+                                )));
+                            }
+                        }
+                        else if (in_array('vercode', $data) && $this->session->userdata('vercode'))
+                        {
+                            if ($data['vercode'] == $this->session->userdata('vercode'))
+                            {
+                                $this->db->where(array(
+                                    'username' => $data['username'],
+                                    'password' => $data['password']
+                                ))->update('users', array('logged_stat' => 3));
+
+                                if ($this->db->affected_rows())
+                                {
+                                    // set unlock access
+                                    if (get_cookie('tla') === NULL)
+                                    {
+                                        // set cookie untuk tla
+                                        set_cookie('tla', random_string('alnum', 30), 214995); /* expire for 15 minute  */
+                                    }
+
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'Request Berhasil Dikirim Silahkan Tunggu Selama 30 detik'
+                                    )));
+                                }
+                                else
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'failed',
+                                        'message' => 'Request Gagal Dikirim'
+                                    )));
+                                }
+                            }
+                        }
+                        break;
+                    
+                    default:
+                        log_message('error','kode status tidak ditemukan!');
+                        break;
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'error',
+                    'message' => 'Nama Pengguna, Password Harus Di isi.'
+                )));
+            }
+        }
+        else
+        {
+            redirect('login','refresh'); 
+        }
+    }
+
+    public function get_logged_link()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = $this->input->post('request_data', TRUE);
+
+            if (!empty($data['username']) && !empty($data['password']) && ($data['token'] == $this->session->userdata('CSRF')))
+            {
+                $query = $this->db->where('username', $data['username'])->get('users');
+                $result = $query->result();
+                switch ($result[0]->logged_stat) {
+                    case 1:
+                        if ($data['timeout'] == TRUE)
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 1,
+                                'message' => 'Akun Berhasil Di Logout.'
+                            )));
+                        }
+                        break;
+                    case 2:
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 2,
+                            'message' => 'Akun Dilindungi dengan FLP (Force Logout Protection) oleh pengguna yang sedang login. Anda harus menggunakan metode 2, metode ini menggunakan LRC (Long Recovery Code dan E-Mail untuk memaksa akun untuk logout dan menguncinya hanya untuk anda selama 15 menit)'
+                        )));
+                        break;
+                    case 4:
+                        if ($data['timeout'] == TRUE)
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 4,
+                                'message' => 'Akun Berhasil Di Logout. Anda bisa login sekarang, anda bisa punya waktu 15 menit untuk mengganti password dan generate ulang FLP dan LRC anda pada edit profil di halaman kerja anda.'
+                            )));
+                        }
+                        break;
+                    
+                    default:
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 0,
+                            'message' => 'tidak ada hasil'
+                        )));
+                        log_message('error','kode status tidak ditemukan!');
+                        break;
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'error',
+                    'message' => 'Nama Pengguna dan Password Harus Di isi.'
+                )));
+            }
+        }
+        else
+        {
+            redirect('login','refresh'); 
+        }
+    }
+
+    public function check_online_link()
+    {
+        if ($this->checker->is_online())
+        {
+            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                'status' => 'online'
+            )));
+        }
+        else
+        {
+            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                'status' => 'offline'
+            )));
         }
     }
 }

@@ -75,6 +75,8 @@ if ($app_language == 'indonesia')
     $route['buat-akun-baru'] = 'front/create_new_account';
     $route['reset-kata-sandi'] = 'front/resetpw';
     $route['regnuser'] = 'front/register_new_account';
+    $route['experimental-features'] = 'front/experimental_features';
+    $route['cos'] = 'front/check_online_link';
 
     // Admin
     $route['admin/dashboard'] = 'admin/index';

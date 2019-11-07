@@ -305,9 +305,9 @@ class Admin extends CI_Controller
 
             if ($data['CSRF_client'] === $data['CSRF_server'])
             {
-                $this->db->where('username', $this->_username)->update('users', array('logged' => 0));
-                if ($this->db->affected_rows())
-                {
+                // $this->db->where('username', $this->_username)->update('users', array('logged' => 0));
+                // if ($this->db->affected_rows())
+                // {
                     $this->session->unset_userdata(array('admin_login'));
                     //$this->session->sess_destroy();
                     $this->session->set_userdata('login_pg_msg', 'logout_true');
@@ -317,14 +317,14 @@ class Admin extends CI_Controller
                     header('Content-Type: application/json');
                     // Mengirim output data ke client
                     echo json_encode(array('status' => 'success', 'message' => site_url('login')));
-                }
-                else
-                {
-                    // Ubah tipe content ke JSON
-                    header('Content-Type: application/json');
-                    // Mengirim output data ke client
-                    echo json_encode(array('status' => 'failed', 'message' => $this->lang->line('logout_f')));
-                }
+                // }
+                // else
+                // {
+                //     // Ubah tipe content ke JSON
+                //     header('Content-Type: application/json');
+                //     // Mengirim output data ke client
+                //     echo json_encode(array('status' => 'failed', 'message' => $this->lang->line('logout_f')));
+                // }
             }
             else
             {
@@ -701,25 +701,61 @@ class Admin extends CI_Controller
                         {
                             if ($data['fdata']['email'] !== $user_data->email)
                             {
-                                $this->db->where('username', $this->_username)->update('users', array(
-                                    'email' => $data['fdata']['email']
-                                ));
-                                
-                                if ($this->db->affected_rows())
+                                if ($this->checker->is_online())
                                 {
-                                    $this->activity_log->create_activity_log('profile_update', 'E-Mail berhasil diubah', null, $this->_username);
-                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
-                                        'status' => 'success',
-                                        'message' => 'E-Mail berhasil diubah'
-                                    )));
-                                }
-                                else
-                                {
-                                    $this->activity_log->create_activity_log('profile_update', 'E-Mail gagal diubah', null, $this->_username);
-                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
-                                        'status' => 'error',
-                                        'message' => 'E-Mail gagal diubah'
-                                    )));
+                                    $cem_vcode = random_string('alnum', 8);
+
+                                    $this->session->set_userdata(array(
+                                        'cem_vcode' => $cem_vcode
+                                    ));
+
+                                    $body = '
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                            <meta charset="utf-8">
+                            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                            <title>Kode Verifikasi Ganti E-Mail</title>
+                            </head>
+                            <body>
+                            <div class="contents-container">
+                            <header class="contens-header">
+                                <h2 class="contents-title">Kode Verifikasi Ganti E-Mail</h2>
+                            <header>
+                            <p class="contents-text">
+                                Kepada: ' . $user_data[0]->true_name . ',<br/>' . '
+                                Kode Verifikasi: ' . $cem_vcode . '
+                            </p>
+                            </div>
+                            </body>
+                            </html>
+                        ';
+
+                        if ($this->checker->is_online())
+                        {
+                            if ($this->emailhandler->send_email($data['fdata']['email'], 'Kode Verifikasi', $body, TRUE))
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'success',
+                                    'message' => 'Kode Verifikasi Berhasil Dikirim ke E-Mail Anda.'
+                                )));
+                            }
+                            else
+                            {
+
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'error',
+                                    'message' => 'Kode Verifikasi Gagal Dikirim ke E-Mail Anda.'
+                                )));
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'failed',
+                                'message' => 'Anda harus memiliki koneksi internet untuk menggunakan fitur ini.'
+                            )));
+                        }
                                 }
                             }
                         }
@@ -729,6 +765,32 @@ class Admin extends CI_Controller
                                 'status' => 'warning',
                                 'message' => 'kata sandi tidak valid'
                             )));
+                        }
+                    }
+                    else if ($this->session->userdata('cem_vcode'))
+                    {
+                        if ($data['fdata']['cem_vcode'] == $this->session->userdata('cem_vcode'))
+                        {
+                            $this->db->where('username', $this->_username)->update('users', array(
+                                'email' => $data['fdata']['email']
+                            ));
+                            
+                            if ($this->db->affected_rows())
+                            {
+                                $this->activity_log->create_activity_log('profile_update', 'E-Mail berhasil diubah', null, $this->_username);
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'success',
+                                    'message' => 'E-Mail berhasil diubah'
+                                )));
+                            }
+                            else
+                            {
+                                $this->activity_log->create_activity_log('profile_update', 'E-Mail gagal diubah', null, $this->_username);
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'error',
+                                    'message' => 'E-Mail gagal diubah'
+                                )));
+                            }
                         }
                     }
                     else
@@ -758,6 +820,334 @@ class Admin extends CI_Controller
 
     // ------------------------------------------------------------------------
 
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function verify_email()
+    {
+        if ($this->input->is_ajax_request())
+        {
+            $data = $this->input->post('data', TRUE);
+            $data = json_decode($data, TRUE);
+            $query = $this->db->where('username', $this->_username)->get('users');
+            $result = $query->result();
+
+            if ($this->session->userdata('vem_code'))
+            {
+                if ($data['vem_code'] == $this->session->userdata('vem_code'))
+                {
+                    $this->db->where('username', $this->_username)->update('users', array('email_status' => 'verified'));
+                    if ($this->db->affected_rows())
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'success',
+                            'message' => 'email berhasil di verifikasi'
+                        )));
+                    }
+                    else
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'failed',
+                            'message' => 'email gagal di verifikasi'
+                        )));
+                    }
+                }
+            }
+            else
+            {
+                $vem_vcode = random_string('alnum', 8);
+
+                $this->session->set_userdata(array(
+                    'vem_vcode' => $vem_vcode
+                ));
+
+                $body = '
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                    <meta charset="utf-8">
+                    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                    <title>Verifikasi E-Mail</title>
+                    </head>
+                    <body>
+                    <div class="contents-container">
+                    <header class="contens-header">
+                        <h2 class="contents-title">Verifikasi E-Mail</h2>
+                    <header>
+                    <p class="contents-text">
+                        Kepada: ' . $user_data[0]->true_name . ',<br/>' . '
+                        Kode Verifikasi: ' . $vem_vcode . '
+                    </p>
+                    </div>
+                    </body>
+                    </html>
+                ';
+
+                if ($this->checker->is_online())
+                {
+                    if ($this->emailhandler->send_email($data['fdata']['email'], 'Kode Verifikasi', $body, TRUE))
+                    {
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'success',
+                            'message' => 'Kode Verifikasi Berhasil Dikirim ke E-Mail Anda.'
+                        )));
+                    }
+                    else
+                    {
+
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 'error',
+                            'message' => 'Kode Verifikasi Gagal Dikirim ke E-Mail Anda.'
+                        )));
+                    }
+                }
+                else
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                        'status' => 'failed',
+                        'message' => 'Anda harus memiliki koneksi internet untuk menggunakan fitur ini.'
+                    )));
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function set_security_code()
+    {
+        if ($this->input->is_ajax_request())
+        {
+            $data = $this->input->post('data', TRUE);
+            $data = json_decode($data, TRUE);
+            $query = $this->db->where('username', $this->_username)->get('users');
+            $result = $query->result();
+
+            if ($this->checker->is_online())
+            {
+                if ($this->asmp_security->verify_hashed_password($data['password'], $result[0]->password))
+                {
+                    if (intval($data['flp_code']) && intval($data['lr_code']))
+                    {
+                        if ($result[0]->email_status == 'not_verified')
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'E-Mail Anda Harus Di Verifikasi Terlebih Dahulu'
+                            )));
+                        }
+                        else
+                        {
+                            $to = $result[0]->email;
+                            $flp_code = $this->asmp_security->set_flp_code();
+                            $lr_code = $this->asmp_security->set_lr_code();
+                            $body = '
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                <meta charset="utf-8">
+                                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                <title>Kode Kemanan</title>
+                                </head>
+                                <body>
+                                <div class="contents-container">
+                                <header class="contens-header">
+                                    <h2 class="contents-title">Kode Keamanan</h2>
+                                <header>
+                                <p class="contents-text">
+                                    Kepada: ' . $result[0]->true_name . ',<br/>' . '
+                                    FLP Code: ' . $flp_code . '
+                                    LR Code: ' . $lr_code . '
+                                </p>
+                                </div>
+                                </body>
+                                </html>
+                            ';
+
+                            if ($this->checker->is_online())
+                            {
+                                if ($this->emailhandler->send_email($to, 'Kode Keamanan', $body, TRUE))
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'FLP Code & LR Code Berhasil Dikirim ke E-Mail Anda.'
+                                    )));
+                                }
+                                else
+                                {
+
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'FLP Code & LR Code Gagal Dikirim ke E-Mail Anda.'
+                                    )));
+                                }
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'failed',
+                                    'message' => 'Anda harus memiliki koneksi internet untuk menggunakan fitur ini.'
+                                )));
+                            }
+                        }
+                    }
+                    else if (intval($data['flp_code']))
+                    {
+                        if ($result[0]->email_status == 'not_verified')
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'E-Mail Anda Harus Di Verifikasi Terlebih Dahulu'
+                            )));
+                        }
+                        else
+                        {
+                            $to = $result[0]->email;
+                            $flp_code = $this->asmp_security->set_flp_code();
+                            $body = '
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                <meta charset="utf-8">
+                                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                <title>Kode Kemanan</title>
+                                </head>
+                                <body>
+                                <div class="contents-container">
+                                <header class="contens-header">
+                                    <h2 class="contents-title">Kode Keamanan</h2>
+                                <header>
+                                <p class="contents-text">
+                                    Kepada: ' . $result[0]->true_name . ',<br/>' . '
+                                    FLP Code: ' . $flp_code . '
+                                </p>
+                                </div>
+                                </body>
+                                </html>
+                            ';
+
+                            if ($this->checker->is_online())
+                            {
+                                if ($this->emailhandler->send_email($to, 'Kode Keamanan', $body, TRUE))
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'FLP Code Berhasil Dikirim ke E-Mail Anda.'
+                                    )));
+                                }
+                                else
+                                {
+
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'FLP Code Gagal Dikirim ke E-Mail Anda.'
+                                    )));
+                                }
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'failed',
+                                    'message' => 'Anda harus memiliki koneksi internet untuk menggunakan fitur ini.'
+                                )));
+                            }
+                        }
+                    }
+                    else if (intval($data['lr_code']))
+                    {
+                        if ($result[0]->email_status == 'not_verified')
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'error',
+                                'message' => 'E-Mail Anda Harus Di Verifikasi Terlebih Dahulu'
+                            )));
+                        }
+                        else
+                        {
+                            $to = $result[0]->email;
+                            $lr_code = $this->asmp_security->set_lr_code();
+                            $body = '
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                <meta charset="utf-8">
+                                <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                                <title>Kode Kemanan</title>
+                                </head>
+                                <body>
+                                <div class="contents-container">
+                                <header class="contens-header">
+                                    <h2 class="contents-title">Kode Keamanan</h2>
+                                <header>
+                                <p class="contents-text">
+                                    Kepada: ' . $result[0]->true_name . ',<br/>' . '
+                                    LR Code: ' . $lr_code . '
+                                </p>
+                                </div>
+                                </body>
+                                </html>
+                            ';
+
+                            if ($this->checker->is_online())
+                            {
+                                if ($this->emailhandler->send_email($to, 'Kode Keamanan', $body, TRUE))
+                                {
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'success',
+                                        'message' => 'LR Code Berhasil Dikirim ke E-Mail Anda.'
+                                    )));
+                                }
+                                else
+                                {
+
+                                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                        'status' => 'error',
+                                        'message' => 'LR Code Gagal Dikirim ke E-Mail Anda.'
+                                    )));
+                                }
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'failed',
+                                    'message' => 'Anda harus memiliki koneksi internet untuk menggunakan fitur ini.'
+                                )));
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                        'status' => 'error',
+                        'message' => 'Kata Sandi Anda Tidak Cocok!'
+                    )));
+                }
+            }
+            else
+            {
+                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                    'status' => 'error',
+                    'message' => 'Anda harus online untuk mengaktifkan fitur ini.'
+                )));
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
     public function settings()
     {
         if ($this->input->is_ajax_request())
@@ -874,6 +1264,8 @@ class Admin extends CI_Controller
                 'new_im' => $new_im,
                 'settings' => $this->app_settings->get_user_settings($this->_username),
                 'app_settings' => $this->app_settings->get_app_settings(),
+                'flp_code_status' => ($user_profile_data[0]->flp_code == '-') ? FALSE : TRUE,
+                'lr_code_status' => ($user_profile_data[0]->lr_code == '-') ? FALSE : TRUE,
                 'profile_url' => site_url('assets/images/profile-photo/' . $row[0]->profile_picture),
             );
             $this->load->view('admin/admin-settings', $data, FALSE);
@@ -3308,5 +3700,142 @@ class Admin extends CI_Controller
     public function close_changelogs($token)
     {
         $this->session->unset_userdata('changelog-on');
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function set_logged_status()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = $this->input->post('request_data', TRUE);
+
+            if ($this->checker->is_admin() && ($data['token'] == $this->session->userdata('CSRF')))
+            {
+                $query = $this->db->where('username', $this->_username)->get('users');
+                $result = $query->result();
+
+                switch ($data['status_code']) {
+                    case 2:
+                        if ($this->asmp_securtiy->verify_hashed_password($data['flp_code'], $result[0]->flp_code))
+                        {
+                            $this->db->where(array(
+                                'username' => $data['username']
+                            ))->update('users', array('logged_stat' => 2));
+    
+                            if ($this->db->affected_rows())
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'success',
+                                    'message' => 'Akun berhasil dilindungi'
+                                )));
+                            }
+                            else
+                            {
+                                $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                    'status' => 'failed',
+                                    'message' => 'Akun Gagal dilindungi'
+                                )));
+                            }
+                        }
+                        else
+                        {
+                            $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                                'status' => 'failed',
+                                'message' => 'FLP Code Salah!'
+                            )));
+                        }
+                        break;
+                    case 4:
+                        if ($data['force_logout_perms'] == 'allow')
+                        {
+                            $this->db->where(array(
+                                'username' => $data['username']
+                            ))->update('users', array('logged_stat' => 4));
+
+                            if ($this->db->affected_rows())
+                            {
+                                $data = array(
+                                    'CSRF_client' => $data['token'],
+                                    'CSRF_server' => $this->session->userdata('CSRF'),
+                                );
+                    
+                                if ($data['CSRF_client'] === $data['CSRF_server'])
+                                {
+                                    $this->db->where('username', $this->_username)->update('users', array('logged' => 0));
+                                    if ($this->db->affected_rows())
+                                    {
+                                        $this->session->unset_userdata(array('admin_login'));
+                                        $this->session->sess_destroy();
+
+                                        $this->session->set_userdata('login_pg_msg', 'logout_true');
+                                        // Tulis log
+                                        $this->activity_log->create_activity_log('logout_activity', ' Telah Log Out', null, $this->_username);
+
+                                        // Ubah tipe content ke JSON
+                                        header('Content-Type: application/json');
+                                        // Mengirim output data ke client
+                                        echo json_encode(array('status' => 'success', 'message' => site_url('login')));
+                                    }
+                                    else
+                                    {
+                                        log_message('error', 'Force Logout Failed: Status Cannot Be Set');
+                                    }
+                                }
+                                else
+                                {
+                                    log_message('error', 'Force Logout Failed: Token Not Match');
+                                }
+                            }
+                        }
+                    default:
+                        log_message('error','kode status tidak ditemukan!');
+                        break;
+                }
+            }
+            else
+            {
+                redirect('login','refresh');
+            }
+        }
+        else
+        {
+            redirect('login','refresh');
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    public function get_logged_status()
+    {
+        if ($this->input->is_ajax_request() && $this->input->post())
+        {
+            $data = $this->input->post('request_data', TRUE);
+
+            if ($data['token'] == $this->session->userdata('CSRF'))
+            {
+                $query = $this->db->where('username', $this->_username)->get('users');
+                $result = $query->result();
+                switch ($result[0]->logged_stat) {
+                    case 1:
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 1,
+                            'message' => 'Ada yang mencoba me-logout anda secara paksa, anda akan logout. Jika anda tidak ingin dilogout paksa anda harus memasukkan FLP, jika anda tidak memasukkan FLP Dalam 20 detik anda akan logout secara paksa dan tidak bisa login selama 3 menit.'
+                        )));
+                        break;
+                    case 3:
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 3,
+                            'message' => 'Pengguna asli memaksa anda untuk logout dengan metode 2, anda akan logout secara paksa, dan akun ini akan dikunci (Hanya Pemilik Akun Asli Yang Bisa Login).'
+                        )));
+                        break;
+                    default:
+                        $this->output->set_content_type('application/json')->set_output(json_encode(array(
+                            'status' => 0,
+                            'message' => 'tidak ada hasil'
+                        )));
+                }
+            }
+        }
     }
 }

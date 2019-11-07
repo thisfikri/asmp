@@ -226,7 +226,14 @@ class Auth extends CI_Controller
                             // Ubah tipe content ke JSON
                             header('Content-Type: application/json');
                             // Mengirim output data ke client
-                            echo json_encode(array('status' => 'warning', 'message' => 'Akun Sendang Login!', 'logged' => 1));
+                            echo json_encode(array('status' => 'warning', 'message' => 'Akun Sendang Login!', 'logged' => $result[0]->logged));
+                        }
+                        else if ($result[0]->logged_stat == 4 && get_cookie('tla') === NULL)
+                        {
+                            // Ubah tipe content ke JSON
+                            header('Content-Type: application/json');
+                            // Mengirim output data ke client
+                            echo json_encode(array('status' => 'warning', 'message' => 'Akun Dikunci Oleh Pemilik, anda tidak bisa login untuk saat ini.', 'logged' => 2));
                         }
                         else if ($result[0]->logged == 0)
                         {

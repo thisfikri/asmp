@@ -318,9 +318,9 @@ class User extends CI_Controller
 
             if ($data['CSRF_client'] === $data['CSRF_server'])
             {
-                $this->db->where('username', $this->_username)->update('users', array('logged' => 0));
-                if ($this->db->affected_rows())
-                {
+                // $this->db->where('username', $this->_username)->update('users', array('logged' => 0));
+                // if ($this->db->affected_rows())
+                // {
                     $this->session->unset_userdata(array('user_login'));
                     //$this->session->sess_destroy();
                     $this->session->set_userdata('login_pg_msg', 'logout_true');
@@ -330,14 +330,14 @@ class User extends CI_Controller
                     header('Content-Type: application/json');
                     // Mengirim output data ke client
                     echo json_encode(array('status' => 'success', 'message' => site_url('login')));
-                }
-                else
-                {
-                    // Ubah tipe content ke JSON
-                    header('Content-Type: application/json');
-                    // Mengirim output data ke client
-                    echo json_encode(array('status' => 'failed', 'message' => $this->lang->line('logout_f')));
-                }
+                // }
+                // else
+                // {
+                //     // Ubah tipe content ke JSON
+                //     header('Content-Type: application/json');
+                //     // Mengirim output data ke client
+                //     echo json_encode(array('status' => 'failed', 'message' => $this->lang->line('logout_f')));
+                // }
             }
             else
             {

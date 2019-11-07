@@ -64,14 +64,169 @@ defined('BASEPATH') OR exit('No direct script access allowed');
         }
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $plain_password
+     * @return void
+     */
     public function get_hashed_password($plain_password)
     {
         return password_hash($plain_password, PASSWORD_BCRYPT);
     }
 
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @param [type] $plain_password
+     * @param [type] $hashed_password
+     * @return void
+     */
     public function verify_hashed_password($plain_password, $hashed_password)
     {
         return password_verify($plain_password, $hashed_password) ? true : false;
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @param boolean $allow
+     * @return void
+     */
+    public function set_flp_code($allow = true)
+    {
+        if ($this->checker->is_admin())
+        {
+            $username = $this->session->userdata('admin_login');
+        }
+        else if ($this->checker->is_user())
+        {
+            $username = $this->session->userdata('user_login');
+        }
+
+        $flp_code = random_string('alnum', 8);
+        $hashed_flp_code = $this->get_hashed_password($flp_code);
+
+        $this->db->where('username', $username)->update('users', array('flp_code' => $hashed_flp_code));
+        if ($this->db->affected_rows())
+        {
+            log_message('info', 'force logut protection is set!');
+            return $flp_code;
+        }
+        else
+        {
+            log_message('error', 'force logut protection is not set!');
+            return $flp_code;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @param boolean $allow
+     * @return void
+     */
+    public function set_lr_code($allow = true)
+    {
+        if ($this->checker->is_admin())
+        {
+            $username = $this->session->userdata('admin_login');
+        }
+        else if ($this->checker->is_user())
+        {
+            $username = $this->session->userdata('user_login');
+        }
+        $lr_code = random_string('alnum', 60);
+        $hashed_lr_code = $this->get_hashed_password($lr_code);
+
+        $this->db->where('username', $username)->update('users', array('flp_code' => $hashed_lr_code));
+        if ($this->db->affected_rows())
+        {
+            log_message('info', 'long recovery code is set!');
+            return $lr_code;
+        }
+        else
+        {
+            log_message('error', 'long recovery code is not set!');
+            return $lr_code;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @param boolean $allow
+     * @return void
+     */
+    public function reset_flp_code($allow = true)
+    {
+        if ($this->checker->is_admin())
+        {
+            $username = $this->session->userdata('admin_login');
+        }
+        else if ($this->checker->is_user())
+        {
+            $username = $this->session->userdata('user_login');
+        }
+
+        $flp_code = random_string('alnum', 8);
+        $hashed_flp_code = $this->get_hashed_password($flp_code);
+
+        $this->db->where('username', $username)->update('users', array('flp_code' => $hashed_flp_code));
+        if ($this->db->affected_rows())
+        {
+            log_message('info', 'force logut protection is reset!');
+            return $flp_code;
+        }
+        else
+        {
+            log_message('error', 'force logut protection is failed to reset!');
+            return $flp_code;
+        }
+    }
+
+    // ------------------------------------------------------------------------
+
+    /**
+     * Undocumented function
+     *
+     * @param boolean $allow
+     * @return void
+     */
+    public function reset_lr_code($allow = true)
+    {
+        if ($this->checker->is_admin())
+        {
+            $username = $this->session->userdata('admin_login');
+        }
+        else if ($this->checker->is_user())
+        {
+            $username = $this->session->userdata('user_login');
+        }
+        $lr_code = random_string('alnum', 60);
+        $hashed_lr_code = $this->get_hashed_password($lr_code);
+
+        $this->db->where('username', $username)->update('users', array('flp_code' => $hashed_lr_code));
+        if ($this->db->affected_rows())
+        {
+            log_message('info', 'long recovery code is reset!');
+            return $lr_code;
+        }
+        else
+        {
+            log_message('error', 'long recovery code is failed to reset!');
+            return $lr_code;
+        }
     }
  }
  

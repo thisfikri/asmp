@@ -10,9 +10,7 @@
     <link rel="stylesheet" href="<?php echo base_url('assets/framework/font-awesome/css/fontawesome-all.min.css');?>">
     <style type="text/css" media="all">
 		@import "<?php echo site_url().'assets/widgEditor_1.0.1/css/widgEditor.css';?>";
-	</style>
-	
-    
+	</style>    
 </head>
 
 <body class="casual-theme" id="userDashboard">
