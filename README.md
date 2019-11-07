@@ -19,9 +19,9 @@ Aplikasi ini dibuat menggunakan CodeIgniter.
 * Profile
 * Profile Photo Gallery
 
-## Penting
+## Penting !!
 Aplikasi ini masih dalam tahap pengembangan, jadi aplikasi ini masih ada bug.
-aplikasi ini sudah tidak dikembangkan lagi sejak (07/11/2019) dan rencana nya pengembang akan membuat aplikasi baru yang mirip, jika ada waktu.
+(Update) Aplikasi ini sudah tidak dikembangkan lagi sejak (07/11/2019) dan rencana nya pengembang akan membuat aplikasi baru yang mirip, jika ada waktu.
 
 ## Persiapan
 * Install XAMPP (https://www.apachefriends.org/download.html)
